@@ -1537,7 +1537,7 @@
 
     .line 86
     .line 87
-    const-string v2, "OK: abrir categor\u00eda  \u00b7  mantener pulsado: opciones"
+    const-string v2, "OK: abrir categor\u00eda  \u00b7  MENÚ o mantener OK: opciones"
 
     .line 88
     .line 89

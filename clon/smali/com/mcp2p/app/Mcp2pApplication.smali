@@ -26,6 +26,9 @@
     # McP2P-TV: registro de cierres inesperados (primero, para cubrir el resto)
     invoke-static {p0}, Lcom/mcp2p/tv/CrashLog;->install(Landroid/app/Application;)V
 
+    # McP2P-TV: navegación con mando (indicador de foco, recuperación de foco, tecla MENÚ)
+    invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->install(Landroid/app/Application;)V
+
     # McP2P-TV: receptor DLNA en TVBox / Android TV
     invoke-static {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->startIfTv(Landroid/app/Application;)V
 

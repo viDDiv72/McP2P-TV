@@ -1,0 +1,304 @@
+package com.mcp2p.tv;
+
+import android.app.Activity;
+import android.app.Application;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.AbsSeekBar;
+import android.widget.EditText;
+
+import com.mcp2p.dlna.DlnaRenderer;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+/**
+ * Navegación con mando a distancia (solo en TV). Sin tocar las pantallas por dentro:
+ * <ul>
+ * <li>Indicador de foco claro: borde del color de la app y ligero aumento del elemento enfocado.</li>
+ * <li>Recuperación del foco: si una lista se recarga y el foco se pierde, vuelve al último elemento
+ * enfocado que siga en pantalla o, si no, al primer elemento de la lista.</li>
+ * <li>Tecla MENÚ: abre las opciones del elemento enfocado (equivale a mantener OK pulsado).</li>
+ * </ul>
+ */
+public final class TvFocus {
+    static final String TAG = "Mcp2pTvFocus";
+    private static final int TAG_KEY = 0x6d637032; // "mcp2" (clave de tag privada, fuera del rango de R.id)
+    private static final int ACCENT = 0xFF48D9C8;
+    private static final int HISTORY = 12;
+
+    private TvFocus() {}
+
+    /** Llamado desde Mcp2pApplication.onCreate. */
+    public static void install(Application app) {
+        try {
+            if (!DlnaRenderer.isTv(app)) return;
+            app.registerActivityLifecycleCallbacks(new Lifecycle());
+            Log.i(TAG, "Navegación con mando activada");
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudo activar la navegación con mando", t);
+        }
+    }
+
+    // ------------------------------------------------------------------ por actividad
+
+    static final class State {
+        final Activity activity;
+        final Deque<String> history = new ArrayDeque<>();
+        final GradientDrawable ring;
+        View highlighted;
+        boolean recoveryPosted;
+
+        State(Activity a) {
+            activity = a;
+            float d = a.getResources().getDisplayMetrics().density;
+            ring = new GradientDrawable();
+            ring.setColor(0x00000000);
+            ring.setStroke((int) (3 * d + 0.5f), ACCENT);
+            ring.setCornerRadius(14 * d);
+        }
+    }
+
+    static void attach(final Activity a) {
+        final View decor = a.getWindow().getDecorView();
+        if (decor.getTag(TAG_KEY) != null) return;
+        final State s = new State(a);
+        decor.setTag(TAG_KEY, s);
+        ViewTreeObserver vto = decor.getViewTreeObserver();
+        vto.addOnGlobalFocusChangeListener((oldFocus, newFocus) -> safe(() -> onFocusChanged(s, oldFocus, newFocus)));
+        vto.addOnGlobalLayoutListener(() -> safe(() -> scheduleRecovery(s)));
+        Window w = a.getWindow();
+        w.setCallback(new KeyCallback(w.getCallback(), s));
+    }
+
+    /** Un fallo en la ayuda de foco nunca debe cerrar la app: se registra y se ignora. */
+    private static void safe(Runnable r) {
+        try {
+            r.run();
+        } catch (Throwable t) {
+            Log.w(TAG, "Fallo en la ayuda de foco (ignorado)", t);
+        }
+    }
+
+    // ------------------------------------------------------------------ indicador de foco
+
+    private static boolean decorates(View v) {
+        if (v == null || v instanceof EditText || v instanceof SurfaceView || v instanceof TextureView
+                || v instanceof AbsSeekBar) return false;
+        String n = v.getClass().getName();
+        if (n.contains("RecyclerView") || n.contains("PlayerView") || n.contains("VLCVideoLayout")
+                || n.contains("WebView")) return false;
+        // Las vistas grandes (contenedores a pantalla completa) no se resaltan.
+        View root = v.getRootView();
+        return root == null || v.getHeight() < root.getHeight() * 0.6f;
+    }
+
+    private static boolean ownsFocusStyle(View v) {
+        // Las tarjetas de canal/categoría ya cambian borde y color al enfocarse (adaptador d4.v0).
+        return v.getClass().getName().endsWith("MaterialCardView");
+    }
+
+    private static void onFocusChanged(State s, View oldFocus, View newFocus) {
+        clear(s);
+        if (newFocus == null) {
+            scheduleRecovery(s);
+            return;
+        }
+        remember(s, newFocus);
+        if (!decorates(newFocus)) return;
+        View root = newFocus.getRootView();
+        boolean wide = root != null && newFocus.getWidth() > root.getWidth() * 0.6f;
+        float scale = wide ? 1.015f : 1.06f;
+        newFocus.animate().scaleX(scale).scaleY(scale).setDuration(120).start();
+        if (!ownsFocusStyle(newFocus) && newFocus.getWidth() > 0 && newFocus.getHeight() > 0) {
+            s.ring.setBounds(0, 0, newFocus.getWidth(), newFocus.getHeight());
+            newFocus.getOverlay().add(s.ring);
+        }
+        s.highlighted = newFocus;
+    }
+
+    private static void clear(State s) {
+        View v = s.highlighted;
+        s.highlighted = null;
+        if (v == null) return;
+        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+        try {
+            v.getOverlay().remove(s.ring);
+        } catch (Exception ignored) {}
+    }
+
+    // ------------------------------------------------------------------ recuperación del foco
+
+    private static String key(View v) {
+        CharSequence cd = v.getContentDescription();
+        if (cd != null && cd.length() > 0) return "cd:" + cd;
+        if (v instanceof android.widget.TextView) {
+            CharSequence t = ((android.widget.TextView) v).getText();
+            if (t != null && t.length() > 0) return "tx:" + t;
+        }
+        if (v.getId() != View.NO_ID) return "id:" + v.getId();
+        return null;
+    }
+
+    private static void remember(State s, View v) {
+        String k = key(v);
+        if (k == null) return;
+        s.history.remove(k);
+        s.history.addFirst(k);
+        while (s.history.size() > HISTORY) s.history.removeLast();
+    }
+
+    private static void scheduleRecovery(final State s) {
+        if (s.recoveryPosted) return;
+        s.recoveryPosted = true;
+        final View decor = s.activity.getWindow().getDecorView();
+        decor.postDelayed(() -> {
+            s.recoveryPosted = false;
+            safe(() -> recover(s));
+        }, 150);
+    }
+
+    private static void recover(State s) {
+        Activity a = s.activity;
+        if (a.isFinishing() || !a.hasWindowFocus()) return; // un diálogo tiene el foco: no tocar
+        // En el reproductor no tener foco es normal: Media3/VLC gestionan sus propias teclas.
+        if (a.getClass().getName().endsWith("PlayerActivity")) return;
+        View decor = a.getWindow().getDecorView();
+        View current = decor.findFocus();
+        if (current != null && current.isShown()) return;
+        View target = null;
+        for (String k : s.history) {
+            target = findByKey(decor, k);
+            if (target != null) break;
+        }
+        if (target == null) target = firstInList(decor);
+        if (target == null) target = firstFocusable(decor);
+        if (target != null) target.requestFocus();
+    }
+
+    private static boolean usable(View v) {
+        return v.isShown() && v.isFocusable() && v.isEnabled() && v.getWidth() > 0 && v.getHeight() > 0;
+    }
+
+    private static View findByKey(View v, String k) {
+        if (usable(v) && k.equals(key(v))) return v;
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) {
+                View r = findByKey(g.getChildAt(i), k);
+                if (r != null) return r;
+            }
+        }
+        return null;
+    }
+
+    /** Primer elemento enfocable dentro de la primera lista (RecyclerView/ListView) visible con contenido. */
+    private static View firstInList(View v) {
+        if (!v.isShown()) return null;
+        String n = v.getClass().getName();
+        if (v instanceof ViewGroup && (n.contains("RecyclerView") || v instanceof android.widget.AbsListView)) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) {
+                View r = firstFocusable(g.getChildAt(i));
+                if (r != null) return r;
+            }
+            return null;
+        }
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) {
+                View r = firstInList(g.getChildAt(i));
+                if (r != null) return r;
+            }
+        }
+        return null;
+    }
+
+    private static View firstFocusable(View v) {
+        if (!v.isShown()) return null;
+        if (usable(v) && !(v instanceof ViewGroup && ((ViewGroup) v).getDescendantFocusability()
+                == ViewGroup.FOCUS_AFTER_DESCENDANTS && hasFocusableChild((ViewGroup) v))) {
+            return v;
+        }
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            if (g.getDescendantFocusability() == ViewGroup.FOCUS_BLOCK_DESCENDANTS) return null;
+            for (int i = 0; i < g.getChildCount(); i++) {
+                View r = firstFocusable(g.getChildAt(i));
+                if (r != null) return r;
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasFocusableChild(ViewGroup g) {
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View c = g.getChildAt(i);
+            if (usable(c)) return true;
+            if (c instanceof ViewGroup && hasFocusableChild((ViewGroup) c)) return true;
+        }
+        return false;
+    }
+
+    // ------------------------------------------------------------------ tecla MENÚ
+
+    static boolean onKey(State s, KeyEvent e) {
+        if (e.getKeyCode() != KeyEvent.KEYCODE_MENU) return false;
+        View f = s.activity.getWindow().getDecorView().findFocus();
+        if (f == null) return false;
+        View target = f;
+        while (target != null && !target.isLongClickable()) {
+            target = target.getParent() instanceof View ? (View) target.getParent() : null;
+        }
+        if (target == null) return false;
+        if (e.getAction() == KeyEvent.ACTION_UP) target.performLongClick();
+        return true;
+    }
+
+    // ------------------------------------------------------------------ clases auxiliares
+
+    /** Estática a propósito: el d8 de build-tools 34 falla con clases internas no estáticas. */
+    static final class Lifecycle implements Application.ActivityLifecycleCallbacks {
+        @Override public void onActivityCreated(Activity a, Bundle b) {}
+        @Override public void onActivityStarted(Activity a) {}
+        @Override public void onActivityResumed(Activity a) {
+            try {
+                attach(a);
+                Object s = a.getWindow().getDecorView().getTag(TAG_KEY);
+                if (s instanceof State) scheduleRecovery((State) s);
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudo preparar la navegación en " + a.getClass().getSimpleName(), t);
+            }
+        }
+        @Override public void onActivityPaused(Activity a) {}
+        @Override public void onActivityStopped(Activity a) {}
+        @Override public void onActivitySaveInstanceState(Activity a, Bundle b) {}
+        @Override public void onActivityDestroyed(Activity a) {}
+    }
+
+    static final class KeyCallback extends WindowCallbackWrapper {
+        private final State s;
+
+        KeyCallback(Window.Callback d, State s) {
+            super(d);
+            this.s = s;
+        }
+
+        @Override public boolean dispatchKeyEvent(KeyEvent e) {
+            try {
+                if (onKey(s, e)) return true;
+            } catch (Throwable t) {
+                Log.w(TAG, "Tecla MENÚ (ignorado)", t);
+            }
+            return super.dispatchKeyEvent(e);
+        }
+    }
+}

@@ -75,6 +75,18 @@ No usa las funciones `dlna*` del motor Go porque su formato no se puede verifica
 - **Comprobación de layouts al compilar** (`tools/check-layouts.js`): `build.sh` se detiene si una variante
   (`layout-sw600dp`, `layout-land`…) no tiene todos los IDs del layout por defecto.
 
+### 4. Navegación con mando (v1.7.0, pre-release)
+Módulo `com.mcp2p.tv.TvFocus`, solo en TV, enganchado desde `Mcp2pApplication.onCreate`. No modifica las pantallas:
+- **Indicador de foco**: borde color acento (#48D9C8) dibujado en el *overlay* de la vista y aumento ligero
+  (1,06 en botones; 1,015 en tarjetas anchas). Las tarjetas de canal ya cambian su borde, así que solo se escalan.
+- **Recuperación de foco**: si el foco se pierde (una lista que se vacía y recarga), vuelve al último elemento
+  enfocado que siga visible (por `contentDescription`/texto) o al primero de la lista. Así, al entrar en una
+  categoría se enfoca el primer canal y al volver se recupera la categoría si está en pantalla. No actúa en el reproductor.
+- **Tecla MENÚ** = mantener OK pulsado (abre las opciones del elemento enfocado). La pista de la lista lo indica.
+- Todo va protegido: un fallo en la ayuda de foco se registra y se ignora, nunca cierra la app.
+
+Pendiente para la fase de interfaz: CH+/CH− para cambiar de canal desde el reproductor (necesita pasarle la lista).
+
 **Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).
 A televisores DLNA que no son McP2P-TV se les envía el puente del móvil, así que el móvil debe seguir reproduciendo.
 Las cabeceras HTTP/DRM de algunos canales no viajan por DLNA.
