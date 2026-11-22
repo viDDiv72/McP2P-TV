@@ -19,10 +19,10 @@ Requiere: JDK 21, Android SDK build-tools, `C:\Users\viD\tools\apktool.jar`.
 1. Haz los cambios en `clon/` y sube `versionCode` y `versionName` en `clon/apktool.yml`.
 2. `./build.sh`
 3. Commit y push a `main`.
-4. Publica la release (usa la credencial del llavero; el `GH_TOKEN` no tiene permisos de escritura):
+4. Publica la release:
    ```bash
    cp build/McP2P-clon-signed.apk build/McP2P-TV-vX.Y.Z.apk
-   env -u GH_TOKEN gh release create vX.Y.Z build/McP2P-TV-vX.Y.Z.apk --title "McP2P-TV X.Y.Z" --notes "Cambios…"
+   gh release create vX.Y.Z build/McP2P-TV-vX.Y.Z.apk --title "McP2P-TV X.Y.Z" --notes "Cambios…"
    ```
 Firma siempre con el mismo `mcp2p-clon.jks` para que cada versión se instale encima de la anterior.
 
