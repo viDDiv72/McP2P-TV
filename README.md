@@ -16,13 +16,17 @@
 Requiere: JDK 21, Android SDK build-tools, `C:\Users\viD\tools\apktool.jar`.
 
 ## Sacar una versión nueva
+El historial completo está en [CHANGELOG.md](CHANGELOG.md); cada versión tiene su etiqueta git y su release.
 1. Haz los cambios en `clon/` y sube `versionCode` y `versionName` en `clon/apktool.yml`.
+   Añade la entrada nueva en `CHANGELOG.md`.
 2. `./build.sh`
 3. Commit y push a `main`.
 4. Publica la release:
    ```bash
    cp build/McP2P-clon-signed.apk build/McP2P-TV-vX.Y.Z.apk
    gh release create vX.Y.Z build/McP2P-TV-vX.Y.Z.apk --title "McP2P-TV X.Y.Z" --notes "Cambios…"
+   # versión de prueba: añade --prerelease. Para pasarla a estable después:
+   gh release edit vX.Y.Z --prerelease=false --latest
    ```
 Firma siempre con el mismo `mcp2p-clon.jks` para que cada versión se instale encima de la anterior.
 
