@@ -75,7 +75,14 @@
   .hero p{font-size:22px;color:#d3d8ee}
   .hero .prog{margin-top:18px;height:9px}
   .side{display:flex;flex-direction:column;gap:20px;flex:none}
-  .action{width:400px;height:140px;border-radius:24px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:20px;padding:0 26px;cursor:pointer}
+  #favs .ch{width:330px;height:260px;padding:26px}
+  #favs .ch b{font-size:29px;margin-top:20px}
+  #favs .ch small{font-size:21px}
+  .idbox{width:580px;height:150px;flex:none;border-radius:24px;background:var(--surface);border:1px solid var(--outline);padding:20px 24px;display:flex;flex-direction:column;justify-content:center;gap:14px;cursor:pointer}
+  .idbox b{font-size:25px}
+  .field{height:62px;border-radius:16px;background:#0b0d1a;border:1px solid var(--outline);display:flex;align-items:center;gap:12px;padding:0 8px 0 20px;font-size:21px;color:var(--dim)}
+  .field .go{margin-left:auto;width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:var(--brand);color:#fff;font-size:22px}
+  .action{width:380px;height:150px;flex:none;border-radius:24px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:20px;padding:0 26px;cursor:pointer}
   .action .ic{width:78px;height:78px;border-radius:22px;display:grid;place-items:center;font-size:36px;background:linear-gradient(135deg,rgba(47,107,255,.25),rgba(155,60,255,.25));flex:none}
   .action b{font-size:25px;display:block}
   .action small{font-size:19px;color:var(--muted)}
@@ -209,6 +216,25 @@
   .about .lg{width:150px;height:150px;border-radius:30px;flex:none}
   .about b{font-size:30px;display:block}
   .about small{font-size:20px;color:var(--muted);line-height:1.4}
+  /* ventanas: ID/enlace, QR, USB */
+  .modal{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(4,5,12,.78)}
+  .modal.on{display:flex}
+  .mbox{width:920px;border-radius:30px;background:#111327;border:1px solid var(--outline);padding:38px 42px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .mbox h2{font-size:34px;margin-bottom:6px}
+  .mbox .sub{font-size:20px;color:var(--muted);margin-bottom:24px}
+  .mbox input{width:100%;height:76px;border-radius:18px;background:#0b0d1a;border:2px solid var(--outline);color:var(--text);font:inherit;font-size:25px;padding:0 24px;outline:none}
+  .mbox input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(125,107,255,.3)}
+  .mbox .ctr{margin-top:24px}
+  .chips{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .chips .btn{height:58px;font-size:19px}
+  .qr{display:flex;gap:36px;align-items:center}
+  .qr .code{width:280px;height:280px;flex:none;border-radius:20px;background:#fff;padding:18px}
+  .qr ol{font-size:22px;line-height:1.7;color:#d6dbee;padding-left:26px}
+  .qr ol b{color:#c9c2ff}
+  .uitem{height:84px;border-radius:18px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:18px;padding:0 22px;margin-bottom:10px;font-size:23px;cursor:pointer}
+  .uitem .ic{font-size:30px;width:40px;text-align:center}
+  .uitem small{margin-left:auto;font-size:19px;color:var(--muted)}
+  .usbdev{display:flex;align-items:center;gap:14px;font-size:20px;color:var(--muted);margin-bottom:18px}
 </style>
 </head>
 <body>
@@ -231,20 +257,16 @@
       <div class="pills"><div class="pill"><span class="dot"></span>WARP</div><div class="pill"><span class="dot"></span>Recibiendo DLNA</div><div class="clock" data-clock>--:--</div></div>
     </div>
     <div class="page"><div data-scroll>
+      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row">
-        <h2>Continuar viendo</h2>
+        <h2>Abrir contenido</h2>
         <div class="rowvp"><div class="cards">
-          <div class="hero f wide" data-act="play:101 · Deportes 1 HD">
-            <div class="art"></div>
-            <div class="in"><span class="live">● EN DIRECTO</span><h3>Deportes 1 HD</h3><p>Liga · Jornada 14 &nbsp;·&nbsp; 21:00 – 23:00</p><div class="prog"><i style="width:46%"></i></div></div>
-          </div>
-          <div class="side">
-            <div class="action f" data-act="toast:Pega una ID AceStream, un magnet o una URL"><div class="ic">▶</div><div><b>Reproducir ID o enlace</b><small>AceStream, magnet o URL</small></div></div>
-            <div class="action f" data-act="toast:Escanea el QR con el móvil para enviar tu lista"><div class="ic">⌗</div><div><b>Añadir lista por QR</b><small>Envíala desde el móvil</small></div></div>
-          </div>
+          <div class="idbox f wide" data-act="idmodal"><b>Reproducir ID o enlace</b>
+            <div class="field"><span>Pega una ID AceStream, magnet o URL…</span><span class="go">▶</span></div></div>
+          <div class="action f" data-act="qrmodal"><div class="ic">⌗</div><div><b>Añadir lista por QR</b><small>Envíala desde el móvil</small></div></div>
+          <div class="action f" data-act="usbmodal"><div class="ic">⇪</div><div><b>Cargar desde USB</b><small>Listas M3U y vídeos</small></div></div>
         </div></div>
       </div>
-      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row"><h2>Películas recién añadidas <span>Mediateca</span></h2><div class="rowvp"><div class="cards" id="homeMovies"></div></div></div>
       <div class="row">
         <h2>Mis listas <span>3 listas</span></h2>
@@ -336,6 +358,29 @@
     <div class="hint"><span><span class="k">OK</span>Cambiar</span><span><span class="k">← →</span>Ajustar</span><span><span class="k">ATRÁS</span>Volver</span></div>
   </section>
 
+  <div class="modal" id="m-id"><div class="mbox">
+    <h2>Reproducir ID o enlace</h2>
+    <div class="sub">ID de AceStream (40 caracteres), enlace magnet, acestream:// o URL http(s) de un vídeo o canal.</div>
+    <input id="idin" class="f wide" placeholder="Escribe o pega aquí…" autocomplete="off" spellcheck="false">
+    <div class="chips"><div class="btn f" data-act="paste"><span class="ic">📋</span>Pegar</div><div class="btn f" data-act="hist:acestream://5b1f…e9a2"><span class="ic">↺</span>Última: 5b1f…e9a2</div><div class="btn f" data-act="hist:magnet:?xt=urn:btih:9c3d…"><span class="ic">↺</span>magnet:?xt=…9c3d</div></div>
+    <div class="ctr"><div class="btn main f" data-act="idplay"><span class="ic">▶</span>Reproducir</div><div class="btn f" data-act="close"><span class="ic">✕</span>Cancelar</div></div>
+  </div></div>
+  <div class="modal" id="m-qr"><div class="mbox"><div class="qr">
+    <svg class="code" viewBox="0 0 29 29" id="qrsvg" shape-rendering="crispEdges"></svg>
+    <div><h2>Añadir lista por QR</h2>
+      <ol><li>Escanea el código con el móvil.</li><li>Pega la <b>URL de tu lista M3U</b> o sube el archivo.</li><li>La lista aparece aquí al momento.</li></ol>
+      <div class="ctr"><div class="btn main f" data-act="qrok"><span class="ic">✓</span>Simular envío</div><div class="btn f" data-act="close"><span class="ic">✕</span>Cerrar</div></div></div>
+  </div></div></div>
+  <div class="modal" id="m-usb"><div class="mbox">
+    <h2>Cargar desde USB</h2>
+    <div class="usbdev"><span class="dot"></span>Kingston DataTraveler · 32 GB · /storage/1A2B-3C4D</div>
+    <div class="uitem f wide" data-act="usbok:Lista «canales_es.m3u» importada · 184 canales"><span class="ic">☰</span>canales_es.m3u<small>Lista M3U · 2,3 MB</small></div>
+    <div class="uitem f wide" data-act="usbok:Lista «deportes.m3u8» importada · 42 canales"><span class="ic">☰</span>deportes.m3u8<small>Lista M3U · 380 KB</small></div>
+    <div class="uitem f wide" data-act="usbok:Reproduciendo vacaciones_2024.mkv"><span class="ic">🎬</span>vacaciones_2024.mkv<small>Vídeo · 1,4 GB</small></div>
+    <div class="uitem f wide" data-act="usbok:Abriendo carpeta Películas"><span class="ic">📁</span>Películas<small>12 elementos</small></div>
+    <div class="ctr"><div class="btn f" data-act="close"><span class="ic">✕</span>Cerrar</div></div>
+  </div></div>
+
   <div class="toast" id="toast"></div>
 </div></div>
 
@@ -392,7 +437,7 @@ const posterCard=(m,i)=>`<div class="poster f" data-act="movie:${i}">${posterArt
 
 /* render */
 document.getElementById('favs').innerHTML=chans('Favoritos').map((c,i)=>`
-  <div class="ch f" data-act="play:${c.no} · ${c.name}"><div class="hd">${logo(c.name,i,64)}<span class="num">${c.no}</span></div>
+  <div class="ch f" data-act="play:${c.no} · ${c.name}"><div class="hd">${logo(c.name,i,84)}<span class="num">${c.no}</span></div>
   <b>${c.name}</b><small>${c.now}</small><div class="prog"><i style="width:${c.p}%"></i></div></div>`).join('');
 document.getElementById('homeMovies').innerHTML=MOVIES.slice(0,8).map(posterCard).join('');
 const GROUPS=[['Recién añadidas',[0,3,10,6,1,4,8,2]],['Acción y aventura',[3,10,0,8,5,1]],['Para toda la familia',[4,6,7,10,11,2]],['Mejor valoradas',[7,4,0,10,2,11,8]]];
@@ -463,8 +508,18 @@ tick();setInterval(tick,15000);
 /* navegación espacial (mando) */
 let screen='home',focused=null;const lastFocus={};
 const scr=()=>document.getElementById(screen);
-function focusables(){const inDetail=detailOpen!==null&&screen==='movies',root=inDetail?document.getElementById('detail'):scr();
+let modal=null;
+function focusables(){if(modal)return [...modal.querySelectorAll('.f')];
+  const inDetail=detailOpen!==null&&screen==='movies',root=inDetail?document.getElementById('detail'):scr();
   return [...root.querySelectorAll('.f')].filter(e=>e.offsetParent!==null&&!e.closest('.osd.hide')&&(!e.closest('.zap')||e.closest('.zap.on'))&&(inDetail||!e.closest('.detail')));}
+const idin=document.getElementById('idin');
+function openModal(id){modal=document.getElementById(id);modal.classList.add('on');modal._from=focused;
+  if(id==='m-id'){idin.value='';setFocus(idin);idin.focus();}else setFocus(modal.querySelector('.btn.main')||modal.querySelector('.f'));}
+function closeModal(){if(!modal)return;const from=modal._from;modal.classList.remove('on');modal=null;idin.blur();setFocus(from);}
+/* QR de ejemplo (solo decorativo) */
+(function(){let s='';const fin=(x,y)=>{s+=`<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3"/>`;};
+  fin(0,0);fin(22,0);fin(0,22);let r=7;for(let y=0;y<29;y++)for(let x=0;x<29;x++){if((x<8&&y<8)||(x>20&&y<8)||(x<8&&y>20))continue;r=(r*1103515245+12345)&0x7fffffff;if(r%5<2)s+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;}
+  document.getElementById('qrsvg').innerHTML=s;})();
 function setFocus(el){if(!el)return;if(focused)focused.classList.remove('focus');focused=el;el.classList.add('focus');lastFocus[screen]=el;keepVisible(el);}
 const tyOf=e=>parseFloat((e.style.transform.match(/translateY\((-?[\d.]+)px/)||[0,0])[1]);
 const txOf=e=>parseFloat((e.style.transform.match(/translateX\((-?[\d.]+)px/)||[0,0])[1]);
@@ -503,7 +558,7 @@ function go(s){
   if(focused)focused.classList.remove('focus');focused=null;
   if(s==='player'){document.getElementById('osd').classList.remove('hide');document.getElementById('zap').classList.remove('on');armHide();}
   const last=lastFocus[s];
-  const el=last&&last.isConnected&&!last.closest('.detail')?last:document.querySelector(({list:'#chlist .crow',settings:'#sets .sitem.cur',player:'#player .btn.main',movies:'#mrows .poster',home:'#home .hero'})[s]);
+  const el=last&&last.isConnected&&!last.closest('.detail')?last:document.querySelector(({list:'#chlist .crow',settings:'#sets .sitem.cur',player:'#player .btn.main',movies:'#mrows .poster',home:'#favs .ch'})[s]);
   setFocus(el);
 }
 function setPlaying(name,src){document.getElementById('pchn').firstChild.textContent=name+' ';const lg=src&&src.querySelector('.logo'),pl=document.getElementById('plogo');
@@ -511,6 +566,15 @@ function setPlaying(name,src){document.getElementById('pchn').firstChild.textCon
 function act(el){
   const a=el.dataset.act||'',k=a.split(':')[0],v=a.slice(a.indexOf(':')+1);
   if(k==='go')go(v);else if(k==='toast')toast(v);
+  else if(k==='idmodal')openModal('m-id');else if(k==='qrmodal')openModal('m-qr');else if(k==='usbmodal')openModal('m-usb');
+  else if(k==='close')closeModal();
+  else if(k==='paste'){idin.value='acestream://3f9a1c2e7b5d48e6a0c94b7f1d2e3a4b5c6d7e8f';setFocus(idin);idin.focus();}
+  else if(k==='hist'){idin.value=v;setFocus(idin);idin.focus();}
+  else if(k==='idplay'){const val=idin.value.trim();if(!val){toast('Escribe o pega una ID o enlace');setFocus(idin);idin.focus();return;}
+    closeModal();setPlaying('ID · '+(val.length>26?val.slice(0,24)+'…':val),null);const pl=document.getElementById('plogo');pl.textContent='▶';pl.style.background='linear-gradient(135deg,#2f6bff,#9b3cff)';
+    document.getElementById('pnow').textContent='Contenido P2P';document.getElementById('plive').style.display='none';go('player');}
+  else if(k==='qrok'){closeModal();toast('Lista «Mi lista del móvil» añadida · 236 canales');}
+  else if(k==='usbok'){closeModal();toast(v);}
   else if(k==='play'){setPlaying(v,el);document.getElementById('pnow').textContent='Liga · Jornada 14';document.getElementById('plive').style.display='';go('player');}
   else if(k==='movie'){if(screen!=='movies')go('movies');openMovie(+v);}
   else if(k==='dplay'){const m=MOVIES[detailOpen];setPlaying('Película · '+m[0],null);const pl=document.getElementById('plogo');pl.textContent='▶';pl.style.background='linear-gradient(135deg,#2f6bff,#9b3cff)';
@@ -521,6 +585,7 @@ function act(el){
   else if(k==='zap'){document.getElementById('zap').classList.add('on');setFocus(document.querySelector('#zlist .zrow.cur'));}
 }
 function back(){
+  if(modal){closeModal();return;}
   if(screen==='movies'&&detailOpen!==null){const i=detailOpen;detailOpen=null;document.getElementById('detail').classList.remove('on');
     setFocus(document.querySelector(`#mrows [data-act="movie:${i}"]`));return;}
   if(screen==='player'){const z=document.getElementById('zap');if(z.classList.contains('on')){z.classList.remove('on');setFocus(document.querySelector('#player .btn.main'));return;}
@@ -534,13 +599,18 @@ function zapStep(d){if(screen!=='player')return;const rows=[...document.querySel
   document.getElementById('osd').classList.remove('hide');toast((d<0?'CH+ ':'CH− ')+rows[i].querySelector('b').textContent);armHide();}
 document.addEventListener('keydown',e=>{
   const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+  if(e.target===idin){ // escribiendo en la casilla: solo Enter, Esc y ↓ salen de ella
+    if(e.key==='Enter'){e.preventDefault();act({dataset:{act:'idplay'}});}
+    else if(e.key==='Escape'){e.preventDefault();closeModal();}
+    else if(e.key==='ArrowDown'){e.preventDefault();idin.blur();move('down');}
+    return;}
   if(screen==='player'){const o=document.getElementById('osd');if(o.classList.contains('hide')&&!['Escape','Backspace','PageUp','PageDown'].includes(e.key)){o.classList.remove('hide');armHide();e.preventDefault();return;}armHide();}
   if(map[e.key]){e.preventDefault();move(map[e.key]);}
   else if(e.key==='Enter'||e.key===' '){e.preventDefault();if(focused)act(focused);}
   else if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();back();}
   else if(e.key==='m'||e.key==='M')toast('Opciones: ocultar, mover, renombrar…');
   else if(e.key==='PageUp'){e.preventDefault();zapStep(-1);}else if(e.key==='PageDown'){e.preventDefault();zapStep(1);}
-  else if(e.key>='1'&&e.key<='5')go(['home','list','movies','player','settings'][+e.key-1]);
+  else if(e.key>='1'&&e.key<='5'&&!modal)go(['home','list','movies','player','settings'][+e.key-1]);
 });
 document.getElementById('tv').addEventListener('click',e=>{const el=e.target.closest('.f');if(el){setFocus(el);act(el);}else if(screen==='player'){document.getElementById('osd').classList.toggle('hide');armHide();}});
 document.querySelectorAll('.proto button').forEach(b=>b.onclick=()=>go(b.dataset.go));
