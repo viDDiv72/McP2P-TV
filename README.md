@@ -85,6 +85,16 @@ Módulo `com.mcp2p.tv.TvFocus`, solo en TV, enganchado desde `Mcp2pApplication.o
 - **Tecla MENÚ** = mantener OK pulsado (abre las opciones del elemento enfocado). La pista de la lista lo indica.
 - Todo va protegido: un fallo en la ayuda de foco se registra y se ignora, nunca cierra la app.
 
+### 5. Reproducción más estable (v1.7.1, pre-release)
+- **Fallo corregido:** el contador de reintentos (`PlayerActivity.D0`) solo se reiniciaba en `onStart`. En sesiones
+  largas, tras 3 cortes de red sueltos, el 4.º cortaba la reproducción definitivamente. Ahora se reinicia cada vez que
+  la reproducción vuelve a `STATE_READY` (`d4/o0.smali`, `onPlaybackStateChanged`).
+- **Más margen de reconexión:** 6 intentos con espera exponencial y tope de 8 s (1, 2, 4, 8, 8, 8 s ≈ 31 s), antes 3 en 7 s.
+- **`largeHeap="true"`:** más memoria disponible para VLC/ExoPlayer y listas grandes en TVBox con poca RAM.
+- Revisado sin cambios necesarios: M3U leído línea a línea, EPG con `XmlPullParser` + transacción, cachés de
+  imágenes acotadas (8/12 MB), bases de datos de listas/EPG con una única conexión WAL, pantalla siempre
+  encendida al reproducir, parada diferida del motor (25 s) al salir del reproductor.
+
 Pendiente para la fase de interfaz: CH+/CH− para cambiar de canal desde el reproductor (necesita pasarle la lista).
 
 **Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).

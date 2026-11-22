@@ -743,7 +743,7 @@
 .end method
 
 .method public static s(Lcom/mcp2p/app/ui/PlayerActivity;I)V
-    .locals 5
+    .locals 7
 
     .line 1
     invoke-virtual {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->F()Lk0/T;
@@ -810,7 +810,7 @@
 
     .line 31
     .line 32
-    const/4 v2, 0x3
+    const/4 v2, 0x6
 
     .line 33
     if-lt v1, v2, :cond_1
@@ -822,7 +822,7 @@
     .line 36
     .line 37
     .line 38
-    const-string p1, "La reproducci\u00f3n sigue interrumpida tras tres intentos. Vuelve a abrir el canal."
+    const-string p1, "La reproducci\u00f3n sigue interrumpida tras 6 intentos (unos 30 s). Comprueba la conexión y vuelve a abrir el canal."
 
     .line 39
     .line 40
@@ -865,6 +865,17 @@
     .line 58
     shl-long v1, v2, v1
 
+    # McP2P-TV: espera exponencial con tope de 8 s (1, 2, 4, 8, 8, 8 s)
+    const-wide/16 v5, 0x1f40
+
+    cmp-long v3, v1, v5
+
+    if-lez v3, :mcp2p_delay_ok
+
+    move-wide v1, v5
+
+    :mcp2p_delay_ok
+
     .line 59
     .line 60
     new-instance v3, Ljava/lang/StringBuilder;
@@ -889,7 +900,7 @@
     .line 70
     .line 71
     .line 72
-    const-string v4, "/3)"
+    const-string v4, "/6)"
 
     .line 73
     .line 74

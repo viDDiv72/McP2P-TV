@@ -93,6 +93,11 @@
     .line 25
     invoke-virtual {v0, v1}, Landroid/view/View;->setVisibility(I)V
 
+    # McP2P-TV: la reproducción se ha recuperado -> reinicia el contador de reintentos
+    const/4 v0, 0x0
+
+    iput v0, v2, Lcom/mcp2p/app/ui/PlayerActivity;->D0:I
+
     .line 26
     .line 27
     .line 28
@@ -382,7 +387,7 @@
 
     .line 79
     .line 80
-    const/4 v3, 0x3
+    const/4 v3, 0x6
 
     .line 81
     if-ge v1, v3, :cond_3
