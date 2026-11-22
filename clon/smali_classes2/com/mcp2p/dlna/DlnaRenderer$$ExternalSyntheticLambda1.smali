@@ -28,7 +28,7 @@
 
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda1;->f$0:Lcom/mcp2p/dlna/DlnaRenderer;
 
-    invoke-virtual {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$stopPlayer$1$com-mcp2p-dlna-DlnaRenderer()V
+    invoke-virtual {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$stopPlayer$6$com-mcp2p-dlna-DlnaRenderer()V
 
     return-void
 .end method

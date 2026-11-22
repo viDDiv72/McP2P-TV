@@ -30,8 +30,8 @@ echo "== baksmali (vía apktool)"
 ( cd "$WORK/dex" && jar cf "$WORK/dlna.apk" classes.dex )
 java -jar "$APKTOOL" d -f --no-res -o "$WORK/decoded" "$WORK/dlna.apk" >/dev/null
 
-DEST="$ROOT/clon/smali_classes2/com/mcp2p/dlna"
+DEST="$ROOT/clon/smali_classes2/com/mcp2p"
 rm -rf "$DEST"
 mkdir -p "$DEST"
-cp "$WORK/decoded/smali/com/mcp2p/dlna/"*.smali "$DEST/"
-echo "== OK: $(ls "$DEST" | wc -l) clases smali en clon/smali_classes2/com/mcp2p/dlna"
+cp -r "$WORK/decoded/smali/com/mcp2p/"* "$DEST/"
+echo "== OK: $(find "$DEST" -name '*.smali' | wc -l) clases smali en clon/smali_classes2/com/mcp2p"

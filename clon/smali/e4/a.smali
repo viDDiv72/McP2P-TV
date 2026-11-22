@@ -1257,6 +1257,17 @@
 .method public static b()LJ3/d;
     .locals 9
 
+    # McP2P-TV: actualizador de la app original desactivado. Descargaba update.json de un
+    # servidor de terceros (archive.org/acemix-tv) y solo comprobaba el versionCode del APK.
+    # Lanzar aquí hace que la comprobación automática no haga nada y la manual muestre este aviso.
+    new-instance v0, Ljava/io/IOException;
+
+    const-string v1, "Las actualizaciones automáticas están desactivadas en McP2P-TV. Descarga las versiones nuevas desde las releases de GitHub del proyecto."
+
+    invoke-direct {v0, v1}, Ljava/io/IOException;-><init>(Ljava/lang/String;)V
+
+    throw v0
+
     .line 1
     new-instance v0, Ljava/lang/StringBuilder;
 

@@ -63,6 +63,18 @@ No usa las funciones `dlna*` del motor Go porque su formato no se puede verifica
 - Enganches smali: `Mcp2pApplication.onCreate` → `DlnaRenderer.startIfTv`, `PlayerActivity.onCreate` → `DlnaUi.attach`.
 - Prueba en PC (JVM con stubs de Android, sin emulador): `dlna/test` (`Harness.java`).
 
+### 3. Seguridad y estabilidad (v1.6.1)
+- **Actualizador de la app original desactivado** (`e4/a.smali`, método `b()`): descargaba `update.json` de
+  `archive.org/acemix-tv` y solo comprobaba el `versionCode`. Ahora lanza un aviso; el arranque no consulta nada.
+- **Copias de seguridad desactivadas** (`allowBackup=false` + `res/xml/mcp2p_*_rules.xml`): listas, ajustes y
+  credenciales WARP no salen del dispositivo ni por `adb backup`, ni a la nube, ni en la transferencia a otro móvil.
+- **Importación por QR limitada a 32 MB** (antes 512 MB cargados en memoria → cierre por falta de RAM en TVBox).
+- **Registro de cierres inesperados** (`com.mcp2p.tv.CrashLog`): guarda el informe y lo muestra al volver a abrir
+  la app, con opciones de copiar y compartir.
+- **Confirmación DLNA en la TV**: la primera vez que una IP envía algo, se pregunta «Reproducir / Permitir siempre / Rechazar».
+- **Comprobación de layouts al compilar** (`tools/check-layouts.js`): `build.sh` se detiene si una variante
+  (`layout-sw600dp`, `layout-land`…) no tiene todos los IDs del layout por defecto.
+
 **Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).
 A televisores DLNA que no son McP2P-TV se les envía el puente del móvil, así que el móvil debe seguir reproduciendo.
 Las cabeceras HTTP/DRM de algunos canales no viajan por DLNA.

@@ -1,7 +1,9 @@
 package com.mcp2p.dlna;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.widget.Button;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
@@ -75,6 +77,9 @@ public final class DlnaRenderer {
     private volatile String currentMeta = "";
     private volatile String state = "NO_MEDIA_PRESENT";
     private WeakReference<Activity> player = new WeakReference<>(null);
+    /** Pantalla de McP2P-TV visible ahora mismo (para mostrar la confirmación de envío). */
+    private WeakReference<Activity> resumed = new WeakReference<>(null);
+    private AlertDialog pendingDialog;
     private volatile boolean launchedByUs;
     private volatile String lastLaunchedUri = "";
 
@@ -160,9 +165,12 @@ public final class DlnaRenderer {
             }
             @Override public void onActivityStarted(Activity a) {}
             @Override public void onActivityResumed(Activity a) {
+                r.resumed = new WeakReference<>(a);
                 if (PLAYER.equals(a.getClass().getName()) && r.launchedByUs) r.state = "PLAYING";
             }
-            @Override public void onActivityPaused(Activity a) {}
+            @Override public void onActivityPaused(Activity a) {
+                if (a == r.resumed.get()) r.resumed = new WeakReference<>(null);
+            }
             @Override public void onActivityStopped(Activity a) {}
             @Override public void onActivitySaveInstanceState(Activity a, Bundle b) {}
             @Override public void onActivityDestroyed(Activity a) {
@@ -211,6 +219,56 @@ public final class DlnaRenderer {
                 state = "STOPPED";
                 Log.e(Net.TAG, "No se pudo abrir el reproductor", e);
             }
+        });
+    }
+
+    // ---------------------------------------------------------------- confirmación de envíos
+
+    private java.util.Set<String> allowed() {
+        return new java.util.HashSet<>(app.getSharedPreferences("mcp2p_dlna", Context.MODE_PRIVATE)
+                .getStringSet("allowed_ips", new java.util.HashSet<>()));
+    }
+
+    private void allow(String ip) {
+        java.util.Set<String> s = allowed();
+        s.add(ip);
+        app.getSharedPreferences("mcp2p_dlna", Context.MODE_PRIVATE).edit().putStringSet("allowed_ips", s).apply();
+    }
+
+    /**
+     * Cualquier aparato de la red puede enviar por DLNA: la primera vez que llega algo de una IP
+     * se pide confirmación en la TV («Reproducir», «Permitir siempre» o «Rechazar»).
+     */
+    private void requestPlay(final String ip) {
+        if (allowed().contains(ip)) {
+            launchPlayer();
+            return;
+        }
+        final String uri = currentUri;
+        String t = Net.tag(currentMeta, "title");
+        final String title = t == null || t.isEmpty() ? "un vídeo" : "«" + t + "»";
+        main.post(() -> {
+            Activity a = resumed.get();
+            if (a == null || a.isFinishing()) {
+                Log.w(Net.TAG, "Envío DLNA de " + ip + " ignorado: McP2P-TV no está en primer plano");
+                return;
+            }
+            if (pendingDialog != null && pendingDialog.isShowing()) pendingDialog.dismiss();
+            state = "TRANSITIONING";
+            pendingDialog = new AlertDialog.Builder(a)
+                    .setTitle("Envío a esta TV")
+                    .setMessage("El dispositivo " + ip + " quiere reproducir " + title + " en esta TV.")
+                    .setPositiveButton("Reproducir", (d, w) -> { if (uri.equals(currentUri)) launchPlayer(); })
+                    .setNeutralButton("Permitir siempre", (d, w) -> {
+                        allow(ip);
+                        if (uri.equals(currentUri)) launchPlayer();
+                    })
+                    .setNegativeButton("Rechazar", (d, w) -> state = "STOPPED")
+                    .setOnCancelListener(d -> state = "STOPPED")
+                    .create();
+            pendingDialog.show();
+            Button play = pendingDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (play != null) play.requestFocus();
         });
     }
 
@@ -397,7 +455,8 @@ public final class DlnaRenderer {
                 int hash = action.indexOf('#');
                 String service = hash > 0 ? action.substring(0, hash) : "";
                 String name = hash > 0 ? action.substring(hash + 1) : action;
-                String result = control(service, name, body);
+                String remote = c.getInetAddress() == null ? "?" : c.getInetAddress().getHostAddress();
+                String result = control(service, name, body, remote);
                 if (result == null) {
                     send(out, "500 Internal Server Error", "text/xml; charset=\"utf-8\"", fault(401, "Invalid Action"), null);
                 } else {
@@ -473,7 +532,7 @@ public final class DlnaRenderer {
     }
 
     /** Devuelve los argumentos de salida, o null si la acción no existe. */
-    private String control(String service, String action, String body) {
+    private String control(String service, String action, String body, String remote) {
         AudioManager am = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
         switch (action) {
             // ---- AVTransport
@@ -495,7 +554,7 @@ public final class DlnaRenderer {
                 if (currentUri.isEmpty()) return null;
                 Activity a = player.get();
                 if (a == null || a.isFinishing() || !launchedByUs || !currentUri.equals(lastLaunchedUri)) {
-                    launchPlayer();
+                    requestPlay(remote);
                 } else {
                     state = "PLAYING";
                 }

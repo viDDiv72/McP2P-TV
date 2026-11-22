@@ -34,7 +34,7 @@
 
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;->f$1:Ljava/net/Socket;
 
-    invoke-virtual {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$httpLoop$2$com-mcp2p-dlna-DlnaRenderer(Ljava/net/Socket;)V
+    invoke-virtual {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$httpLoop$7$com-mcp2p-dlna-DlnaRenderer(Ljava/net/Socket;)V
 
     return-void
 .end method

@@ -1571,7 +1571,7 @@
 
     .line 475
     .line 476
-    const-string v13, "El archivo est\u00e1 vac\u00edo o supera el l\u00edmite de 512 MB."
+    const-string v13, "El archivo est\u00e1 vac\u00edo o supera el l\u00edmite de 32 MB. Una lista M3U normal ocupa pocos MB."
 
     .line 477
     .line 478
@@ -1579,7 +1579,7 @@
 
     .line 479
     .line 480
-    const-wide/32 v16, 0x20010000
+    const-wide/32 v16, 0x2010000
 
     .line 481
     .line 482
@@ -1760,7 +1760,7 @@
     .catchall {:try_start_c .. :try_end_c} :catchall_4
 
     .line 568
-    const-wide/32 v14, 0x20000000
+    const-wide/32 v14, 0x2000000
 
     .line 569
     .line 570

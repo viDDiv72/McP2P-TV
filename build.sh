@@ -26,6 +26,9 @@ if [ ! -f "$KEYSTORE" ]; then
     -dname "CN=McP2P Clon, OU=Dev, O=Local, C=ES" >/dev/null
 fi
 
+echo "== comprobación de layouts (IDs en variantes de TV/tablet)"
+node "$ROOT/tools/check-layouts.js" "$ROOT/clon/res"
+
 echo "== módulo DLNA (Java -> smali)"
 "$ROOT/dlna/build-dlna.sh"
 
