@@ -1,0 +1,10 @@
+*.apk
+!McP2P-V.1.5.6.apk
+McP2P-V.1.5.6.apk
+build/
+decompiled/
+jadx.log
+*.jks
+*.keystore
+clon/build/
+clon/dist/

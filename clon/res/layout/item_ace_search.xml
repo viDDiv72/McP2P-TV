@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:textSize="16.0sp" android:textColor="@color/mcp_text" android:ellipsize="end" android:gravity="center_vertical" android:id="@android:id/text1" android:paddingTop="8.0dp" android:paddingBottom="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="58.0dp" android:maxLines="2" android:drawablePadding="12.0dp" android:drawableEnd="@android:drawable/ic_media_play" android:paddingStart="14.0dp" android:paddingEnd="14.0dp" android:drawableTint="@color/mcp_accent"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

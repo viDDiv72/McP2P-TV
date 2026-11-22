@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/bg_media_movie_card" android:padding="6.0dp" android:focusable="true" android:clickable="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="6.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/media_poster" android:layout_width="match_parent" android:layout_height="210.0dp" android:scaleType="centerCrop" android:contentDescription="Póster" />
+    <TextView android:textSize="14.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:ellipsize="end" android:gravity="center" android:id="@id/media_title" android:padding="6.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="46.0dp" android:maxLines="2" />
+    <TextView android:textSize="12.0sp" android:textColor="@color/mcp_text_muted" android:gravity="center" android:id="@id/media_subtitle" android:paddingBottom="7.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" />
+</LinearLayout>
