@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
+| [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
 | [1.7.1](#171--2026-11-22) | 25 | Pre-release | Reproducción más estable en directos largos |
 | [1.7.0](#170--2026-11-22) | 24 | Pre-release | Navegación con mando en TV |
 | [1.6.1](#161--2026-11-22) | 23 | Estable | Seguridad y estabilidad |
@@ -25,16 +26,29 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [Sin publicar] · rama `ui-nueva`
-Solo local: no tiene etiqueta ni release. Pendiente de probar en la TVBox.
+## [1.8.0] · 2026-11-22
+**Pre-release** · versionCode 26 · etiqueta `v1.8.0` · pendiente de probar en la Vontar X4
 
 ### Añadido (solo en TV)
 - Inicio nuevo: Reproducir ID o enlace, Añadir lista por QR, Cargar desde USB, Mis listas (máx. 4) y
   Favoritos grandes (máx. 12), con menú lateral y el logo McP2P.
 - Al abrir una lista desde el Inicio se ven directamente todos sus enlaces (Volver → categorías).
+- CI en GitHub Actions: comprobaciones en cada push/PR y compilación del APK en Windows.
+- Pruebas JVM del módulo DLNA (`dlna/test/run-tests.sh`, 31 casos) y comprobación de arreglos de smali
+  (`tools/check-smali.js`: reintentos, Inicio, favoritos, SQL). Las ejecuta `build.sh`.
+- Guías `docs/DEPURACION.md` (logcat, CrashLog, reproducir fallos, memoria) y `docs/FIRMA.md`.
 
 ### Corregido
+- DLNA: al cambiar de red (Wi-Fi ↔ Ethernet, router reiniciado) la TV dejaba de aparecer hasta reiniciar la app.
+  Ahora el anuncio se reabre en la red nueva, y se libera el bloqueo multicast anterior.
+- DLNA: las peticiones de otros equipos usan un grupo de hilos acotado (antes, ilimitado) y un `Content-Length`
+  negativo o no numérico ya no provoca errores.
 - Consulta SQL de «todos los canales de una lista» (alias `e` sin declarar); no se usaba hasta ahora.
+
+### Seguridad
+- `build.sh` ya no lleva la contraseña del keystore ni crea una clave nueva por su cuenta; la firma sale de
+  `.ks-pass`/`MCP2P_KS_PASS` (local) o de secretos de GitHub (CI). La contraseña antigua sigue en el historial
+  del repositorio privado: ver rotación en `docs/FIRMA.md`.
 
 ## [1.7.1] · 2026-11-22
 **Pre-release** · versionCode 25 · etiqueta `v1.7.1`
@@ -96,6 +110,7 @@ Solo local: no tiene etiqueta ni release. Pendiente de probar en la TVBox.
 Estado exacto de la app original descompilada con apktool, sin ningún cambio. Sirve para comparar
 cualquier versión con el original: `git diff v1.5.6-original v1.7.1 -- clon/`.
 
+[1.8.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.8.0
 [1.7.1]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.7.1
 [1.7.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.7.0
 [1.6.1]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.6.1

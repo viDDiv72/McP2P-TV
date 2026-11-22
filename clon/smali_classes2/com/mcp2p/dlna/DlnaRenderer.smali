@@ -66,6 +66,8 @@
 
 .field private final pool:Ljava/util/concurrent/ExecutorService;
 
+.field private final requests:Ljava/util/concurrent/ThreadPoolExecutor;
+
 .field private resumed:Ljava/lang/ref/WeakReference;
     .annotation system Ldalvik/annotation/Signature;
         value = {
@@ -82,12 +84,22 @@
 
 .field private ssdp:Ljava/net/MulticastSocket;
 
+.field private volatile ssdpNetwork:Landroid/net/Network;
+
 .field private volatile state:Ljava/lang/String;
 
 .field private final uuid:Ljava/lang/String;
 
 
 # direct methods
+.method public static synthetic $r8$lambda$PcKQwndoiVVtgzzkLhO5ee2WGRM(Lcom/mcp2p/dlna/DlnaRenderer;)V
+    .locals 0
+
+    invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->onNetworkChanged()V
+
+    return-void
+.end method
+
 .method public static synthetic $r8$lambda$ZeZojSHu5u-mopv_wRKxalPdujU(Lcom/mcp2p/dlna/DlnaRenderer;)V
     .locals 0
 
@@ -127,7 +139,7 @@
 
     const-string v5, "urn:schemas-upnp-org:service:ConnectionManager:1"
 
-    .line 291
+    .line 302
     filled-new-array/range {v0 .. v5}, [Ljava/lang/String;
 
     move-result-object v0
@@ -138,12 +150,12 @@
 .end method
 
 .method private constructor <init>(Landroid/app/Application;)V
-    .locals 3
+    .locals 8
 
-    .line 86
+    .line 96
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 65
+    .line 69
     new-instance v0, Landroid/os/Handler;
 
     invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -154,27 +166,50 @@
 
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->main:Landroid/os/Handler;
 
-    .line 66
+    .line 71
     invoke-static {}, Ljava/util/concurrent/Executors;->newCachedThreadPool()Ljava/util/concurrent/ExecutorService;
 
     move-result-object v0
 
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pool:Ljava/util/concurrent/ExecutorService;
 
+    .line 73
+    new-instance v0, Ljava/util/concurrent/ThreadPoolExecutor;
+
+    const/4 v2, 0x2
+
+    const/4 v3, 0x6
+
+    const-wide/16 v4, 0x1e
+
+    sget-object v6, Ljava/util/concurrent/TimeUnit;->SECONDS:Ljava/util/concurrent/TimeUnit;
+
+    new-instance v7, Ljava/util/concurrent/ArrayBlockingQueue;
+
+    const/16 v1, 0x10
+
+    invoke-direct {v7, v1}, Ljava/util/concurrent/ArrayBlockingQueue;-><init>(I)V
+
+    move-object v1, v0
+
+    invoke-direct/range {v1 .. v7}, Ljava/util/concurrent/ThreadPoolExecutor;-><init>(IIJLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/BlockingQueue;)V
+
+    iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->requests:Ljava/util/concurrent/ThreadPoolExecutor;
+
     const-string v0, ""
 
-    .line 76
+    .line 86
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
-    .line 77
+    .line 87
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentMeta:Ljava/lang/String;
 
     const-string v1, "NO_MEDIA_PRESENT"
 
-    .line 78
+    .line 88
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
-    .line 79
+    .line 89
     new-instance v1, Ljava/lang/ref/WeakReference;
 
     const/4 v2, 0x0
@@ -183,38 +218,38 @@
 
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
-    .line 81
+    .line 91
     new-instance v1, Ljava/lang/ref/WeakReference;
 
     invoke-direct {v1, v2}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->resumed:Ljava/lang/ref/WeakReference;
 
-    .line 84
+    .line 94
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->lastLaunchedUri:Ljava/lang/String;
 
-    .line 87
+    .line 97
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     const-string v0, "mcp2p_dlna"
 
     const/4 v1, 0x0
 
-    .line 88
+    .line 98
     invoke-virtual {p1, v0, v1}, Landroid/app/Application;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
 
     move-result-object p1
 
     const-string v0, "uuid"
 
-    .line 89
+    .line 99
     invoke-interface {p1, v0, v2}, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
 
     if-nez v1, :cond_0
 
-    .line 91
+    .line 101
     invoke-static {}, Ljava/util/UUID;->randomUUID()Ljava/util/UUID;
 
     move-result-object v1
@@ -223,7 +258,7 @@
 
     move-result-object v1
 
-    .line 92
+    .line 102
     invoke-interface {p1}, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
 
     move-result-object p1
@@ -234,7 +269,7 @@
 
     invoke-interface {p1}, Landroid/content/SharedPreferences$Editor;->apply()V
 
-    .line 94
+    .line 104
     :cond_0
     new-instance p1, Ljava/lang/StringBuilder;
 
@@ -250,7 +285,7 @@
 
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->uuid:Ljava/lang/String;
 
-    .line 95
+    .line 105
     sget-object p1, Landroid/os/Build;->MODEL:Ljava/lang/String;
 
     if-nez p1, :cond_1
@@ -266,7 +301,7 @@
 
     move-result-object p1
 
-    .line 96
+    .line 106
     :goto_0
     new-instance v0, Ljava/lang/StringBuilder;
 
@@ -292,7 +327,7 @@
 .method static synthetic access$000(Lcom/mcp2p/dlna/DlnaRenderer;)Ljava/lang/ref/WeakReference;
     .locals 0
 
-    .line 51
+    .line 55
     iget-object p0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
     return-object p0
@@ -301,7 +336,7 @@
 .method static synthetic access$002(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
     .locals 0
 
-    .line 51
+    .line 55
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
     return-object p1
@@ -310,7 +345,7 @@
 .method static synthetic access$100(Lcom/mcp2p/dlna/DlnaRenderer;)Ljava/lang/ref/WeakReference;
     .locals 0
 
-    .line 51
+    .line 55
     iget-object p0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->resumed:Ljava/lang/ref/WeakReference;
 
     return-object p0
@@ -319,7 +354,7 @@
 .method static synthetic access$102(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
     .locals 0
 
-    .line 51
+    .line 55
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->resumed:Ljava/lang/ref/WeakReference;
 
     return-object p1
@@ -328,7 +363,7 @@
 .method static synthetic access$200(Lcom/mcp2p/dlna/DlnaRenderer;)Z
     .locals 0
 
-    .line 51
+    .line 55
     iget-boolean p0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->launchedByUs:Z
 
     return p0
@@ -337,7 +372,7 @@
 .method static synthetic access$202(Lcom/mcp2p/dlna/DlnaRenderer;Z)Z
     .locals 0
 
-    .line 51
+    .line 55
     iput-boolean p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->launchedByUs:Z
 
     return p1
@@ -346,7 +381,7 @@
 .method static synthetic access$300(Lcom/mcp2p/dlna/DlnaRenderer;)Ljava/lang/String;
     .locals 0
 
-    .line 51
+    .line 55
     iget-object p0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     return-object p0
@@ -355,7 +390,7 @@
 .method static synthetic access$302(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;)Ljava/lang/String;
     .locals 0
 
-    .line 51
+    .line 55
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     return-object p1
@@ -364,15 +399,15 @@
 .method private allow(Ljava/lang/String;)V
     .locals 3
 
-    .line 233
+    .line 244
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->allowed()Ljava/util/Set;
 
     move-result-object v0
 
-    .line 234
+    .line 245
     invoke-interface {v0, p1}, Ljava/util/Set;->add(Ljava/lang/Object;)Z
 
-    .line 235
+    .line 246
     iget-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     const-string v1, "mcp2p_dlna"
@@ -409,7 +444,7 @@
         }
     .end annotation
 
-    .line 228
+    .line 239
     new-instance v0, Ljava/util/HashSet;
 
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
@@ -428,7 +463,7 @@
 
     const-string v3, "allowed_ips"
 
-    .line 229
+    .line 240
     invoke-interface {v1, v3, v2}, Landroid/content/SharedPreferences;->getStringSet(Ljava/lang/String;Ljava/util/Set;)Ljava/util/Set;
 
     move-result-object v1
@@ -441,7 +476,7 @@
 .method private answerSearch(Ljava/lang/String;Ljava/net/SocketAddress;)V
     .locals 8
 
-    .line 332
+    .line 361
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->location()Ljava/lang/String;
 
     move-result-object v0
@@ -450,7 +485,7 @@
 
     return-void
 
-    .line 334
+    .line 363
     :cond_0
     sget-object v1, Lcom/mcp2p/dlna/DlnaRenderer;->NTS:[Ljava/lang/String;
 
@@ -465,13 +500,13 @@
 
     if-nez v4, :cond_1
 
-    .line 335
+    .line 364
     iget-object v4, p0, Lcom/mcp2p/dlna/DlnaRenderer;->uuid:Ljava/lang/String;
 
     :cond_1
     const-string v5, "ssdp:all"
 
-    .line 336
+    .line 365
     invoke-virtual {p1, v5}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v5
@@ -486,7 +521,7 @@
 
     goto :goto_1
 
-    .line 337
+    .line 366
     :cond_2
     new-instance v5, Ljava/lang/StringBuilder;
 
@@ -514,7 +549,7 @@
 
     invoke-virtual {v5, v6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 343
+    .line 372
     invoke-direct {p0, v4}, Lcom/mcp2p/dlna/DlnaRenderer;->usn(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v4
@@ -532,12 +567,12 @@
     :try_start_0
     const-string v5, "UTF-8"
 
-    .line 345
+    .line 374
     invoke-virtual {v4, v5}, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
 
     move-result-object v4
 
-    .line 346
+    .line 375
     iget-object v5, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     new-instance v6, Ljava/net/DatagramPacket;
@@ -559,7 +594,7 @@
 
     const-string v6, "No se pudo responder M-SEARCH"
 
-    .line 348
+    .line 377
     invoke-static {v5, v6, v4}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_1
@@ -574,7 +609,7 @@
 .method private static arg(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
-    .line 525
+    .line 570
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<"
@@ -607,7 +642,7 @@
 
     move-result-object v0
 
-    .line 526
+    .line 571
     invoke-virtual {v0}, Ljava/util/regex/Matcher;->find()Z
 
     move-result v2
@@ -630,7 +665,7 @@
 
     return-object p0
 
-    .line 527
+    .line 572
     :cond_0
     new-instance v0, Ljava/lang/StringBuilder;
 
@@ -671,6 +706,49 @@
     return-object p0
 .end method
 
+.method static bodyLength(Ljava/lang/String;)I
+    .locals 5
+
+    const/4 v0, 0x0
+
+    if-nez p0, :cond_0
+
+    return v0
+
+    .line 513
+    :cond_0
+    :try_start_0
+    invoke-virtual {p0}, Ljava/lang/String;->trim()Ljava/lang/String;
+
+    move-result-object p0
+
+    invoke-static {p0}, Ljava/lang/Long;->parseLong(Ljava/lang/String;)J
+
+    move-result-wide v1
+
+    const-wide/32 v3, 0x80000
+
+    .line 514
+    invoke-static {v1, v2, v3, v4}, Ljava/lang/Math;->min(JJ)J
+
+    move-result-wide v1
+
+    const-wide/16 v3, 0x0
+
+    invoke-static {v3, v4, v1, v2}, Ljava/lang/Math;->max(JJ)J
+
+    move-result-wide v0
+    :try_end_0
+    .catch Ljava/lang/NumberFormatException; {:try_start_0 .. :try_end_0} :catch_0
+
+    long-to-int p0, v0
+
+    return p0
+
+    :catch_0
+    return v0
+.end method
+
 .method private control(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     .locals 16
 
@@ -680,7 +758,7 @@
 
     move-object/from16 v2, p3
 
-    .line 536
+    .line 581
     iget-object v3, v0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     const-string v4, "audio"
@@ -691,7 +769,7 @@
 
     check-cast v3, Landroid/media/AudioManager;
 
-    .line 537
+    .line 582
     invoke-virtual/range {p2 .. p2}, Ljava/lang/String;->hashCode()I
 
     invoke-virtual/range {p2 .. p2}, Ljava/lang/String;->hashCode()I
@@ -1120,7 +1198,7 @@
 
     const-string v2, "Play,Stop"
 
-    .line 583
+    .line 628
     invoke-static {v1, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1133,7 +1211,7 @@
     :pswitch_2
     const-string v1, "ConnectionIDs"
 
-    .line 623
+    .line 668
     invoke-static {v1, v5}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1145,7 +1223,7 @@
 
     const-string v2, "FactoryDefaults"
 
-    .line 613
+    .line 658
     invoke-static {v1, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1155,7 +1233,7 @@
     :pswitch_4
     if-eqz v3, :cond_18
 
-    .line 602
+    .line 647
     invoke-virtual {v3, v8}, Landroid/media/AudioManager;->isStreamMute(I)Z
 
     move-result v1
@@ -1167,14 +1245,14 @@
     :cond_18
     const-string v1, "CurrentMute"
 
-    .line 601
+    .line 646
     invoke-static {v1, v5}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
 
     return-object v1
 
-    .line 568
+    .line 613
     :pswitch_5
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1212,7 +1290,7 @@
 
     return-object v1
 
-    .line 618
+    .line 663
     :pswitch_6
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1242,7 +1320,7 @@
 
     return-object v1
 
-    .line 570
+    .line 615
     :pswitch_7
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1278,7 +1356,7 @@
 
     iget-object v3, v0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
-    .line 571
+    .line 616
     invoke-static {v2, v3}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1305,7 +1383,7 @@
 
     const-string v3, "2147483647"
 
-    .line 572
+    .line 617
     invoke-static {v2, v3}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1326,7 +1404,7 @@
 
     return-object v1
 
-    .line 581
+    .line 626
     :pswitch_8
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1365,7 +1443,7 @@
     :pswitch_9
     return-object v7
 
-    .line 540
+    .line 585
     :pswitch_a
     invoke-static {v2, v13}, Lcom/mcp2p/dlna/DlnaRenderer;->arg(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
@@ -1375,11 +1453,11 @@
 
     move-object v3, v7
 
-    .line 541
+    .line 586
     :cond_19
     iput-object v3, v0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
-    .line 542
+    .line 587
     invoke-static {v2, v4}, Lcom/mcp2p/dlna/DlnaRenderer;->arg(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1388,11 +1466,11 @@
 
     move-object v2, v7
 
-    .line 543
+    .line 588
     :cond_1a
     iput-object v2, v0, Lcom/mcp2p/dlna/DlnaRenderer;->currentMeta:Ljava/lang/String;
 
-    .line 544
+    .line 589
     iget-object v2, v0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     invoke-virtual {v1, v2}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -1408,13 +1486,13 @@
     :cond_1b
     return-object v7
 
-    .line 565
+    .line 610
     :pswitch_b
     invoke-direct/range {p0 .. p0}, Lcom/mcp2p/dlna/DlnaRenderer;->stopPlayer()V
 
     return-object v7
 
-    .line 554
+    .line 599
     :pswitch_c
     iget-object v2, v0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
@@ -1426,7 +1504,7 @@
 
     return-object v10
 
-    .line 555
+    .line 600
     :cond_1c
     iget-object v2, v0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
@@ -1438,7 +1516,7 @@
 
     if-eqz v2, :cond_1e
 
-    .line 556
+    .line 601
     invoke-virtual {v2}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v2
@@ -1461,7 +1539,7 @@
 
     goto :goto_1
 
-    .line 559
+    .line 604
     :cond_1d
     iput-object v1, v0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
@@ -1471,13 +1549,13 @@
     :goto_1
     move-object/from16 v1, p4
 
-    .line 557
+    .line 602
     invoke-direct {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->requestPlay(Ljava/lang/String;)V
 
     :goto_2
     return-object v7
 
-    .line 625
+    .line 670
     :pswitch_d
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1509,7 +1587,7 @@
 
     const-string v2, "PeerConnectionManager"
 
-    .line 626
+    .line 671
     invoke-static {v2, v7}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1530,7 +1608,7 @@
 
     const-string v3, "Input"
 
-    .line 627
+    .line 672
     invoke-static {v2, v3}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1551,7 +1629,7 @@
 
     return-object v1
 
-    .line 579
+    .line 624
     :pswitch_e
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1584,7 +1662,7 @@
     :pswitch_f
     const-string v1, "DesiredMute"
 
-    .line 604
+    .line 649
     invoke-static {v2, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->arg(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1593,7 +1671,7 @@
 
     if-eqz v1, :cond_22
 
-    .line 606
+    .line 651
     invoke-virtual {v1}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v2
@@ -1641,7 +1719,7 @@
 
     const/16 v14, 0x64
 
-    .line 607
+    .line 652
     :goto_5
     invoke-virtual {v3, v8, v14, v1}, Landroid/media/AudioManager;->adjustStreamVolume(III)V
 
@@ -1656,7 +1734,7 @@
 
     goto :goto_6
 
-    .line 586
+    .line 631
     :cond_23
     invoke-virtual {v3, v8}, Landroid/media/AudioManager;->getStreamMaxVolume(I)I
 
@@ -1669,7 +1747,7 @@
 
     goto :goto_7
 
-    .line 587
+    .line 632
     :cond_24
     invoke-virtual {v3, v8}, Landroid/media/AudioManager;->getStreamVolume(I)I
 
@@ -1687,7 +1765,7 @@
 
     mul-int/2addr v1, v2
 
-    .line 588
+    .line 633
     div-int v7, v1, v5
 
     :goto_8
@@ -1706,7 +1784,7 @@
     :pswitch_12
     const-string v1, "DesiredVolume"
 
-    .line 591
+    .line 636
     invoke-static {v2, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->arg(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1715,12 +1793,12 @@
 
     if-eqz v1, :cond_26
 
-    .line 593
+    .line 638
     invoke-virtual {v3, v8}, Landroid/media/AudioManager;->getStreamMaxVolume(I)I
 
     move-result v2
 
-    .line 595
+    .line 640
     :try_start_0
     invoke-virtual {v1}, Ljava/lang/String;->trim()Ljava/lang/String;
 
@@ -1746,7 +1824,7 @@
     :cond_26
     return-object v7
 
-    .line 574
+    .line 619
     :pswitch_13
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1784,7 +1862,7 @@
 
     iget-object v2, v0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
-    .line 575
+    .line 620
     invoke-static {v13, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1801,7 +1879,7 @@
 
     const-string v2, "NextURI"
 
-    .line 576
+    .line 621
     invoke-static {v2, v7}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1826,7 +1904,7 @@
 
     const-string v2, "RecordMedium"
 
-    .line 577
+    .line 622
     invoke-static {v2, v6}, Lcom/mcp2p/dlna/DlnaRenderer;->e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -1907,7 +1985,7 @@
 .method private description()Ljava/lang/String;
     .locals 6
 
-    .line 636
+    .line 681
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<?xml version=\"1.0\" encoding=\"utf-8\"?><root xmlns=\"urn:schemas-upnp-org:device-1-0\" xmlns:dlna=\"urn:schemas-dlna-org:device-1-0\"><specVersion><major>1</major><minor>0</minor></specVersion><device><deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType><friendlyName>"
@@ -1916,7 +1994,7 @@
 
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->friendlyName:Ljava/lang/String;
 
-    .line 640
+    .line 685
     invoke-static {v1}, Lcom/mcp2p/dlna/Net;->escape(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1945,7 +2023,7 @@
 
     const-string v5, "/avt.xml"
 
-    .line 644
+    .line 689
     invoke-static {v3, v4, v5, v1, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->service(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1962,7 +2040,7 @@
 
     const-string v5, "/rc.xml"
 
-    .line 645
+    .line 690
     invoke-static {v3, v4, v5, v1, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->service(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -1979,7 +2057,7 @@
 
     const-string v5, "/cm.xml"
 
-    .line 646
+    .line 691
     invoke-static {v3, v4, v5, v1, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->service(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
@@ -2000,7 +2078,7 @@
 .method private static e(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     .locals 2
 
-    .line 531
+    .line 576
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<"
@@ -2042,7 +2120,7 @@
 .method private static envelope(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     .locals 2
 
-    .line 507
+    .line 552
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<?xml version=\"1.0\" encoding=\"utf-8\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:"
@@ -2083,7 +2161,7 @@
 .method private static fault(ILjava/lang/String;)Ljava/lang/String;
     .locals 2
 
-    .line 515
+    .line 560
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<?xml version=\"1.0\" encoding=\"utf-8\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><s:Fault><faultcode>s:Client</faultcode><faultstring>UPnPError</faultstring><detail><UPnPError xmlns=\"urn:schemas-upnp-org:control-1-0\"><errorCode>"
@@ -2114,16 +2192,16 @@
 
     const/16 v0, 0x2710
 
-    .line 409
+    .line 443
     :try_start_0
     invoke-virtual {p1, v0}, Ljava/net/Socket;->setSoTimeout(I)V
 
-    .line 410
+    .line 444
     invoke-virtual {p1}, Ljava/net/Socket;->getInputStream()Ljava/io/InputStream;
 
     move-result-object v0
 
-    .line 411
+    .line 445
     invoke-static {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->readHead(Ljava/io/InputStream;)Ljava/lang/String;
 
     move-result-object v1
@@ -2133,7 +2211,7 @@
 
     if-nez v1, :cond_0
 
-    .line 471
+    .line 505
     :try_start_1
     invoke-virtual {p1}, Ljava/net/Socket;->close()V
     :try_end_1
@@ -2146,14 +2224,14 @@
     :try_start_2
     const-string v2, "\r\n"
 
-    .line 413
+    .line 447
     invoke-virtual {v1, v2}, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
 
     move-result-object v1
 
     const/4 v2, 0x0
 
-    .line 414
+    .line 448
     aget-object v3, v1, v2
 
     const-string v4, " "
@@ -2162,7 +2240,7 @@
 
     move-result-object v3
 
-    .line 415
+    .line 449
     array-length v4, v3
     :try_end_2
     .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_2
@@ -2172,7 +2250,7 @@
 
     if-ge v4, v5, :cond_1
 
-    .line 471
+    .line 505
     :try_start_3
     invoke-virtual {p1}, Ljava/net/Socket;->close()V
     :try_end_3
@@ -2181,30 +2259,30 @@
     :catch_1
     return-void
 
-    .line 416
+    .line 450
     :cond_1
     :try_start_4
     aget-object v4, v3, v2
 
     const/4 v5, 0x1
 
-    .line 417
+    .line 451
     aget-object v3, v3, v5
 
-    .line 418
+    .line 452
     new-instance v6, Ljava/util/HashMap;
 
     invoke-direct {v6}, Ljava/util/HashMap;-><init>()V
 
     move v7, v5
 
-    .line 419
+    .line 453
     :goto_0
     array-length v8, v1
 
     if-ge v7, v8, :cond_3
 
-    .line 420
+    .line 454
     aget-object v8, v1, v7
 
     const/16 v9, 0x3a
@@ -2215,7 +2293,7 @@
 
     if-lez v8, :cond_2
 
-    .line 421
+    .line 455
     aget-object v9, v1, v7
 
     invoke-virtual {v9, v2, v8}, Ljava/lang/String;->substring(II)Ljava/lang/String;
@@ -2254,37 +2332,27 @@
     :cond_3
     const-string v1, "content-length"
 
-    .line 424
+    .line 458
     invoke-interface {v6, v1}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v1
 
     check-cast v1, Ljava/lang/String;
+
+    .line 459
+    invoke-static {v1}, Lcom/mcp2p/dlna/DlnaRenderer;->bodyLength(Ljava/lang/String;)I
+
+    move-result v1
     :try_end_4
     .catch Ljava/lang/Exception; {:try_start_4 .. :try_end_4} :catch_2
     .catchall {:try_start_4 .. :try_end_4} :catchall_0
 
     const-string v7, ""
 
-    if-eqz v1, :cond_6
+    if-lez v1, :cond_6
 
-    .line 426
+    .line 461
     :try_start_5
-    invoke-virtual {v1}, Ljava/lang/String;->trim()Ljava/lang/String;
-
-    move-result-object v1
-
-    invoke-static {v1}, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
-
-    move-result v1
-
-    const/high16 v8, 0x80000
-
-    invoke-static {v1, v8}, Ljava/lang/Math;->min(II)I
-
-    move-result v1
-
-    .line 427
     new-array v8, v1, [B
 
     move v9, v2
@@ -2294,7 +2362,7 @@
 
     sub-int v10, v1, v9
 
-    .line 430
+    .line 464
     invoke-virtual {v0, v8, v9, v10}, Ljava/io/InputStream;->read([BII)I
 
     move-result v10
@@ -2308,7 +2376,7 @@
 
     goto :goto_1
 
-    .line 434
+    .line 468
     :cond_5
     :goto_2
     new-instance v0, Ljava/lang/String;
@@ -2322,7 +2390,7 @@
     :cond_6
     move-object v0, v7
 
-    .line 436
+    .line 470
     :goto_3
     invoke-virtual {p1}, Ljava/net/Socket;->getOutputStream()Ljava/io/OutputStream;
 
@@ -2330,7 +2398,7 @@
 
     const-string v8, "GET"
 
-    .line 437
+    .line 471
     invoke-virtual {v8, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v8
@@ -2362,21 +2430,21 @@
     :cond_7
     const-string v3, "SUBSCRIBE"
 
-    .line 445
+    .line 479
     invoke-virtual {v3, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v3
 
     if-eqz v3, :cond_8
 
-    .line 446
+    .line 480
     new-instance v0, Ljava/util/HashMap;
 
     invoke-direct {v0}, Ljava/util/HashMap;-><init>()V
 
     const-string v2, "SID"
 
-    .line 447
+    .line 481
     new-instance v3, Ljava/lang/StringBuilder;
 
     invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
@@ -2401,10 +2469,10 @@
 
     const-string v3, "Second-1800"
 
-    .line 448
+    .line 482
     invoke-interface {v0, v2, v3}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 449
+    .line 483
     invoke-static {v1, v12, v13, v7, v0}, Lcom/mcp2p/dlna/DlnaRenderer;->send(Ljava/io/OutputStream;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 
     goto/16 :goto_9
@@ -2412,14 +2480,14 @@
     :cond_8
     const-string v3, "UNSUBSCRIBE"
 
-    .line 450
+    .line 484
     invoke-virtual {v3, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v3
 
     if-eqz v3, :cond_9
 
-    .line 451
+    .line 485
     invoke-static {v1, v12, v13, v7, v13}, Lcom/mcp2p/dlna/DlnaRenderer;->send(Ljava/io/OutputStream;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 
     goto/16 :goto_9
@@ -2427,7 +2495,7 @@
     :cond_9
     const-string v3, "POST"
 
-    .line 452
+    .line 486
     invoke-virtual {v3, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v3
@@ -2436,7 +2504,7 @@
 
     const-string v3, "soapaction"
 
-    .line 453
+    .line 487
     invoke-interface {v6, v3}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v3
@@ -2452,7 +2520,7 @@
     :cond_a
     const-string v4, "\""
 
-    .line 454
+    .line 488
     invoke-virtual {v3, v4, v7}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
 
     move-result-object v3
@@ -2460,14 +2528,14 @@
     :goto_4
     const/16 v4, 0x23
 
-    .line 455
+    .line 489
     invoke-virtual {v3, v4}, Ljava/lang/String;->indexOf(I)I
 
     move-result v4
 
     if-lez v4, :cond_b
 
-    .line 456
+    .line 490
     invoke-virtual {v3, v2, v4}, Ljava/lang/String;->substring(II)Ljava/lang/String;
 
     move-result-object v7
@@ -2477,12 +2545,12 @@
 
     add-int/2addr v4, v5
 
-    .line 457
+    .line 491
     invoke-virtual {v3, v4}, Ljava/lang/String;->substring(I)Ljava/lang/String;
 
     move-result-object v3
 
-    .line 458
+    .line 492
     :cond_c
     invoke-virtual {p1}, Ljava/net/Socket;->getInetAddress()Ljava/net/InetAddress;
 
@@ -2503,7 +2571,7 @@
 
     move-result-object v2
 
-    .line 459
+    .line 493
     :goto_5
     invoke-direct {p0, v7, v3, v0, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->control(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
@@ -2517,7 +2585,7 @@
 
     const/16 v3, 0x191
 
-    .line 461
+    .line 495
     invoke-static {v3, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->fault(ILjava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -2526,7 +2594,7 @@
 
     goto :goto_9
 
-    .line 463
+    .line 497
     :cond_e
     invoke-static {v7, v3, v0}, Lcom/mcp2p/dlna/DlnaRenderer;->envelope(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
@@ -2539,7 +2607,7 @@
     :cond_f
     const-string v0, "405 Method Not Allowed"
 
-    .line 466
+    .line 500
     invoke-static {v1, v0, v9, v7, v13}, Lcom/mcp2p/dlna/DlnaRenderer;->send(Ljava/io/OutputStream;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 
     goto :goto_9
@@ -2548,7 +2616,7 @@
     :goto_6
     const-string v0, "/description.xml"
 
-    .line 439
+    .line 473
     invoke-virtual {v3, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v0
@@ -2564,7 +2632,7 @@
     :cond_11
     const-string v0, "/avt.xml"
 
-    .line 440
+    .line 474
     invoke-virtual {v3, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v0
@@ -2580,7 +2648,7 @@
     :cond_12
     const-string v0, "/rc.xml"
 
-    .line 441
+    .line 475
     invoke-virtual {v3, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v0
@@ -2596,7 +2664,7 @@
     :cond_13
     const-string v0, "/cm.xml"
 
-    .line 442
+    .line 476
     invoke-virtual {v3, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v0
@@ -2617,12 +2685,12 @@
 
     const-string v0, "404 Not Found"
 
-    .line 443
+    .line 477
     invoke-static {v1, v0, v9, v7, v13}, Lcom/mcp2p/dlna/DlnaRenderer;->send(Ljava/io/OutputStream;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 
     goto :goto_9
 
-    .line 444
+    .line 478
     :cond_15
     invoke-virtual {v10, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
@@ -2641,7 +2709,7 @@
     .catch Ljava/lang/Exception; {:try_start_6 .. :try_end_6} :catch_2
     .catchall {:try_start_6 .. :try_end_6} :catchall_0
 
-    .line 471
+    .line 505
     :goto_9
     :try_start_7
     invoke-virtual {p1}, Ljava/net/Socket;->close()V
@@ -2663,7 +2731,7 @@
 
     const-string v2, "Petici\u00f3n DLNA fallida"
 
-    .line 469
+    .line 503
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
     :try_end_8
     .catchall {:try_start_8 .. :try_end_8} :catchall_0
@@ -2674,65 +2742,87 @@
     :goto_a
     return-void
 
-    .line 471
+    .line 505
     :goto_b
     :try_start_9
     invoke-virtual {p1}, Ljava/net/Socket;->close()V
     :try_end_9
     .catch Ljava/lang/Exception; {:try_start_9 .. :try_end_9} :catch_4
 
-    .line 472
+    .line 506
     :catch_4
     throw v0
 .end method
 
 .method private httpLoop()V
-    .locals 3
+    .locals 4
 
-    .line 396
+    const-string v0, "Mcp2pDlna"
+
+    .line 425
+    :catch_0
     :goto_0
-    iget-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
+    iget-boolean v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
-    if-eqz v0, :cond_1
+    if-eqz v1, :cond_1
 
-    .line 398
+    .line 427
     :try_start_0
-    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
+    iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
 
-    invoke-virtual {v0}, Ljava/net/ServerSocket;->accept()Ljava/net/Socket;
+    invoke-virtual {v1}, Ljava/net/ServerSocket;->accept()Ljava/net/Socket;
 
-    move-result-object v0
-
-    .line 399
-    iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pool:Ljava/util/concurrent/ExecutorService;
-
-    new-instance v2, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;
-
-    invoke-direct {v2, p0, v0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/net/Socket;)V
-
-    invoke-interface {v1, v2}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
+    move-result-object v1
     :try_end_0
-    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_2
+
+    .line 429
+    :try_start_1
+    iget-object v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->requests:Ljava/util/concurrent/ThreadPoolExecutor;
+
+    new-instance v3, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda6;
+
+    invoke-direct {v3, p0, v1}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda6;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/net/Socket;)V
+
+    invoke-virtual {v2, v3}, Ljava/util/concurrent/ThreadPoolExecutor;->execute(Ljava/lang/Runnable;)V
+    :try_end_1
+    .catch Ljava/util/concurrent/RejectedExecutionException; {:try_start_1 .. :try_end_1} :catch_1
+    .catch Ljava/lang/Exception; {:try_start_1 .. :try_end_1} :catch_2
 
     goto :goto_0
 
-    :catch_0
-    move-exception v0
+    :catch_1
+    :try_start_2
+    const-string v2, "Demasiadas peticiones DLNA a la vez; se descarta una"
 
-    .line 401
-    iget-boolean v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
+    .line 431
+    invoke-static {v0, v2}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_2
+    .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_2
 
-    if-nez v1, :cond_0
+    .line 432
+    :try_start_3
+    invoke-virtual {v1}, Ljava/net/Socket;->close()V
+    :try_end_3
+    .catch Ljava/lang/Exception; {:try_start_3 .. :try_end_3} :catch_0
+
+    goto :goto_0
+
+    :catch_2
+    move-exception v1
+
+    .line 435
+    iget-boolean v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
+
+    if-nez v2, :cond_0
 
     return-void
 
     :cond_0
-    const-string v1, "Mcp2pDlna"
-
     const-string v2, "accept() fall\u00f3"
 
-    .line 402
-    invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+    .line 436
+    invoke-static {v0, v2, v1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     goto :goto_0
 
@@ -2745,7 +2835,7 @@
 
     const/4 v0, 0x0
 
-    .line 126
+    .line 136
     :try_start_0
     new-instance v1, Ljava/io/BufferedReader;
 
@@ -2763,7 +2853,7 @@
     :try_end_0
     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 127
+    .line 137
     :try_start_1
     invoke-virtual {v1}, Ljava/io/BufferedReader;->readLine()Ljava/lang/String;
 
@@ -2771,7 +2861,7 @@
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 128
+    .line 138
     :try_start_2
     invoke-virtual {v1}, Ljava/io/BufferedReader;->close()V
     :try_end_2
@@ -2782,7 +2872,7 @@
     :catchall_0
     move-exception v2
 
-    .line 126
+    .line 136
     :try_start_3
     invoke-virtual {v1}, Ljava/io/BufferedReader;->close()V
     :try_end_3
@@ -2805,7 +2895,7 @@
     :goto_1
     if-eqz v0, :cond_0
 
-    .line 129
+    .line 139
     invoke-virtual {v0}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v0
@@ -2821,7 +2911,7 @@
     :cond_0
     if-eqz v0, :cond_2
 
-    .line 130
+    .line 140
     invoke-virtual {v0}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -2861,7 +2951,7 @@
     :try_start_0
     const-string v1, "uimode"
 
-    .line 113
+    .line 123
     invoke-virtual {p0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object v1
@@ -2872,7 +2962,7 @@
 
     if-eqz v1, :cond_0
 
-    .line 114
+    .line 124
     invoke-virtual {v1}, Landroid/app/UiModeManager;->getCurrentModeType()I
 
     move-result v1
@@ -2883,7 +2973,7 @@
 
     return v2
 
-    .line 115
+    .line 125
     :cond_0
     invoke-virtual {p0}, Landroid/content/Context;->getPackageManager()Landroid/content/pm/PackageManager;
 
@@ -2891,7 +2981,7 @@
 
     const-string v1, "android.software.leanback"
 
-    .line 116
+    .line 126
     invoke-virtual {p0, v1}, Landroid/content/pm/PackageManager;->hasSystemFeature(Ljava/lang/String;)Z
 
     move-result v1
@@ -2900,7 +2990,7 @@
 
     const-string v1, "amazon.hardware.fire_tv"
 
-    .line 117
+    .line 127
     invoke-virtual {p0, v1}, Landroid/content/pm/PackageManager;->hasSystemFeature(Ljava/lang/String;)Z
 
     move-result v1
@@ -2909,7 +2999,7 @@
 
     const-string v1, "android.hardware.touchscreen"
 
-    .line 118
+    .line 128
     invoke-virtual {p0, v1}, Landroid/content/pm/PackageManager;->hasSystemFeature(Ljava/lang/String;)Z
 
     move-result p0
@@ -2929,12 +3019,12 @@
 .method private launchPlayer()V
     .locals 6
 
-    .line 189
+    .line 200
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
     if-eqz v0, :cond_4
 
-    .line 190
+    .line 201
     invoke-virtual {v0}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -2943,21 +3033,21 @@
 
     goto :goto_2
 
-    .line 191
+    .line 202
     :cond_0
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->lastLaunchedUri:Ljava/lang/String;
 
     const/4 v1, 0x1
 
-    .line 192
+    .line 203
     iput-boolean v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->launchedByUs:Z
 
     const-string v1, "TRANSITIONING"
 
-    .line 193
+    .line 204
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
-    .line 194
+    .line 205
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentMeta:Ljava/lang/String;
 
     const-string v2, "title"
@@ -2966,7 +3056,7 @@
 
     move-result-object v1
 
-    .line 198
+    .line 209
     :try_start_0
     invoke-static {v0}, Landroid/net/Uri;->parse(Ljava/lang/String;)Landroid/net/Uri;
 
@@ -2974,7 +3064,7 @@
 
     const-string v3, "mcp2p"
 
-    .line 199
+    .line 210
     invoke-virtual {v2, v3}, Landroid/net/Uri;->getQueryParameter(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -2986,13 +3076,13 @@
     :catch_0
     const/4 v2, 0x0
 
-    .line 201
+    .line 212
     :goto_0
     new-instance v3, Landroid/content/Intent;
 
     invoke-direct {v3}, Landroid/content/Intent;-><init>()V
 
-    .line 202
+    .line 213
     iget-object v4, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     const-string v5, "com.mcp2p.app.ui.PlayerActivity"
@@ -3001,12 +3091,12 @@
 
     const/high16 v4, 0x14000000
 
-    .line 203
+    .line 214
     invoke-virtual {v3, v4}, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
 
     if-eqz v2, :cond_1
 
-    .line 204
+    .line 215
     invoke-virtual {v2}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v4
@@ -3019,7 +3109,7 @@
 
     const-string v0, "com.mcp2p.app.extra.P2P_INPUT"
 
-    .line 205
+    .line 216
     invoke-virtual {v2}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v2
@@ -3031,13 +3121,13 @@
     :cond_1
     const-string v2, "com.mcp2p.app.extra.URL"
 
-    .line 207
+    .line 218
     invoke-virtual {v3, v2, v0}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
     :goto_1
     if-eqz v1, :cond_2
 
-    .line 209
+    .line 220
     invoke-virtual {v1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v0
@@ -3052,7 +3142,7 @@
 
     invoke-virtual {v3, v0, v1}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
-    .line 210
+    .line 221
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->main:Landroid/os/Handler;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda0;
@@ -3069,7 +3159,7 @@
 .method private location()Ljava/lang/String;
     .locals 3
 
-    .line 287
+    .line 298
     invoke-static {}, Lcom/mcp2p/dlna/Net;->lanIp()Ljava/lang/String;
 
     move-result-object v0
@@ -3080,7 +3170,7 @@
 
     goto :goto_0
 
-    .line 288
+    .line 299
     :cond_0
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -3113,7 +3203,7 @@
 .method private notifyLoop()V
     .locals 2
 
-    .line 354
+    .line 383
     :goto_0
     iget-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
@@ -3121,12 +3211,12 @@
 
     const-string v0, "ssdp:alive"
 
-    .line 355
+    .line 384
     invoke-direct {p0, v0}, Lcom/mcp2p/dlna/DlnaRenderer;->sendNotify(Ljava/lang/String;)V
 
     const-wide/16 v0, 0x7530
 
-    .line 356
+    .line 385
     :try_start_0
     invoke-static {v0, v1}, Ljava/lang/Thread;->sleep(J)V
     :try_end_0
@@ -3139,7 +3229,65 @@
     return-void
 .end method
 
-.method private static readHead(Ljava/io/InputStream;)Ljava/lang/String;
+.method private onNetworkChanged()V
+    .locals 2
+
+    .line 313
+    iget-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
+
+    if-nez v0, :cond_0
+
+    return-void
+
+    .line 314
+    :cond_0
+    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
+
+    invoke-static {v0}, Lcom/mcp2p/dlna/Net;->physicalNetwork(Landroid/content/Context;)Landroid/net/Network;
+
+    move-result-object v0
+
+    .line 315
+    iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdpNetwork:Landroid/net/Network;
+
+    if-nez v0, :cond_1
+
+    if-nez v1, :cond_2
+
+    goto :goto_0
+
+    .line 316
+    :cond_1
+    invoke-virtual {v0, v1}, Landroid/net/Network;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_2
+
+    :goto_0
+    return-void
+
+    :cond_2
+    const-string v0, "Mcp2pDlna"
+
+    const-string v1, "Cambio de red: se reinicia el anuncio DLNA"
+
+    .line 317
+    invoke-static {v0, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
+    .line 318
+    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
+
+    if-eqz v0, :cond_3
+
+    .line 319
+    invoke-virtual {v0}, Ljava/net/MulticastSocket;->close()V
+
+    :cond_3
+    return-void
+.end method
+
+.method static readHead(Ljava/io/InputStream;)Ljava/lang/String;
     .locals 8
     .annotation system Ldalvik/annotation/Throws;
         value = {
@@ -3147,7 +3295,7 @@
         }
     .end annotation
 
-    .line 476
+    .line 521
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -3160,7 +3308,7 @@
 
     move v4, v3
 
-    .line 478
+    .line 523
     :goto_0
     invoke-virtual {p0}, Ljava/io/InputStream;->read()I
 
@@ -3172,7 +3320,7 @@
 
     int-to-char v7, v5
 
-    .line 479
+    .line 524
     invoke-virtual {v0, v7}, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
 
     const/16 v7, 0xd
@@ -3187,7 +3335,7 @@
 
     if-ne v5, v2, :cond_0
 
-    .line 481
+    .line 526
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I
 
     move-result p0
@@ -3202,7 +3350,7 @@
 
     return-object p0
 
-    .line 484
+    .line 529
     :cond_0
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I
 
@@ -3230,7 +3378,7 @@
 .method private requestPlay(Ljava/lang/String;)V
     .locals 4
 
-    .line 243
+    .line 254
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->allowed()Ljava/util/Set;
 
     move-result-object v0
@@ -3241,16 +3389,16 @@
 
     if-eqz v0, :cond_0
 
-    .line 244
+    .line 255
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->launchPlayer()V
 
     return-void
 
-    .line 247
+    .line 258
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
-    .line 248
+    .line 259
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentMeta:Ljava/lang/String;
 
     const-string v2, "title"
@@ -3261,7 +3409,7 @@
 
     if-eqz v1, :cond_2
 
-    .line 249
+    .line 260
     invoke-virtual {v1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v2
@@ -3293,13 +3441,13 @@
     :goto_0
     const-string v1, "un v\u00eddeo"
 
-    .line 250
+    .line 261
     :goto_1
     iget-object v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->main:Landroid/os/Handler;
 
-    new-instance v3, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda10;
+    new-instance v3, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda11;
 
-    invoke-direct {v3, p0, p1, v1, v0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda10;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+    invoke-direct {v3, p0, p1, v1, v0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda11;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 
     invoke-virtual {v2, v3}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
@@ -3309,14 +3457,14 @@
 .method private static scpd([Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
     .locals 13
 
-    .line 658
+    .line 703
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<?xml version=\"1.0\" encoding=\"utf-8\"?><scpd xmlns=\"urn:schemas-upnp-org:service-1-0\"><specVersion><major>1</major><minor>0</minor></specVersion><actionList>"
 
     invoke-direct {v0, v1}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
-    .line 661
+    .line 706
     array-length v1, p0
 
     const/4 v2, 0x0
@@ -3338,14 +3486,14 @@
 
     const/4 v9, -0x1
 
-    .line 662
+    .line 707
     invoke-virtual {v7, v8, v9}, Ljava/lang/String;->split(Ljava/lang/String;I)[Ljava/lang/String;
 
     move-result-object v7
 
     const-string v8, "<action><name>"
 
-    .line 663
+    .line 708
     invoke-virtual {v0, v8}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     aget-object v8, v7, v2
@@ -3356,7 +3504,7 @@
 
     invoke-virtual {v0, v8}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 664
+    .line 709
     array-length v8, v7
 
     if-le v8, v6, :cond_1
@@ -3386,14 +3534,14 @@
 
     aget-object v10, v7, v9
 
-    .line 665
+    .line 710
     invoke-virtual {v10, v5}, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
 
     move-result-object v10
 
     const-string v11, "<argument><name>"
 
-    .line 666
+    .line 711
     invoke-virtual {v0, v11}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     aget-object v11, v10, v6
@@ -3404,7 +3552,7 @@
 
     invoke-virtual {v0, v11}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 667
+    .line 712
     aget-object v11, v10, v2
 
     const-string v12, "in"
@@ -3429,7 +3577,7 @@
 
     aget-object v10, v10, v4
 
-    .line 668
+    .line 713
     invoke-virtual {v0, v10}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     const-string v10, "</relatedStateVariable></argument>"
@@ -3443,7 +3591,7 @@
     :cond_1
     const-string v4, "</argumentList></action>"
 
-    .line 670
+    .line 715
     invoke-virtual {v0, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     add-int/lit8 v3, v3, 0x1
@@ -3453,10 +3601,10 @@
     :cond_2
     const-string p0, "</actionList><serviceStateTable>"
 
-    .line 672
+    .line 717
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 673
+    .line 718
     array-length p0, p1
 
     move v1, v2
@@ -3466,14 +3614,14 @@
 
     aget-object v3, p1, v1
 
-    .line 674
+    .line 719
     invoke-virtual {v3, v5}, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
 
     move-result-object v3
 
     const-string v7, "<stateVariable sendEvents=\""
 
-    .line 675
+    .line 720
     invoke-virtual {v0, v7}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     array-length v7, v3
@@ -3496,7 +3644,7 @@
 
     aget-object v7, v3, v2
 
-    .line 676
+    .line 721
     invoke-virtual {v0, v7}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     const-string v7, "</name><dataType>"
@@ -3518,7 +3666,7 @@
     :cond_4
     const-string p0, "</serviceStateTable></scpd>"
 
-    .line 678
+    .line 723
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
@@ -3561,7 +3709,7 @@
 
     const-string v14, "GetCurrentTransportActions|in:InstanceID:A_ARG_TYPE_InstanceID,out:Actions:CurrentTransportActions"
 
-    .line 683
+    .line 728
     filled-new-array/range {v0 .. v14}, [Ljava/lang/String;
 
     move-result-object v0
@@ -3646,7 +3794,7 @@
 
     const-string v2, "GetProtocolInfo|out:Source:SourceProtocolInfo,out:Sink:SinkProtocolInfo"
 
-    .line 730
+    .line 775
     filled-new-array {v2, v0, v1}, [Ljava/lang/String;
 
     move-result-object v0
@@ -3697,7 +3845,7 @@
 
     const-string v5, "SetMute|in:InstanceID:A_ARG_TYPE_InstanceID,in:Channel:A_ARG_TYPE_Channel,in:DesiredMute:Mute"
 
-    .line 716
+    .line 761
     filled-new-array/range {v0 .. v5}, [Ljava/lang/String;
 
     move-result-object v0
@@ -3751,12 +3899,12 @@
 
     const-string v0, "UTF-8"
 
-    .line 491
+    .line 536
     invoke-virtual {p3, v0}, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
 
     move-result-object p3
 
-    .line 492
+    .line 537
     new-instance v1, Ljava/lang/StringBuilder;
 
     const-string v2, "HTTP/1.1 "
@@ -3773,7 +3921,7 @@
 
     const-string v2, "Content-Type: "
 
-    .line 493
+    .line 538
     invoke-virtual {v1, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     invoke-virtual {v1, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -3783,7 +3931,7 @@
     :cond_0
     const-string p2, "Content-Length: "
 
-    .line 494
+    .line 539
     invoke-virtual {v1, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     array-length p2, p3
@@ -3796,7 +3944,7 @@
 
     if-eqz p4, :cond_1
 
-    .line 497
+    .line 542
     invoke-interface {p4}, Ljava/util/Map;->entrySet()Ljava/util/Set;
 
     move-result-object p2
@@ -3818,7 +3966,7 @@
 
     check-cast p4, Ljava/util/Map$Entry;
 
-    .line 498
+    .line 543
     invoke-interface {p4}, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
 
     move-result-object v2
@@ -3843,11 +3991,11 @@
 
     goto :goto_0
 
-    .line 500
+    .line 545
     :cond_1
     invoke-virtual {v1, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 501
+    .line 546
     invoke-virtual {v1}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
     move-result-object p1
@@ -3858,10 +4006,10 @@
 
     invoke-virtual {p0, p1}, Ljava/io/OutputStream;->write([B)V
 
-    .line 502
+    .line 547
     invoke-virtual {p0, p3}, Ljava/io/OutputStream;->write([B)V
 
-    .line 503
+    .line 548
     invoke-virtual {p0}, Ljava/io/OutputStream;->flush()V
 
     return-void
@@ -3870,7 +4018,7 @@
 .method private sendNotify(Ljava/lang/String;)V
     .locals 10
 
-    .line 361
+    .line 390
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->location()Ljava/lang/String;
 
     move-result-object v0
@@ -3882,7 +4030,7 @@
     :cond_0
     const/4 v1, 0x0
 
-    .line 365
+    .line 394
     :try_start_0
     new-instance v2, Ljava/net/MulticastSocket;
 
@@ -3897,13 +4045,13 @@
     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_3
     .catchall {:try_start_0 .. :try_end_0} :catchall_1
 
-    .line 366
+    .line 395
     :try_start_1
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     invoke-static {v1, v2}, Lcom/mcp2p/dlna/Net;->bind(Landroid/content/Context;Ljava/net/DatagramSocket;)V
 
-    .line 367
+    .line 396
     invoke-static {}, Lcom/mcp2p/dlna/Net;->lanInterface()Ljava/net/NetworkInterface;
 
     move-result-object v1
@@ -3913,7 +4061,7 @@
 
     if-eqz v1, :cond_1
 
-    .line 369
+    .line 398
     :try_start_2
     invoke-virtual {v2, v1}, Ljava/net/MulticastSocket;->setNetworkInterface(Ljava/net/NetworkInterface;)V
     :try_end_2
@@ -3924,7 +4072,7 @@
     :cond_1
     const/4 v1, 0x4
 
-    .line 371
+    .line 400
     :try_start_3
     invoke-virtual {v2, v1}, Ljava/net/MulticastSocket;->setTimeToLive(I)V
     :try_end_3
@@ -3935,12 +4083,12 @@
     :try_start_4
     const-string v1, "239.255.255.250"
 
-    .line 372
+    .line 401
     invoke-static {v1}, Ljava/net/InetAddress;->getByName(Ljava/lang/String;)Ljava/net/InetAddress;
 
     move-result-object v1
 
-    .line 373
+    .line 402
     sget-object v3, Lcom/mcp2p/dlna/DlnaRenderer;->NTS:[Ljava/lang/String;
 
     array-length v5, v3
@@ -3952,10 +4100,10 @@
 
     if-nez v6, :cond_2
 
-    .line 374
+    .line 403
     iget-object v6, p0, Lcom/mcp2p/dlna/DlnaRenderer;->uuid:Ljava/lang/String;
 
-    .line 375
+    .line 404
     :cond_2
     new-instance v7, Ljava/lang/StringBuilder;
 
@@ -3991,7 +4139,7 @@
 
     invoke-virtual {v7, v8}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 382
+    .line 411
     invoke-direct {p0, v6}, Lcom/mcp2p/dlna/DlnaRenderer;->usn(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v6
@@ -4008,12 +4156,12 @@
 
     const-string v7, "UTF-8"
 
-    .line 383
+    .line 412
     invoke-virtual {v6, v7}, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
 
     move-result-object v6
 
-    .line 384
+    .line 413
     new-instance v7, Ljava/net/DatagramPacket;
 
     array-length v8, v6
@@ -4031,7 +4179,7 @@
 
     goto :goto_0
 
-    .line 389
+    .line 418
     :cond_3
     invoke-virtual {v2}, Ljava/net/MulticastSocket;->close()V
 
@@ -4065,14 +4213,14 @@
 
     const-string v2, "NOTIFY fallido"
 
-    .line 387
+    .line 416
     invoke-static {v0, v2, p1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
     :try_end_5
     .catchall {:try_start_5 .. :try_end_5} :catchall_1
 
     if-eqz v1, :cond_4
 
-    .line 389
+    .line 418
     invoke-virtual {v1}, Ljava/net/MulticastSocket;->close()V
 
     :cond_4
@@ -4084,7 +4232,7 @@
 
     invoke-virtual {v1}, Ljava/net/MulticastSocket;->close()V
 
-    .line 390
+    .line 419
     :cond_5
     throw p1
 .end method
@@ -4092,7 +4240,7 @@
 .method private static service(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     .locals 2
 
-    .line 651
+    .line 696
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "<service><serviceType>"
@@ -4139,15 +4287,31 @@
 .method private ssdpLoop()V
     .locals 8
 
-    .line 298
+    .line 323
     :cond_0
     :goto_0
     iget-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
-    if-eqz v0, :cond_6
+    if-eqz v0, :cond_7
 
-    .line 300
+    .line 325
     :try_start_0
+    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->lock:Landroid/net/wifi/WifiManager$MulticastLock;
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_1
+
+    if-eqz v0, :cond_1
+
+    .line 326
+    :try_start_1
+    invoke-virtual {v0}, Landroid/net/wifi/WifiManager$MulticastLock;->release()V
+    :try_end_1
+    .catch Ljava/lang/Exception; {:try_start_1 .. :try_end_1} :catch_0
+
+    .line 328
+    :catch_0
+    :cond_1
+    :try_start_2
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     const-string v1, "mcp2p-dlna-renderer"
@@ -4158,7 +4322,7 @@
 
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->lock:Landroid/net/wifi/WifiManager$MulticastLock;
 
-    .line 301
+    .line 329
     new-instance v0, Ljava/net/MulticastSocket;
 
     const/4 v1, 0x0
@@ -4169,10 +4333,10 @@
 
     const/4 v1, 0x1
 
-    .line 302
+    .line 330
     invoke-virtual {v0, v1}, Ljava/net/MulticastSocket;->setReuseAddress(Z)V
 
-    .line 303
+    .line 331
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     new-instance v1, Ljava/net/InetSocketAddress;
@@ -4183,28 +4347,37 @@
 
     invoke-virtual {v0, v1}, Ljava/net/MulticastSocket;->bind(Ljava/net/SocketAddress;)V
 
-    .line 304
+    .line 332
+    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
+
+    invoke-static {v0}, Lcom/mcp2p/dlna/Net;->physicalNetwork(Landroid/content/Context;)Landroid/net/Network;
+
+    move-result-object v0
+
+    iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdpNetwork:Landroid/net/Network;
+
+    .line 333
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     invoke-static {v0, v1}, Lcom/mcp2p/dlna/Net;->bind(Landroid/content/Context;Ljava/net/DatagramSocket;)V
 
-    .line 305
+    .line 334
     invoke-static {}, Lcom/mcp2p/dlna/Net;->lanInterface()Ljava/net/NetworkInterface;
 
     move-result-object v0
 
     const-string v1, "239.255.255.250"
 
-    .line 306
+    .line 335
     invoke-static {v1}, Ljava/net/InetAddress;->getByName(Ljava/lang/String;)Ljava/net/InetAddress;
 
     move-result-object v1
 
-    if-eqz v0, :cond_1
+    if-eqz v0, :cond_2
 
-    .line 308
+    .line 337
     iget-object v3, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     new-instance v4, Ljava/net/InetSocketAddress;
@@ -4215,8 +4388,8 @@
 
     goto :goto_1
 
-    .line 310
-    :cond_1
+    .line 339
+    :cond_2
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     invoke-virtual {v0, v1}, Ljava/net/MulticastSocket;->joinGroup(Ljava/net/InetAddress;)V
@@ -4226,23 +4399,23 @@
 
     new-array v1, v0, [B
 
-    .line 313
+    .line 342
     :goto_2
     iget-boolean v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
     if-eqz v2, :cond_0
 
-    .line 314
+    .line 343
     new-instance v2, Ljava/net/DatagramPacket;
 
     invoke-direct {v2, v1, v0}, Ljava/net/DatagramPacket;-><init>([BI)V
 
-    .line 315
+    .line 344
     iget-object v3, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
     invoke-virtual {v3, v2}, Ljava/net/MulticastSocket;->receive(Ljava/net/DatagramPacket;)V
 
-    .line 316
+    .line 345
     new-instance v3, Ljava/lang/String;
 
     invoke-virtual {v2}, Ljava/net/DatagramPacket;->getData()[B
@@ -4261,29 +4434,29 @@
 
     const-string v4, "M-SEARCH"
 
-    .line 317
+    .line 346
     invoke-virtual {v3, v4}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v4
 
-    if-nez v4, :cond_2
+    if-nez v4, :cond_3
 
     goto :goto_2
 
-    :cond_2
+    :cond_3
     const-string v4, "ST"
 
-    .line 318
+    .line 347
     invoke-static {v3, v4}, Lcom/mcp2p/dlna/DlnaSender;->header(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v3
 
-    if-nez v3, :cond_3
+    if-nez v3, :cond_4
 
     goto :goto_2
 
-    .line 320
-    :cond_3
+    .line 349
+    :cond_4
     invoke-virtual {v3}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v3
@@ -4293,49 +4466,49 @@
     move-result-object v2
 
     invoke-direct {p0, v3, v2}, Lcom/mcp2p/dlna/DlnaRenderer;->answerSearch(Ljava/lang/String;Ljava/net/SocketAddress;)V
-    :try_end_0
-    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+    :try_end_2
+    .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_1
 
     goto :goto_2
 
-    :catch_0
+    :catch_1
     move-exception v0
 
-    .line 323
+    .line 352
     iget-boolean v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
-    if-nez v1, :cond_4
+    if-nez v1, :cond_5
 
     return-void
 
-    :cond_4
+    :cond_5
     const-string v1, "Mcp2pDlna"
 
     const-string v2, "SSDP del receptor reinici\u00e1ndose"
 
-    .line 324
+    .line 353
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 325
+    .line 354
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->ssdp:Ljava/net/MulticastSocket;
 
-    if-eqz v0, :cond_5
+    if-eqz v0, :cond_6
 
     invoke-virtual {v0}, Ljava/net/MulticastSocket;->close()V
 
-    :cond_5
+    :cond_6
     const-wide/16 v0, 0x1388
 
-    .line 326
-    :try_start_1
+    .line 355
+    :try_start_3
     invoke-static {v0, v1}, Ljava/lang/Thread;->sleep(J)V
-    :try_end_1
-    .catch Ljava/lang/InterruptedException; {:try_start_1 .. :try_end_1} :catch_1
+    :try_end_3
+    .catch Ljava/lang/InterruptedException; {:try_start_3 .. :try_end_3} :catch_2
 
     goto/16 :goto_0
 
-    :catch_1
-    :cond_6
+    :catch_2
+    :cond_7
     return-void
 .end method
 
@@ -4349,23 +4522,23 @@
 
     const/4 v0, 0x1
 
-    .line 134
+    .line 144
     iput-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->running:Z
 
-    .line 135
+    .line 145
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->trackPlayer()V
 
-    .line 136
+    .line 146
     new-instance v1, Ljava/net/ServerSocket;
 
     invoke-direct {v1}, Ljava/net/ServerSocket;-><init>()V
 
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
 
-    .line 137
+    .line 147
     invoke-virtual {v1, v0}, Ljava/net/ServerSocket;->setReuseAddress(Z)V
 
-    .line 139
+    .line 149
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
 
@@ -4381,7 +4554,7 @@
 
     goto :goto_0
 
-    .line 141
+    .line 151
     :catch_0
     new-instance v0, Ljava/net/ServerSocket;
 
@@ -4391,7 +4564,7 @@
 
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
 
-    .line 143
+    .line 153
     :goto_0
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->server:Ljava/net/ServerSocket;
 
@@ -4401,7 +4574,7 @@
 
     iput v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->httpPort:I
 
-    .line 144
+    .line 154
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pool:Ljava/util/concurrent/ExecutorService;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda2;
@@ -4410,7 +4583,7 @@
 
     invoke-interface {v0, v1}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
-    .line 145
+    .line 155
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pool:Ljava/util/concurrent/ExecutorService;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda3;
@@ -4419,7 +4592,7 @@
 
     invoke-interface {v0, v1}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
-    .line 146
+    .line 156
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pool:Ljava/util/concurrent/ExecutorService;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda4;
@@ -4428,7 +4601,16 @@
 
     invoke-interface {v0, v1}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
-    .line 147
+    .line 157
+    iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
+
+    new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;
+
+    invoke-direct {v1, p0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
+
+    invoke-static {v0, v1}, Lcom/mcp2p/dlna/Net;->watchNetworks(Landroid/content/Context;Ljava/lang/Runnable;)V
+
+    .line 158
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "Receptor DLNA activo: "
@@ -4461,7 +4643,7 @@
 .method public static startIfTv(Landroid/app/Application;)V
     .locals 2
 
-    .line 102
+    .line 112
     :try_start_0
     invoke-static {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->isMainProcess(Landroid/content/Context;)Z
 
@@ -4477,7 +4659,7 @@
 
     goto :goto_0
 
-    .line 103
+    .line 113
     :cond_0
     sget-object v0, Lcom/mcp2p/dlna/DlnaRenderer;->instance:Lcom/mcp2p/dlna/DlnaRenderer;
 
@@ -4485,7 +4667,7 @@
 
     return-void
 
-    .line 104
+    .line 114
     :cond_1
     new-instance v0, Lcom/mcp2p/dlna/DlnaRenderer;
 
@@ -4493,7 +4675,7 @@
 
     sput-object v0, Lcom/mcp2p/dlna/DlnaRenderer;->instance:Lcom/mcp2p/dlna/DlnaRenderer;
 
-    .line 105
+    .line 115
     sget-object p0, Lcom/mcp2p/dlna/DlnaRenderer;->instance:Lcom/mcp2p/dlna/DlnaRenderer;
 
     invoke-direct {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->start()V
@@ -4513,7 +4695,7 @@
 
     const-string v1, "No se pudo iniciar el receptor DLNA"
 
-    .line 107
+    .line 117
     invoke-static {v0, v1, p0}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_1
@@ -4523,7 +4705,7 @@
 .method private stopPlayer()V
     .locals 2
 
-    .line 276
+    .line 287
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->main:Landroid/os/Handler;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda1;
@@ -4538,7 +4720,7 @@
 .method private trackPlayer()V
     .locals 2
 
-    .line 153
+    .line 164
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     new-instance v1, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;
@@ -4553,7 +4735,7 @@
 .method private usn(Ljava/lang/String;)Ljava/lang/String;
     .locals 2
 
-    .line 294
+    .line 305
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->uuid:Ljava/lang/String;
 
     invoke-virtual {p1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -4594,7 +4776,7 @@
 .method synthetic lambda$httpLoop$7$com-mcp2p-dlna-DlnaRenderer(Ljava/net/Socket;)V
     .locals 0
 
-    .line 399
+    .line 429
     invoke-direct {p0, p1}, Lcom/mcp2p/dlna/DlnaRenderer;->handle(Ljava/net/Socket;)V
 
     return-void
@@ -4608,7 +4790,7 @@
 
     const-string v1, "DLNA: reproduciendo "
 
-    .line 212
+    .line 223
     :try_start_0
     iget-object v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
@@ -4620,7 +4802,7 @@
 
     if-eqz v2, :cond_0
 
-    .line 213
+    .line 224
     invoke-virtual {v2}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v3
@@ -4632,22 +4814,22 @@
     :cond_0
     const/4 v2, 0x1
 
-    .line 214
+    .line 225
     iput-boolean v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->launchedByUs:Z
 
     const-string v2, "TRANSITIONING"
 
-    .line 215
+    .line 226
     iput-object v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
-    .line 216
+    .line 227
     iget-object v2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->app:Landroid/app/Application;
 
     invoke-virtual {v2, p1}, Landroid/app/Application;->startActivity(Landroid/content/Intent;)V
 
     const-string v2, "com.mcp2p.app.extra.P2P_INPUT"
 
-    .line 217
+    .line 228
     invoke-virtual {p1, v2}, Landroid/content/Intent;->hasExtra(Ljava/lang/String;)Z
 
     move-result p1
@@ -4677,12 +4859,12 @@
 
     const-string v1, "STOPPED"
 
-    .line 219
+    .line 230
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     const-string v1, "No se pudo abrir el reproductor"
 
-    .line 220
+    .line 231
     invoke-static {v0, v1, p1}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_1
@@ -4692,7 +4874,7 @@
 .method synthetic lambda$requestPlay$1$com-mcp2p-dlna-DlnaRenderer(Ljava/lang/String;Landroid/content/DialogInterface;I)V
     .locals 0
 
-    .line 261
+    .line 272
     iget-object p2, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
     invoke-virtual {p1, p2}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -4710,10 +4892,10 @@
 .method synthetic lambda$requestPlay$2$com-mcp2p-dlna-DlnaRenderer(Ljava/lang/String;Ljava/lang/String;Landroid/content/DialogInterface;I)V
     .locals 0
 
-    .line 263
+    .line 274
     invoke-direct {p0, p1}, Lcom/mcp2p/dlna/DlnaRenderer;->allow(Ljava/lang/String;)V
 
-    .line 264
+    .line 275
     iget-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->currentUri:Ljava/lang/String;
 
     invoke-virtual {p2, p1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -4734,7 +4916,7 @@
     .line 0
     const-string p1, "STOPPED"
 
-    .line 266
+    .line 277
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     return-void
@@ -4746,7 +4928,7 @@
     .line 0
     const-string p1, "STOPPED"
 
-    .line 267
+    .line 278
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     return-void
@@ -4755,7 +4937,7 @@
 .method synthetic lambda$requestPlay$5$com-mcp2p-dlna-DlnaRenderer(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
     .locals 3
 
-    .line 251
+    .line 262
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->resumed:Ljava/lang/ref/WeakReference;
 
     invoke-virtual {v0}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
@@ -4766,7 +4948,7 @@
 
     if-eqz v0, :cond_3
 
-    .line 252
+    .line 263
     invoke-virtual {v0}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v1
@@ -4775,7 +4957,7 @@
 
     goto/16 :goto_0
 
-    .line 256
+    .line 267
     :cond_0
     iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pendingDialog:Landroid/app/AlertDialog;
 
@@ -4794,17 +4976,17 @@
     :cond_1
     const-string v1, "TRANSITIONING"
 
-    .line 257
+    .line 268
     iput-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
-    .line 258
+    .line 269
     new-instance v1, Landroid/app/AlertDialog$Builder;
 
     invoke-direct {v1, v0}, Landroid/app/AlertDialog$Builder;-><init>(Landroid/content/Context;)V
 
     const-string v0, "Env\u00edo a esta TV"
 
-    .line 259
+    .line 270
     invoke-virtual {v1, v0}, Landroid/app/AlertDialog$Builder;->setTitle(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v0
@@ -4831,41 +5013,30 @@
 
     move-result-object p2
 
-    .line 260
+    .line 271
     invoke-virtual {v0, p2}, Landroid/app/AlertDialog$Builder;->setMessage(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
-
-    move-result-object p2
-
-    new-instance v0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda6;
-
-    invoke-direct {v0, p0, p3}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda6;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;)V
-
-    const-string v1, "Reproducir"
-
-    .line 261
-    invoke-virtual {p2, v1, v0}, Landroid/app/AlertDialog$Builder;->setPositiveButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object p2
 
     new-instance v0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda7;
 
-    invoke-direct {v0, p0, p1, p3}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda7;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;Ljava/lang/String;)V
+    invoke-direct {v0, p0, p3}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda7;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;)V
+
+    const-string v1, "Reproducir"
+
+    .line 272
+    invoke-virtual {p2, v1, v0}, Landroid/app/AlertDialog$Builder;->setPositiveButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
+
+    move-result-object p2
+
+    new-instance v0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda8;
+
+    invoke-direct {v0, p0, p1, p3}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda8;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/String;Ljava/lang/String;)V
 
     const-string p1, "Permitir siempre"
 
-    .line 262
+    .line 273
     invoke-virtual {p2, p1, v0}, Landroid/app/AlertDialog$Builder;->setNeutralButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
-
-    move-result-object p1
-
-    new-instance p2, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda8;
-
-    invoke-direct {p2, p0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda8;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
-
-    const-string p3, "Rechazar"
-
-    .line 266
-    invoke-virtual {p1, p3, p2}, Landroid/app/AlertDialog$Builder;->setNegativeButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object p1
 
@@ -4873,22 +5044,33 @@
 
     invoke-direct {p2, p0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda9;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
 
-    .line 267
+    const-string p3, "Rechazar"
+
+    .line 277
+    invoke-virtual {p1, p3, p2}, Landroid/app/AlertDialog$Builder;->setNegativeButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
+
+    move-result-object p1
+
+    new-instance p2, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda10;
+
+    invoke-direct {p2, p0}, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda10;-><init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
+
+    .line 278
     invoke-virtual {p1, p2}, Landroid/app/AlertDialog$Builder;->setOnCancelListener(Landroid/content/DialogInterface$OnCancelListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object p1
 
-    .line 268
+    .line 279
     invoke-virtual {p1}, Landroid/app/AlertDialog$Builder;->create()Landroid/app/AlertDialog;
 
     move-result-object p1
 
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pendingDialog:Landroid/app/AlertDialog;
 
-    .line 269
+    .line 280
     invoke-virtual {p1}, Landroid/app/AlertDialog;->show()V
 
-    .line 270
+    .line 281
     iget-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer;->pendingDialog:Landroid/app/AlertDialog;
 
     const/4 p2, -0x1
@@ -4899,13 +5081,13 @@
 
     if-eqz p1, :cond_2
 
-    .line 271
+    .line 282
     invoke-virtual {p1}, Landroid/widget/Button;->requestFocus()Z
 
     :cond_2
     return-void
 
-    .line 253
+    .line 264
     :cond_3
     :goto_0
     new-instance p2, Ljava/lang/StringBuilder;
@@ -4934,7 +5116,7 @@
 .method synthetic lambda$stopPlayer$6$com-mcp2p-dlna-DlnaRenderer()V
     .locals 2
 
-    .line 277
+    .line 288
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->player:Ljava/lang/ref/WeakReference;
 
     invoke-virtual {v0}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
@@ -4945,7 +5127,7 @@
 
     if-eqz v0, :cond_0
 
-    .line 278
+    .line 289
     invoke-virtual {v0}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v1
@@ -4957,12 +5139,12 @@
     :cond_0
     const/4 v0, 0x0
 
-    .line 279
+    .line 290
     iput-boolean v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->launchedByUs:Z
 
     const-string v0, "STOPPED"
 
-    .line 280
+    .line 291
     iput-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer;->state:Ljava/lang/String;
 
     return-void

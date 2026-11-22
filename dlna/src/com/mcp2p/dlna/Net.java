@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -76,6 +77,35 @@ final class Net {
             }
         }
         return (HttpURLConnection) u.openConnection();
+    }
+
+    /**
+     * Avisa cuando cambian las redes (Wi-Fi ↔ Ethernet, router reiniciado…). Clase estática a propósito:
+     * el d8 de build-tools 34 falla con clases internas no estáticas.
+     */
+    static final class NetworkWatcher extends ConnectivityManager.NetworkCallback {
+        private final Runnable onChange;
+
+        NetworkWatcher(Runnable onChange) {
+            this.onChange = onChange;
+        }
+
+        @Override public void onAvailable(Network n) {
+            onChange.run();
+        }
+
+        @Override public void onLost(Network n) {
+            onChange.run();
+        }
+    }
+
+    static void watchNetworks(Context ctx, Runnable onChange) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm != null) cm.registerNetworkCallback(new NetworkRequest.Builder().build(), new NetworkWatcher(onChange));
+        } catch (Exception e) {
+            Log.w(TAG, "No se pueden vigilar los cambios de red", e);
+        }
     }
 
     static WifiManager.MulticastLock multicastLock(Context ctx, String tag) {

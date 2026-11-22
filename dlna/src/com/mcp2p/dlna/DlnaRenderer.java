@@ -39,6 +39,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +67,13 @@ public final class DlnaRenderer {
 
     private final Application app;
     private final Handler main = new Handler(Looper.getMainLooper());
+    /** Bucles de larga duración (HTTP, SSDP, NOTIFY). */
     private final ExecutorService pool = Executors.newCachedThreadPool();
+    /** Peticiones HTTP: acotadas para que un equipo de la red no pueda crear hilos sin límite. */
+    private final ThreadPoolExecutor requests = new ThreadPoolExecutor(2, 6, 30, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<Runnable>(16));
+    /** Red física a la que está atado el socket SSDP ahora mismo. */
+    private volatile android.net.Network ssdpNetwork;
     private final String uuid;
     private final String friendlyName;
     private volatile boolean running;
@@ -144,6 +154,7 @@ public final class DlnaRenderer {
         pool.execute(this::httpLoop);
         pool.execute(this::ssdpLoop);
         pool.execute(this::notifyLoop);
+        Net.watchNetworks(app, this::onNetworkChanged);
         Log.i(Net.TAG, "Receptor DLNA activo: " + friendlyName + " puerto " + httpPort);
     }
 
@@ -294,13 +305,31 @@ public final class DlnaRenderer {
         return nt.equals(uuid) ? uuid : uuid + "::" + nt;
     }
 
+    /**
+     * Wi-Fi ↔ Ethernet, router reiniciado…: si la red física ya no es aquella a la que está atado el
+     * socket SSDP, se cierra; ssdpLoop lo vuelve a abrir en la red nueva y la TV sigue apareciendo.
+     */
+    private void onNetworkChanged() {
+        if (!running) return;
+        android.net.Network now = Net.physicalNetwork(app);
+        android.net.Network was = ssdpNetwork;
+        if (now == null ? was == null : now.equals(was)) return;
+        Log.i(Net.TAG, "Cambio de red: se reinicia el anuncio DLNA");
+        MulticastSocket s = ssdp;
+        if (s != null) s.close();
+    }
+
     private void ssdpLoop() {
         while (running) {
             try {
+                if (lock != null) {
+                    try { lock.release(); } catch (Exception ignored) {}
+                }
                 lock = Net.multicastLock(app, "mcp2p-dlna-renderer");
                 ssdp = new MulticastSocket(null);
                 ssdp.setReuseAddress(true);
                 ssdp.bind(new InetSocketAddress(Net.SSDP_PORT));
+                ssdpNetwork = Net.physicalNetwork(app);
                 Net.bind(app, ssdp);
                 NetworkInterface ni = Net.lanInterface();
                 InetAddress group = InetAddress.getByName(Net.SSDP_ADDR);
@@ -396,7 +425,12 @@ public final class DlnaRenderer {
         while (running) {
             try {
                 final Socket c = server.accept();
-                pool.execute(() -> handle(c));
+                try {
+                    requests.execute(() -> handle(c));
+                } catch (RejectedExecutionException busy) {
+                    Log.w(Net.TAG, "Demasiadas peticiones DLNA a la vez; se descarta una");
+                    try { c.close(); } catch (Exception ignored) {}
+                }
             } catch (Exception e) {
                 if (!running) return;
                 Log.w(Net.TAG, "accept() falló", e);
@@ -422,8 +456,8 @@ public final class DlnaRenderer {
             }
             String body = "";
             String cl = h.get("content-length");
-            if (cl != null) {
-                int n = Math.min(Integer.parseInt(cl.trim()), 512 * 1024);
+            int n = bodyLength(cl);
+            if (n > 0) {
                 byte[] b = new byte[n];
                 int off = 0;
                 while (off < n) {
@@ -472,7 +506,18 @@ public final class DlnaRenderer {
         }
     }
 
-    private static String readHead(InputStream in) throws java.io.IOException {
+    /** Content-Length acotado a [0, 512 KB]; un valor no numérico o negativo cuenta como 0. */
+    static int bodyLength(String contentLength) {
+        if (contentLength == null) return 0;
+        try {
+            long n = Long.parseLong(contentLength.trim());
+            return (int) Math.max(0, Math.min(n, 512 * 1024));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    static String readHead(InputStream in) throws java.io.IOException {
         StringBuilder sb = new StringBuilder();
         int prev3 = -1, prev2 = -1, prev1 = -1, ch;
         while ((ch = in.read()) != -1) {

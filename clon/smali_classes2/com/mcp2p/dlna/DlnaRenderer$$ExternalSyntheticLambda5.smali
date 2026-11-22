@@ -9,18 +9,14 @@
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/dlna/DlnaRenderer;
 
-.field public final synthetic f$1:Ljava/net/Socket;
-
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/net/Socket;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;->f$0:Lcom/mcp2p/dlna/DlnaRenderer;
-
-    iput-object p2, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;->f$1:Ljava/net/Socket;
 
     return-void
 .end method
@@ -28,13 +24,11 @@
 
 # virtual methods
 .method public final run()V
-    .locals 2
+    .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;->f$0:Lcom/mcp2p/dlna/DlnaRenderer;
 
-    iget-object v1, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda5;->f$1:Ljava/net/Socket;
-
-    invoke-virtual {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$httpLoop$7$com-mcp2p-dlna-DlnaRenderer(Ljava/net/Socket;)V
+    invoke-static {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->$r8$lambda$PcKQwndoiVVtgzzkLhO5ee2WGRM(Lcom/mcp2p/dlna/DlnaRenderer;)V
 
     return-void
 .end method

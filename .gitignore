@@ -9,3 +9,7 @@ jadx.log
 clon/build/
 clon/dist/
 dlna/test/out/
+
+# Firma: contraseña local del keystore (ver docs/FIRMA.md)
+.ks-pass
+*.p12

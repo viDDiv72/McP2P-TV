@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/content/DialogInterface$OnCancelListener;
+.implements Landroid/content/DialogInterface$OnClickListener;
 
 
 # instance fields
@@ -23,12 +23,12 @@
 
 
 # virtual methods
-.method public final onCancel(Landroid/content/DialogInterface;)V
+.method public final onClick(Landroid/content/DialogInterface;I)V
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$$ExternalSyntheticLambda9;->f$0:Lcom/mcp2p/dlna/DlnaRenderer;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$requestPlay$4$com-mcp2p-dlna-DlnaRenderer(Landroid/content/DialogInterface;)V
+    invoke-virtual {v0, p1, p2}, Lcom/mcp2p/dlna/DlnaRenderer;->lambda$requestPlay$3$com-mcp2p-dlna-DlnaRenderer(Landroid/content/DialogInterface;I)V
 
     return-void
 .end method

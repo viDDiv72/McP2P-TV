@@ -13,7 +13,11 @@
 ```bash
 ./build.sh          # Git Bash
 ```
-Requiere: JDK 21, Android SDK build-tools, `C:\Users\viD\tools\apktool.jar`.
+Requiere: JDK 21, Node, Android SDK build-tools, `C:\Users\viD\tools\apktool.jar` (3.0.3) y la firma
+(`mcp2p-clon.jks` + `.ks-pass`, ver [docs/FIRMA.md](docs/FIRMA.md)). Antes de compilar, `build.sh` pasa las
+comprobaciones de layouts y de smali y las pruebas JVM del módulo DLNA; la CI de GitHub
+(`.github/workflows/ci.yml`) hace lo mismo y compila el APK en Windows.
+Depuración en la TV (logcat, CrashLog, memoria): [docs/DEPURACION.md](docs/DEPURACION.md).
 
 ## Sacar una versión nueva
 El historial completo está en [CHANGELOG.md](CHANGELOG.md); cada versión tiene su etiqueta git y su release.
@@ -28,7 +32,8 @@ El historial completo está en [CHANGELOG.md](CHANGELOG.md); cada versión tiene
    # versión de prueba: añade --prerelease. Para pasarla a estable después:
    gh release edit vX.Y.Z --prerelease=false --latest
    ```
-Firma siempre con el mismo `mcp2p-clon.jks` para que cada versión se instale encima de la anterior.
+Firma siempre con el mismo `mcp2p-clon.jks` para que cada versión se instale encima de la anterior
+(copia de seguridad y cambio de contraseña: [docs/FIRMA.md](docs/FIRMA.md)).
 
 ## Instalar en la TVBox
 El clon está firmado con otra clave, así que **hay que desinstalar la McP2P original** antes
@@ -101,7 +106,7 @@ Módulo `com.mcp2p.tv.TvFocus`, solo en TV, enganchado desde `Mcp2pApplication.o
 
 Pendiente para la fase de interfaz: CH+/CH− para cambiar de canal desde el reproductor (necesita pasarle la lista).
 
-### 6. Inicio nuevo para TV (rama `ui-nueva`, sin publicar)
+### 6. Inicio nuevo para TV (v1.8.0, pre-release)
 Diseño acordado en `ui/prototipo/index.html`, hecho nativo en `com.mcp2p.tv.HomeScreen` (solo en TV; en el móvil
 se mantiene la pantalla original). Si algo falla al montarlo, se queda la pantalla original.
 - **Abrir contenido:** Reproducir ID o enlace (con Pegar y recientes; usa `MainActivity.E`, igual que la casilla

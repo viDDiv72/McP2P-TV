@@ -1,0 +1,99 @@
+# CI de McP2P-TV
+#  - comprobaciones (cada push y cada PR): layouts, arreglos de smali y pruebas JVM del módulo DLNA.
+#  - compilación del APK en Windows con el mismo build.sh que en local.
+#    Firma con el keystore real solo si existen los secretos MCP2P_KEYSTORE_B64 y MCP2P_KS_PASS
+#    (ver docs/FIRMA.md). Sin ellos (p. ej. en PR) se firma con una clave temporal de prueba:
+#    ese APK sirve para probar, pero NO se instala encima de las versiones publicadas.
+name: CI
+
+on:
+  push:
+    branches: [main, ui-nueva]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Comprobaciones
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Layouts (IDs en variantes de TV/tablet)
+        run: node tools/check-layouts.js clon/res
+      - name: Arreglos de smali en su sitio
+        run: node tools/check-smali.js clon
+      - name: Pruebas del módulo DLNA (JVM)
+        run: bash dlna/test/run-tests.sh
+
+  build:
+    name: Compilar APK
+    needs: checks
+    runs-on: windows-latest
+    timeout-minutes: 40
+    env:
+      APKTOOL_VERSION: 3.0.3
+      APKTOOL_SHA256: dbf930b076c6b9be08d57c449cacefc3bdd6b71ebd59b3066fc0e1f5b14f9423
+    steps:
+      - name: Sin conversión de saltos de línea (scripts .sh y smali)
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Descargar apktool (versión y hash fijados)
+        shell: bash
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/apktool.jar" \
+            "https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VERSION}/apktool_${APKTOOL_VERSION}.jar"
+          echo "${APKTOOL_SHA256}  $RUNNER_TEMP/apktool.jar" | sha256sum -c -
+      - name: Preparar la firma
+        id: sign
+        shell: bash
+        env:
+          KS_B64: ${{ secrets.MCP2P_KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.MCP2P_KS_PASS }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/mcp2p.jks"
+            echo "MCP2P_KS_PASS=$KS_PASS" >> "$GITHUB_ENV"
+            echo "kind=release" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Sin secretos de firma: se usa una clave temporal (APK solo de prueba)."
+            echo "MCP2P_NEW_KEYSTORE=1" >> "$GITHUB_ENV"
+            echo "MCP2P_KS_PASS=$(openssl rand -hex 16)" >> "$GITHUB_ENV"
+            echo "kind=prueba" >> "$GITHUB_OUTPUT"
+          fi
+          echo "MCP2P_KEYSTORE=$RUNNER_TEMP/mcp2p.jks" >> "$GITHUB_ENV"
+      - name: build.sh
+        shell: bash
+        run: |
+          export APKTOOL="$RUNNER_TEMP/apktool.jar"
+          ./build.sh
+      - name: Borrar el keystore del runner
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/mcp2p.jks"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: McP2P-TV-${{ steps.sign.outputs.kind }}-${{ github.sha }}
+          path: build/McP2P-clon-signed.apk
+          retention-days: 14

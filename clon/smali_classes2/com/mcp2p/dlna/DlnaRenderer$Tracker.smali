@@ -25,7 +25,7 @@
 .method constructor <init>(Lcom/mcp2p/dlna/DlnaRenderer;)V
     .locals 0
 
-    .line 162
+    .line 173
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
@@ -38,7 +38,7 @@
 .method public onActivityCreated(Landroid/app/Activity;Landroid/os/Bundle;)V
     .locals 1
 
-    .line 164
+    .line 175
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p2
@@ -70,7 +70,7 @@
 .method public onActivityDestroyed(Landroid/app/Activity;)V
     .locals 3
 
-    .line 177
+    .line 188
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     invoke-static {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->access$000(Lcom/mcp2p/dlna/DlnaRenderer;)Ljava/lang/ref/WeakReference;
@@ -83,7 +83,7 @@
 
     if-ne p1, v0, :cond_0
 
-    .line 178
+    .line 189
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     new-instance v1, Ljava/lang/ref/WeakReference;
@@ -94,7 +94,7 @@
 
     invoke-static {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->access$002(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
 
-    .line 180
+    .line 191
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     invoke-static {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->access$200(Lcom/mcp2p/dlna/DlnaRenderer;)Z
@@ -123,14 +123,14 @@
 
     if-nez p1, :cond_0
 
-    .line 181
+    .line 192
     iget-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     const/4 v0, 0x0
 
     invoke-static {p1, v0}, Lcom/mcp2p/dlna/DlnaRenderer;->access$202(Lcom/mcp2p/dlna/DlnaRenderer;Z)Z
 
-    .line 182
+    .line 193
     iget-object p1, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     const-string v0, "STOPPED"
@@ -144,7 +144,7 @@
 .method public onActivityPaused(Landroid/app/Activity;)V
     .locals 2
 
-    .line 172
+    .line 183
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     invoke-static {v0}, Lcom/mcp2p/dlna/DlnaRenderer;->access$100(Lcom/mcp2p/dlna/DlnaRenderer;)Ljava/lang/ref/WeakReference;
@@ -174,7 +174,7 @@
 .method public onActivityResumed(Landroid/app/Activity;)V
     .locals 2
 
-    .line 168
+    .line 179
     iget-object v0, p0, Lcom/mcp2p/dlna/DlnaRenderer$Tracker;->r:Lcom/mcp2p/dlna/DlnaRenderer;
 
     new-instance v1, Ljava/lang/ref/WeakReference;
@@ -183,7 +183,7 @@
 
     invoke-static {v0, v1}, Lcom/mcp2p/dlna/DlnaRenderer;->access$102(Lcom/mcp2p/dlna/DlnaRenderer;Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
 
-    .line 169
+    .line 180
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p1
