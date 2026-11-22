@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McP2P-TV · Prototipo de interfaz</title>
+<style>
+  :root{
+    --bg:#0b0f19; --bg2:#0f1524; --surface:#141b2a; --surface2:#1b2436; --outline:#29364c;
+    --text:#f3f6ff; --muted:#a9b4c8; --dim:#6f7b92; --accent:#48d9c8; --accent2:#2bb3a4;
+    --warn:#f2b84b; --ok:#5fd38a; --live:#ff5a6a;
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#05070c;color:var(--text);font-family:Roboto,"Segoe UI",system-ui,sans-serif;overflow:hidden;
+       display:flex;flex-direction:column;align-items:center}
+  /* ---------- barra del prototipo (fuera de la TV) ---------- */
+  .proto{width:100%;display:flex;gap:10px;align-items:center;padding:10px 16px;background:#0a0d14;border-bottom:1px solid #1a2233;
+         font-size:14px;color:var(--muted);flex-wrap:wrap}
+  .proto b{color:var(--text)}
+  .proto button{background:#141b2a;color:var(--text);border:1px solid #29364c;border-radius:10px;padding:7px 12px;font:inherit;cursor:pointer}
+  .proto button.on{background:var(--accent);color:#06121a;border-color:var(--accent);font-weight:700}
+  .proto .keys{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border-radius:6px;background:#1b2436;border:1px solid #2e3b55;color:var(--text);font-size:12px}
+  .wrap{flex:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  /* ---------- la TV ---------- */
+  .tv{width:1920px;height:1080px;position:relative;flex:none;transform-origin:center center;border-radius:14px;overflow:hidden;
+      background:radial-gradient(1200px 700px at 85% -10%,#15304a 0%,transparent 60%),radial-gradient(900px 600px at -10% 110%,#10283a 0%,transparent 60%),var(--bg);
+      box-shadow:0 0 0 10px #000,0 0 0 12px #222,0 30px 80px rgba(0,0,0,.6)}
+  .screen{position:absolute;inset:0;display:none}
+  .screen.on{display:block}
+  /* foco común: lo que pinta TvFocus en la app */
+  .f{transition:transform .12s ease,box-shadow .12s ease,background .12s ease,border-color .12s ease;outline:none}
+  .f.focus{transform:scale(1.05);box-shadow:0 0 0 4px var(--accent),0 14px 38px rgba(72,217,200,.28);z-index:5;position:relative}
+  .f.wide.focus{transform:scale(1.015)}
+  /* ---------- comunes ---------- */
+  .top{position:absolute;left:220px;right:64px;top:44px;height:64px;display:flex;align-items:center;gap:18px}
+  .hello{font-size:40px;font-weight:700;letter-spacing:-.5px}
+  .hello small{display:block;font-size:20px;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:2px}
+  .pills{margin-left:auto;display:flex;gap:12px;align-items:center}
+  .pill{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:rgba(20,27,42,.85);border:1px solid var(--outline);font-size:19px;color:var(--muted)}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  .dot.warn{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+  .clock{font-size:30px;font-weight:600;color:var(--text);margin-left:8px;font-variant-numeric:tabular-nums}
+  .logo{flex:none;display:grid;place-items:center;border-radius:14px;font-weight:800;color:#fff;letter-spacing:-.5px}
+  .prog{height:6px;border-radius:6px;background:#2a3549;overflow:hidden}
+  .prog i{display:block;height:100%;background:var(--accent);border-radius:6px}
+  .hint{position:absolute;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;gap:34px;padding:0 64px 0 220px;
+        background:linear-gradient(0deg,rgba(5,8,14,.95),rgba(5,8,14,0));font-size:20px;color:var(--muted)}
+  .hint .k{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:32px;padding:0 10px;border-radius:8px;background:var(--surface2);
+           border:1px solid var(--outline);color:var(--text);font-weight:700;font-size:17px;margin-right:10px}
+  /* ---------- menú lateral ---------- */
+  .rail{position:absolute;left:0;top:0;bottom:0;width:180px;padding:44px 0 0;display:flex;flex-direction:column;align-items:center;gap:10px;
+        background:linear-gradient(90deg,rgba(8,11,19,.96),rgba(8,11,19,.75));border-right:1px solid #172033}
+  .brand{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,var(--accent),#2a7fd6);display:grid;place-items:center;
+         font-weight:900;font-size:26px;color:#06121a;margin-bottom:26px;letter-spacing:-1px}
+  .nav{width:144px;height:96px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:17px;cursor:pointer}
+  .nav .ic{font-size:34px;line-height:1}
+  .nav.cur{color:var(--accent);background:rgba(72,217,200,.08)}
+  .nav.focus{background:var(--surface2);color:var(--text)}
+  .rail .sp{flex:1}
+  /* ---------- inicio ---------- */
+  .home{position:absolute;left:220px;right:0;top:140px;bottom:64px;overflow:hidden}
+  .row{margin-bottom:38px}
+  .row h2{font-size:27px;font-weight:600;margin:0 0 16px 4px;display:flex;align-items:baseline;gap:14px}
+  .row h2 span{font-size:19px;color:var(--dim);font-weight:400}
+  .cards{display:flex;gap:26px;padding:8px 4px}
+  .hero{width:760px;height:300px;border-radius:24px;overflow:hidden;position:relative;cursor:pointer;
+        background:linear-gradient(120deg,#123a5a,#0e223b 55%,#1a1030);border:1px solid #23314a}
+  .hero .art{position:absolute;inset:0;background:radial-gradient(500px 260px at 78% 30%,rgba(72,217,200,.35),transparent 60%),
+             repeating-linear-gradient(115deg,rgba(255,255,255,.03) 0 2px,transparent 2px 26px)}
+  .hero .in{position:absolute;left:34px;right:34px;bottom:30px}
+  .live{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:800;letter-spacing:1px;color:#fff;background:var(--live);border-radius:8px;padding:5px 10px}
+  .hero h3{font-size:44px;margin:14px 0 6px;letter-spacing:-.5px}
+  .hero p{font-size:21px;color:#cdd6e6}
+  .hero .prog{margin-top:18px;height:8px}
+  .side{display:flex;flex-direction:column;gap:20px}
+  .action{width:420px;height:140px;border-radius:22px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:22px;padding:0 28px;cursor:pointer}
+  .action .ic{width:76px;height:76px;border-radius:20px;display:grid;place-items:center;font-size:36px;background:rgba(72,217,200,.12);color:var(--accent);flex:none}
+  .action b{font-size:25px;display:block}
+  .action small{font-size:18px;color:var(--muted)}
+  .ch{width:300px;height:210px;border-radius:22px;background:var(--surface);border:1px solid var(--outline);padding:22px;display:flex;flex-direction:column;cursor:pointer}
+  .ch .hd{display:flex;align-items:center;gap:16px}
+  .ch .num{margin-left:auto;font-size:18px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .ch b{font-size:23px;display:block;margin-top:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ch small{font-size:18px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+  .ch .prog{margin-top:auto}
+  .pl{width:360px;height:180px;border-radius:22px;padding:26px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.07)}
+  .pl b{font-size:28px}
+  .pl small{font-size:19px;color:rgba(255,255,255,.8)}
+  .pl.add{background:transparent;border:2px dashed var(--outline);align-items:center;justify-content:center;gap:10px;color:var(--muted)}
+  .pl.add b{font-size:24px;color:var(--text)}
+  /* ---------- lista: categorías + canales ---------- */
+  .lhead{position:absolute;left:220px;right:64px;top:44px;height:90px;display:flex;align-items:center;gap:22px}
+  .lhead h1{font-size:40px;letter-spacing:-.5px}
+  .lhead .meta{font-size:21px;color:var(--muted)}
+  .search{margin-left:auto;width:420px;height:64px;border-radius:999px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:14px;padding:0 26px;color:var(--dim);font-size:21px;cursor:pointer}
+  .cats{position:absolute;left:220px;top:160px;bottom:84px;width:430px;overflow:hidden;padding:6px 10px 6px 4px}
+  .cat{height:76px;border-radius:16px;display:flex;align-items:center;gap:16px;padding:0 22px;font-size:23px;color:var(--muted);margin-bottom:8px;cursor:pointer}
+  .cat .n{margin-left:auto;font-size:19px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .cat .ic{font-size:26px;width:32px;text-align:center}
+  .cat.cur{background:rgba(72,217,200,.1);color:var(--text)}
+  .cat.cur .n{color:var(--accent)}
+  .cat.focus{background:var(--surface2);color:var(--text)}
+  .chans{position:absolute;left:680px;right:64px;top:160px;bottom:84px;overflow:hidden;padding:6px}
+  .chlist,.scroller{transition:transform .18s ease}
+  .crow{height:112px;border-radius:18px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:22px;padding:0 22px;margin-bottom:12px;cursor:pointer}
+  .crow .no{width:52px;text-align:right;font-size:22px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .crow .tt{flex:1;min-width:0}
+  .crow b{font-size:26px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crow .now{font-size:19px;color:var(--muted);display:flex;gap:12px;align-items:center;margin-top:5px;white-space:nowrap;overflow:hidden}
+  .crow .now em{font-style:normal;color:var(--accent);font-weight:600}
+  .crow .prog{width:100%;max-width:520px;margin-top:10px;height:5px}
+  .crow .next{width:300px;font-size:18px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crow .next span{display:block;color:var(--muted);font-size:16px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .crow .acts{display:flex;gap:10px}
+  .crow .mini{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:var(--surface2);border:1px solid var(--outline);color:var(--accent)}
+  .crow .fav{color:var(--live)}
+  /* ---------- reproductor ---------- */
+  .video{position:absolute;inset:0;background:
+     radial-gradient(900px 520px at 70% 35%,rgba(255,180,90,.35),transparent 60%),
+     radial-gradient(700px 500px at 25% 70%,rgba(60,140,255,.35),transparent 60%),
+     linear-gradient(160deg,#1d3b2a 0%,#0e2a1d 40%,#081a14 100%)}
+  .video::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 3px,transparent 3px 140px)}
+  .pitch{position:absolute;left:50%;top:52%;width:1200px;height:520px;transform:translate(-50%,-50%) perspective(900px) rotateX(48deg);
+         border:4px solid rgba(255,255,255,.35);border-radius:6px}
+  .pitch::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:4px solid rgba(255,255,255,.35)}
+  .pitch::after{content:"";position:absolute;left:50%;top:50%;width:180px;height:180px;margin:-90px;border:4px solid rgba(255,255,255,.35);border-radius:50%}
+  .osd{position:absolute;inset:0;transition:opacity .2s}
+  .osd.hide{opacity:0;pointer-events:none}
+  .otop{position:absolute;left:0;right:0;top:0;height:200px;padding:46px 64px;display:flex;align-items:flex-start;gap:22px;
+        background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,0))}
+  .otop .chn{font-size:30px;font-weight:700}
+  .otop .chn small{display:block;font-size:20px;font-weight:400;color:#cfd7e6}
+  .obot{position:absolute;left:0;right:0;bottom:0;padding:0 64px 46px;background:linear-gradient(0deg,rgba(0,0,0,.9) 30%,rgba(0,0,0,0));height:430px;
+        display:flex;flex-direction:column;justify-content:flex-end}
+  .info{display:flex;gap:30px;align-items:flex-end;margin-bottom:28px}
+  .info h3{font-size:46px;letter-spacing:-.5px;margin:10px 0 8px}
+  .info .t{font-size:22px;color:#d4dbe8}
+  .info .t b{color:var(--accent)}
+  .info .prog{height:8px;margin-top:16px;width:900px}
+  .info .nx{margin-left:auto;width:420px;padding:20px 24px;border-radius:18px;background:rgba(20,27,42,.75);border:1px solid rgba(255,255,255,.08);font-size:20px;color:#d4dbe8}
+  .info .nx span{display:block;font-size:15px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .ctr{display:flex;gap:16px}
+  .btn{height:72px;min-width:72px;padding:0 26px;border-radius:999px;background:rgba(27,36,54,.92);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:12px;font-size:21px;cursor:pointer;color:var(--text)}
+  .btn .ic{font-size:28px}
+  .btn.main{background:var(--text);color:#0b0f19;font-weight:700}
+  .zap{position:absolute;left:0;top:0;bottom:0;width:640px;background:linear-gradient(90deg,rgba(6,9,15,.97) 70%,rgba(6,9,15,0));padding:46px 90px 46px 46px;
+       transform:translateX(-100%);transition:transform .22s ease}
+  .zap.on{transform:none}
+  .zap h4{font-size:26px;margin-bottom:6px}
+  .zap p{font-size:18px;color:var(--muted);margin-bottom:20px}
+  .zrow{height:92px;border-radius:16px;display:flex;align-items:center;gap:18px;padding:0 18px;margin-bottom:8px;cursor:pointer}
+  .zrow .no{width:40px;font-size:20px;color:var(--dim);text-align:right}
+  .zrow b{font-size:22px;display:block}
+  .zrow small{font-size:17px;color:var(--muted)}
+  .zrow.cur{background:rgba(72,217,200,.1)}
+  .zrow.focus{background:var(--surface2)}
+  .toast{position:absolute;left:50%;top:60px;transform:translateX(-50%);padding:16px 28px;border-radius:999px;background:rgba(20,27,42,.95);border:1px solid var(--outline);
+         font-size:21px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+  .toast.on{opacity:1}
+  /* ---------- ajustes ---------- */
+  .sets{position:absolute;left:220px;top:160px;bottom:84px;width:460px;padding:6px}
+  .sitem{height:86px;border-radius:18px;display:flex;align-items:center;gap:18px;padding:0 24px;font-size:23px;color:var(--muted);margin-bottom:8px;cursor:pointer}
+  .sitem .ic{font-size:28px;width:36px;text-align:center}
+  .sitem.cur{background:rgba(72,217,200,.1);color:var(--text)}
+  .sitem.focus{background:var(--surface2);color:var(--text)}
+  .spanel{position:absolute;left:720px;right:64px;top:160px;bottom:84px;padding:6px}
+  .spanel h2{font-size:32px;margin-bottom:6px}
+  .spanel .sub{font-size:20px;color:var(--muted);margin-bottom:26px;max-width:950px}
+  .opt{min-height:100px;border-radius:18px;background:var(--surface);border:1px solid var(--outline);display:flex;align-items:center;gap:22px;padding:18px 28px;margin-bottom:12px;cursor:pointer}
+  .opt .tt{flex:1}
+  .opt b{font-size:24px;display:block}
+  .opt small{font-size:18px;color:var(--muted);display:block;margin-top:4px}
+  .sw{width:84px;height:46px;border-radius:999px;background:#2a3549;position:relative;flex:none;transition:background .15s}
+  .sw::after{content:"";position:absolute;left:5px;top:5px;width:36px;height:36px;border-radius:50%;background:#c7d0e0;transition:left .15s}
+  .sw.on{background:var(--accent)}
+  .sw.on::after{left:43px;background:#06121a}
+  .val{font-size:22px;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:14px}
+  .val .arr{color:var(--dim);font-size:20px}
+  .status{display:flex;align-items:center;gap:14px;padding:18px 26px;border-radius:18px;background:rgba(95,211,138,.08);border:1px solid rgba(95,211,138,.3);font-size:21px;margin-bottom:22px}
+</style>
+</head>
+<body>
+<div class="proto">
+  <b>McP2P-TV · prototipo</b>
+  <button data-go="home" class="on">1 · Inicio</button>
+  <button data-go="list">2 · Lista</button>
+  <button data-go="player">3 · Reproductor</button>
+  <button data-go="settings">4 · Ajustes</button>
+  <div class="keys">Mando:
+    <span class="kbd">← ↑ → ↓</span> mover · <span class="kbd">Enter</span> OK · <span class="kbd">Esc</span> ATRÁS · <span class="kbd">M</span> MENÚ · <span class="kbd">PgUp/PgDn</span> CH+/CH−
+  </div>
+</div>
+<div class="wrap"><div class="tv" id="tv">
+
+  <!-- ===================== INICIO ===================== -->
+  <section class="screen on" id="home">
+    <nav class="rail">
+      <div class="brand">P2P</div>
+      <div class="nav f cur" data-act="go:home"><div class="ic">⌂</div>Inicio</div>
+      <div class="nav f" data-act="go:list"><div class="ic">☰</div>Listas</div>
+      <div class="nav f" data-act="go:list"><div class="ic">♥</div>Favoritos</div>
+      <div class="nav f" data-act="toast:Mediateca · Películas"><div class="ic">🎬</div>Películas</div>
+      <div class="nav f" data-act="toast:Buscar en AceStream"><div class="ic">⌕</div>Buscar</div>
+      <div class="sp"></div>
+      <div class="nav f" data-act="go:settings" style="margin-bottom:30px"><div class="ic">⚙</div>Ajustes</div>
+    </nav>
+    <div class="top">
+      <div class="hello" id="greet">Buenas tardes<small>¿Qué te apetece ver?</small></div>
+      <div class="pills">
+        <div class="pill"><span class="dot"></span>WARP conectado</div>
+        <div class="pill"><span class="dot"></span>Lista para recibir · DLNA</div>
+        <div class="clock" data-clock>--:--</div>
+      </div>
+    </div>
+    <div class="home"><div class="scroller" data-scroll>
+      <div class="row">
+        <h2>Continuar viendo</h2>
+        <div class="cards">
+          <div class="hero f wide" data-act="go:player">
+            <div class="art"></div>
+            <div class="in">
+              <span class="live">● EN DIRECTO</span>
+              <h3>Deportes 1 HD</h3>
+              <p>Liga · Jornada 14 &nbsp;·&nbsp; 21:00 – 23:00</p>
+              <div class="prog"><i style="width:46%"></i></div>
+            </div>
+          </div>
+          <div class="side">
+            <div class="action f" data-act="toast:Pega una ID AceStream, un magnet o una URL"><div class="ic">▶</div><div><b>Reproducir ID o enlace</b><small>AceStream, magnet o URL</small></div></div>
+            <div class="action f" data-act="toast:Escanea el QR con el móvil para enviar tu lista"><div class="ic">⌗</div><div><b>Añadir lista por QR</b><small>Envíala desde el móvil</small></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <h2>Favoritos <span>6 canales</span></h2>
+        <div class="cards" id="favs"></div>
+      </div>
+      <div class="row">
+        <h2>Mis listas <span>3 listas</span></h2>
+        <div class="cards">
+          <div class="pl f" style="background:linear-gradient(135deg,#1f6f8b,#173a63)" data-act="go:list"><b>Lista IPTV</b><small>1.248 canales · actualizada hoy</small></div>
+          <div class="pl f" style="background:linear-gradient(135deg,#6b3fa0,#2d2363)" data-act="go:list"><b>Deportes</b><small>212 canales · hace 2 días</small></div>
+          <div class="pl f" style="background:linear-gradient(135deg,#a0563f,#5a2a2a)" data-act="go:list"><b>Películas</b><small>86 entradas · hace 1 semana</small></div>
+          <div class="pl add f" data-act="toast:Añadir lista desde URL, archivo o QR"><b>＋ Añadir lista</b><small>URL, archivo o QR</small></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="hint"><span><span class="k">OK</span>Abrir</span><span><span class="k">←</span>Menú lateral</span><span><span class="k">MENÚ</span>Opciones</span></div>
+  </section>
+
+  <!-- ===================== LISTA ===================== -->
+  <section class="screen" id="list">
+    <nav class="rail">
+      <div class="brand">P2P</div>
+      <div class="nav f" data-act="go:home"><div class="ic">⌂</div>Inicio</div>
+      <div class="nav f cur" data-act="go:list"><div class="ic">☰</div>Listas</div>
+      <div class="nav f" data-act="toast:Favoritos"><div class="ic">♥</div>Favoritos</div>
+      <div class="nav f" data-act="toast:Mediateca · Películas"><div class="ic">🎬</div>Películas</div>
+      <div class="nav f" data-act="toast:Buscar en AceStream"><div class="ic">⌕</div>Buscar</div>
+      <div class="sp"></div>
+      <div class="nav f" data-act="go:settings" style="margin-bottom:30px"><div class="ic">⚙</div>Ajustes</div>
+    </nav>
+    <div class="lhead">
+      <h1>Lista IPTV</h1><div class="meta">1.248 canales · EPG actualizada 18:02</div>
+      <div class="search f" data-act="toast:Buscar canal (también por voz)">⌕&nbsp; Buscar canal…</div>
+      <div class="clock" data-clock>--:--</div>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="chans"><div class="chlist" id="chlist" data-scroll></div></div>
+    <div class="hint"><span><span class="k">OK</span>Ver canal</span><span><span class="k">→</span>Favorito / Guía</span><span><span class="k">MENÚ</span>Opciones</span><span><span class="k">ATRÁS</span>Volver</span></div>
+  </section>
+
+  <!-- ===================== REPRODUCTOR ===================== -->
+  <section class="screen" id="player">
+    <div class="video"><div class="pitch"></div></div>
+    <div class="osd" id="osd">
+      <div class="otop">
+        <div class="logo" id="plogo" style="width:84px;height:84px;font-size:30px;background:#c0392b">D1</div>
+        <div class="chn" id="pchn">101 · Deportes 1 HD<small>Lista IPTV · Deportes</small></div>
+        <div class="pills" style="margin-left:auto">
+          <div class="pill"><span class="dot"></span>P2P · 23 peers · 4,2 Mbps</div>
+          <div class="pill">1080p · 5.1</div>
+          <div class="clock" data-clock>--:--</div>
+        </div>
+      </div>
+      <div class="obot">
+        <div class="info">
+          <div>
+            <span class="live">● EN DIRECTO</span>
+            <h3 id="pnow">Liga · Jornada 14</h3>
+            <div class="t"><b>21:00 – 23:00</b> &nbsp;·&nbsp; quedan 64 min</div>
+            <div class="prog"><i style="width:46%"></i></div>
+          </div>
+          <div class="nx"><span>Después · 23:00</span>Resumen de la jornada</div>
+        </div>
+        <div class="ctr">
+          <div class="btn main f" data-act="toast:Pausa"><span class="ic">⏸</span>Pausa</div>
+          <div class="btn f" data-act="zap"><span class="ic">☰</span>Canales</div>
+          <div class="btn f" data-act="toast:Guía de programación"><span class="ic">▦</span>Guía</div>
+          <div class="btn f" data-act="toast:Pista de audio: Español 5.1"><span class="ic">♪</span>Audio</div>
+          <div class="btn f" data-act="toast:Subtítulos: desactivados"><span class="ic">CC</span>Subtítulos</div>
+          <div class="btn f" data-act="toast:♥ Añadido a favoritos"><span class="ic">♡</span>Favorito</div>
+          <div class="btn f" data-act="toast:Buscando televisores DLNA…"><span class="ic">📺</span>Enviar a TV</div>
+        </div>
+      </div>
+    </div>
+    <div class="zap" id="zap">
+      <h4>Deportes</h4><p>CH+ / CH− cambia de canal sin abrir la lista</p>
+      <div id="zlist"></div>
+    </div>
+    <div class="toast" id="ptoast"></div>
+  </section>
+
+  <!-- ===================== AJUSTES ===================== -->
+  <section class="screen" id="settings">
+    <nav class="rail">
+      <div class="brand">P2P</div>
+      <div class="nav f" data-act="go:home"><div class="ic">⌂</div>Inicio</div>
+      <div class="nav f" data-act="go:list"><div class="ic">☰</div>Listas</div>
+      <div class="nav f" data-act="toast:Favoritos"><div class="ic">♥</div>Favoritos</div>
+      <div class="nav f" data-act="toast:Mediateca · Películas"><div class="ic">🎬</div>Películas</div>
+      <div class="nav f" data-act="toast:Buscar en AceStream"><div class="ic">⌕</div>Buscar</div>
+      <div class="sp"></div>
+      <div class="nav f cur" data-act="go:settings" style="margin-bottom:30px"><div class="ic">⚙</div>Ajustes</div>
+    </nav>
+    <div class="lhead"><h1>Ajustes</h1><div class="meta">McP2P-TV 1.8.0 · Vontar X4</div><div class="clock" data-clock style="margin-left:auto">--:--</div></div>
+    <div class="sets" id="sets"></div>
+    <div class="spanel" id="spanel"></div>
+    <div class="hint"><span><span class="k">OK</span>Cambiar</span><span><span class="k">← →</span>Ajustar valor</span><span><span class="k">ATRÁS</span>Volver</span></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div></div>
+
+<script>
+/* ======================= datos de ejemplo ======================= */
+const COLORS=['#c0392b','#2a7fd6','#8e44ad','#16a085','#d35400','#2c3e50','#b03a6b','#1f8a4c','#7a5af5','#b8860b'];
+const CATS=[
+  {ic:'★',n:'Favoritos',c:6},{ic:'⚽',n:'Deportes',c:84},{ic:'🎬',n:'Cine',c:132},{ic:'📰',n:'Noticias',c:40},
+  {ic:'🧸',n:'Infantil',c:25},{ic:'♪',n:'Música',c:18},{ic:'🌍',n:'Documentales',c:33},{ic:'📺',n:'Entretenimiento',c:61},{ic:'👁',n:'Ocultas',c:12}];
+const SHOWS={
+  'Deportes':['Liga · Jornada 14','Fútbol internacional','Baloncesto: Euroliga','Tenis: Masters','Motor: Gran Premio','Golf: Open','Ciclismo: Clásica','Resumen deportivo'],
+  'Cine':['Estreno: La última frontera','Ciclo clásicos','Acción: Persecución','Comedia: Vacaciones','Drama: El faro','Suspense: Ecos','Animación: Nubes','Western: Polvo'],
+  'Noticias':['Informativo 21h','Última hora','Economía hoy','El tiempo','Debate de la noche','Internacional','Reportaje','Entrevista'],
+  'Favoritos':['Liga · Jornada 14','Informativo 21h','Estreno: La última frontera','Dibujos de la tarde','Top 40','Planeta azul'],
+};
+function chans(cat){
+  const base={Deportes:['Deportes 1 HD','Deportes 2 HD','Deportes 3','Motor TV','Golf+','Basket Live','Tenis Pro','Ciclismo TV'],
+    Cine:['Cine Estreno','Cine Clásico','Acción HD','Comedia','Drama TV','Suspense','Animación','Western'],
+    Noticias:['Noticias 24h','Última Hora','Economía TV','Meteo','Debate','Internacional','Reportajes','Canal Parlamento'],
+    Favoritos:['Deportes 1 HD','Noticias 24h','Cine Estreno','Infantil Club','Música Top','Docu Planeta']}[cat]
+    || Array.from({length:8},(_,i)=>cat+' '+(i+1));
+  const shows=SHOWS[cat]||base.map(n=>'Programa de '+n);
+  return base.map((n,i)=>({no:100+i+1+(CATS.findIndex(c=>c.n===cat)*20),name:n,now:shows[i%shows.length],
+    t:['21:00 – 23:00','20:30 – 22:00','21:15 – 22:45','20:00 – 21:30'][i%4],p:[46,72,18,88,35,60,12,95][i%8],
+    next:['Resumen de la jornada','Cine de medianoche','Noticias noche','Documental','Concierto','Tertulia'][i%6],fav:i%3===0}));
+}
+const initials=n=>n.replace(/[^A-Za-zÁÉÍÓÚÑ0-9 ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const logo=(n,i,s)=>`<div class="logo" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.36)}px;background:${COLORS[i%COLORS.length]}">${initials(n)}</div>`;
+
+/* ======================= render ======================= */
+document.getElementById('favs').innerHTML=chans('Favoritos').map((c,i)=>`
+  <div class="ch f" data-act="play:${c.name}"><div class="hd">${logo(c.name,i,64)}<span class="num">${c.no}</span></div>
+  <b>${c.name}</b><small>${c.now}</small><div class="prog"><i style="width:${c.p}%"></i></div></div>`).join('');
+
+let curCat=1;
+function renderCats(){
+  document.getElementById('cats').innerHTML=CATS.map((c,i)=>`
+    <div class="cat f ${i===curCat?'cur':''}" data-cat="${i}" data-act="cat:${i}"><span class="ic">${c.ic}</span>${c.n}<span class="n">${c.c}</span></div>`).join('');
+}
+function renderChans(){
+  const list=chans(CATS[curCat].n);
+  document.getElementById('chlist').style.transform='translateY(0)';
+  document.getElementById('chlist').innerHTML=list.map((c,i)=>`
+    <div class="crow f wide" data-act="play:${c.name}">
+      <div class="no">${c.no}</div>${logo(c.name,i+curCat,76)}
+      <div class="tt"><b>${c.name}</b><div class="now"><em>AHORA</em>${c.now} · ${c.t}</div><div class="prog"><i style="width:${c.p}%"></i></div></div>
+      <div class="next"><span>Después</span>${c.next}</div>
+      <div class="acts"><div class="mini f ${c.fav?'fav':''}" data-act="toast:${c.fav?'Quitado de':'Añadido a'} favoritos">${c.fav?'♥':'♡'}</div><div class="mini f" data-act="toast:Guía de ${c.name}">▦</div></div>
+    </div>`).join('');
+}
+renderCats(); renderChans();
+document.getElementById('zlist').innerHTML=chans('Deportes').map((c,i)=>`
+  <div class="zrow f ${i===0?'cur':''}" data-act="play:${c.name}"><div class="no">${c.no}</div>${logo(c.name,i+1,58)}<div><b>${c.name}</b><small>${c.now}</small></div></div>`).join('');
+
+const SETS=[
+  {ic:'🛡',n:'Conexión y WARP',sub:'Túnel Cloudflare WARP para la red P2P. Solo afecta al tráfico de McP2P.',status:'WARP conectado · 162.159.193.4',
+   opts:[['Conectar WARP automáticamente al reproducir','',true],['Mantener WARP activo en TV al salir del reproductor','',true],['Desconectar WARP ahora','Se usará la conexión normal',null]]},
+  {ic:'▶',n:'Reproducción',sub:'Búfer y reproductor. Los cambios se aplican en la siguiente reproducción.',
+   opts:[['Búfer de reproducción','Más segundos = menos cortes, inicio más lento','8 s'],['Reproductor para enlaces Magnet','VLC admite más formatos (MKV)','VLC'],['Reconexión automática','Reintenta durante ~30 s si se corta','Activada']]},
+  {ic:'♪',n:'Audio',sub:'Compatibilidad con barras de sonido y receptores.',
+   opts:[['Decodificador de audio','FFmpeg admite más formatos pero usa más CPU','Automático'],['Salida PCM (sin passthrough)','Evita problemas con Dolby/DTS',false],['Priorizar pista estéreo','Si el canal la ofrece',false],['Diagnóstico de audio','Último formato y errores',null]]},
+  {ic:'▤',n:'Almacenamiento',sub:'Solo archivos temporales. Tus listas y ajustes no se borran.',
+   opts:[['Caché de la aplicación','Ocupa 214 MB','Borrar'],['Caché del motor P2P','Límite de disco','512 MB']]},
+  {ic:'▦',n:'Guía EPG',sub:'Las fuentes url-tvg de tus listas se añaden solas.',
+   opts:[['Fuentes EPG','2 fuentes · actualizada 18:02','Gestionar'],['Actualizar guía ahora','',null]]},
+  {ic:'📺',n:'Enviar y recibir (DLNA)',sub:'Recibe canales desde el móvil u otras apps DLNA de tu red.',status:'Visible en la red como «McP2P-TV (Vontar X4)»',
+   opts:[['Recibir envíos DLNA','Esta TV aparece en «Enviar a TV»',true],['Pedir confirmación a dispositivos nuevos','Reproducir / Permitir siempre / Rechazar',true],['Dispositivos permitidos','2 dispositivos','Gestionar']]},
+  {ic:'ℹ',n:'Acerca de',sub:'McP2P-TV 1.8.0 (prototipo) · motor P2P integrado.',
+   opts:[['Historial de IDs','Vuelve a abrir IDs que funcionaron','Abrir'],['Último informe de error','No hay errores registrados',null],['Versión','McP2P-TV 1.8.0 · versionCode 26','']]},
+];
+let curSet=0;
+function renderSets(){
+  document.getElementById('sets').innerHTML=SETS.map((s,i)=>`<div class="sitem f ${i===curSet?'cur':''}" data-act="set:${i}"><span class="ic">${s.ic}</span>${s.n}</div>`).join('');
+  const s=SETS[curSet];
+  document.getElementById('spanel').innerHTML=`<h2>${s.n}</h2><div class="sub">${s.sub}</div>`+
+    (s.status?`<div class="status"><span class="dot"></span>${s.status}</div>`:'')+
+    s.opts.map((o,i)=>{
+      const [t,d,v]=o; let right='';
+      if(v===true||v===false) right=`<div class="sw ${v?'on':''}"></div>`;
+      else if(v) right=`<div class="val"><span class="arr">‹</span>${v}<span class="arr">›</span></div>`;
+      else right=`<div class="val">›</div>`;
+      return `<div class="opt f wide" data-act="opt:${i}"><div class="tt"><b>${t}</b>${d?`<small>${d}</small>`:''}</div>${right}</div>`;
+    }).join('');
+}
+renderSets();
+
+/* ======================= reloj ======================= */
+function tick(){const d=new Date();const s=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  document.querySelectorAll('[data-clock]').forEach(e=>e.textContent=s);
+  const h=d.getHours();document.getElementById('greet').firstChild.textContent=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';}
+tick(); setInterval(tick,15000);
+
+/* ======================= navegación espacial (mando) ======================= */
+let screen='home', focused=null;
+const lastFocus={};
+function scr(){return document.getElementById(screen)}
+function focusables(){return [...scr().querySelectorAll('.f')].filter(e=>e.offsetParent!==null && !e.closest('.osd.hide') && (!e.closest('.zap')||e.closest('.zap.on')))}
+function setFocus(el){
+  if(!el) return;
+  if(focused) focused.classList.remove('focus');
+  focused=el; el.classList.add('focus'); lastFocus[screen]=el;
+  keepVisible(el);
+}
+function keepVisible(el){
+  const list=el.closest('[data-scroll]'); if(!list) return;
+  const box=list.parentElement.getBoundingClientRect(), item=(el.closest('.crow,.row')||el).getBoundingClientRect();
+  const sc=scale(); let ty=parseFloat((list.style.transform.match(/-?[d.]+/)||[0])[0]);
+  if(item.bottom>box.bottom) ty-=(item.bottom-box.bottom)/sc+24; else if(item.top<box.top) ty+=(box.top-item.top)/sc+24;
+  list.style.transform='translateY('+Math.min(0,ty)+'px)';
+}
+function center(r){return {x:r.left+r.width/2,y:r.top+r.height/2}}
+function move(dir){
+  const all=focusables(); if(!focused||!all.includes(focused)){setFocus(all[0]);return;}
+  // Entrar en un panel lleva a su primer elemento (como en Android TV)
+  if(dir==='right'&&focused.matches('.sitem')){setFocus(document.querySelector('#spanel .opt'));return;}
+  if(dir==='right'&&focused.matches('.cat')){const r=[...document.querySelectorAll('#chlist .crow')].find(e=>e.getBoundingClientRect().top>=document.querySelector('.chans').getBoundingClientRect().top-2);setFocus(r);return;}
+  if(dir==='left'&&focused.matches('.opt')){setFocus(document.querySelector('#sets .sitem.cur'));return;}
+  if(dir==='left'&&focused.matches('.crow')){setFocus(document.querySelector('#cats .cat.cur'));return;}
+  const a=focused.getBoundingClientRect(), ca=center(a); let best=null,bs=1e9;
+  for(const e of all){ if(e===focused) continue;
+    const b=e.getBoundingClientRect(), cb=center(b); const dx=cb.x-ca.x, dy=cb.y-ca.y;
+    let main,cross;
+    if(dir==='left'){ if(b.right>a.left+4 && dx>=-4) continue; main=-dx; cross=Math.abs(dy);}
+    if(dir==='right'){ if(b.left<a.right-4 && dx<=4) continue; main=dx; cross=Math.abs(dy);}
+    if(dir==='up'){ if(b.bottom>a.top+4 && dy>=-4) continue; main=-dy; cross=Math.abs(dx);}
+    if(dir==='down'){ if(b.top<a.bottom-4 && dy<=4) continue; main=dy; cross=Math.abs(dx);}
+    if(main<=0) continue; const s=main+cross*2.2; if(s<bs){bs=s;best=e;}
+  }
+  if(best) setFocus(best);
+}
+function toast(msg){const t=document.getElementById(screen==='player'?'ptoast':'toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1600)}
+function go(s){
+  screen=s; document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===s));
+  document.querySelectorAll('.proto button').forEach(b=>b.classList.toggle('on',b.dataset.go===s));
+  if(focused) focused.classList.remove('focus'); focused=null;
+  if(s==='player'){document.getElementById('osd').classList.remove('hide');document.getElementById('zap').classList.remove('on');armHide();}
+  {const el=lastFocus[s]&&lastFocus[s].isConnected?lastFocus[s]:
+    (s==='list'?document.querySelector('#chlist .crow'):s==='settings'?document.querySelector('#sets .sitem.cur'):s==='player'?document.querySelector('.btn.main'):document.querySelector('#home .hero'));
+    setFocus(el);}
+}
+function act(el){
+  const a=el.dataset.act||''; const [k,v]=[a.split(':')[0],a.slice(a.indexOf(':')+1)];
+  if(k==='go') go(v);
+  else if(k==='toast') toast(v);
+  else if(k==='play'){ setPlaying(v,el); go('player'); }
+  else if(k==='cat'){ curCat=+v; renderCats(); renderChans(); setFocus(document.querySelector(`#cats [data-cat="${v}"]`)); }
+  else if(k==='set'){ curSet=+v; renderSets(); setFocus(document.querySelectorAll('#sets .sitem')[curSet]); }
+  else if(k==='opt'){ const sw=el.querySelector('.sw'); if(sw){sw.classList.toggle('on');toast(sw.classList.contains('on')?'Activado':'Desactivado');} else toast(el.querySelector('b').textContent); }
+  else if(k==='zap'){ document.getElementById('zap').classList.add('on'); setFocus(document.querySelector('#zlist .zrow.cur')); }
+}
+function setPlaying(name,src){ document.getElementById('pchn').firstChild.textContent=name+' ';
+  const lg=src&&src.querySelector('.logo'), pl=document.getElementById('plogo'); if(lg){pl.textContent=lg.textContent;pl.style.background=lg.style.background;} }
+function back(){
+  if(screen==='player'){ const z=document.getElementById('zap'); if(z.classList.contains('on')){z.classList.remove('on');setFocus(document.querySelector('.btn.main'));return;}
+    const o=document.getElementById('osd'); if(!o.classList.contains('hide')){o.classList.add('hide');return;} go('list'); return; }
+  if(screen==='list'||screen==='settings') go('home');
+}
+let hideT; function armHide(){clearTimeout(hideT);hideT=setTimeout(()=>{if(screen==='player'&&!document.getElementById('zap').classList.contains('on'))document.getElementById('osd').classList.add('hide')},6000)}
+function zapStep(d){ if(screen!=='player') return; const rows=[...document.querySelectorAll('#zlist .zrow')]; let i=rows.findIndex(r=>r.classList.contains('cur'));
+  rows[i].classList.remove('cur'); i=(i+d+rows.length)%rows.length; rows[i].classList.add('cur');
+  const n=rows[i].querySelector('b').textContent; setPlaying(rows[i].querySelector('.no').textContent+' · '+n,rows[i]);
+  document.getElementById('osd').classList.remove('hide'); toast((d>0?'CH+ ':'CH− ')+n); armHide(); }
+
+document.addEventListener('keydown',e=>{
+  const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+  if(screen==='player'){ const o=document.getElementById('osd'); if(o.classList.contains('hide')&&!['Escape','Backspace','PageUp','PageDown'].includes(e.key)){o.classList.remove('hide');armHide();e.preventDefault();return;} armHide(); }
+  if(map[e.key]){ e.preventDefault(); move(map[e.key]); }
+  else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(focused) act(focused); }
+  else if(e.key==='Escape'||e.key==='Backspace'){ e.preventDefault(); back(); }
+  else if(e.key==='m'||e.key==='M'){ toast('Opciones: ocultar, mover, renombrar…'); }
+  else if(e.key==='PageUp'){ e.preventDefault(); zapStep(-1); } else if(e.key==='PageDown'){ e.preventDefault(); zapStep(1); }
+  else if(e.key>='1'&&e.key<='4'){ go(['home','list','player','settings'][+e.key-1]); }
+});
+document.getElementById('tv').addEventListener('click',e=>{const el=e.target.closest('.f'); if(el){setFocus(el);act(el);} else if(screen==='player'){document.getElementById('osd').classList.toggle('hide');armHide();}});
+document.querySelectorAll('.proto button').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ======================= escalado de la TV a la ventana ======================= */
+function scale(){const tv=document.getElementById('tv');return parseFloat(tv.dataset.s||1)}
+function fit(){const w=document.querySelector('.wrap'),tv=document.getElementById('tv');
+  const s=Math.min((w.clientWidth-40)/1920,(w.clientHeight-40)/1080); tv.style.transform=`scale(${s})`; tv.dataset.s=s;}
+window.addEventListener('resize',fit); fit(); go('home');
+</script>
+</body>
+</html>
