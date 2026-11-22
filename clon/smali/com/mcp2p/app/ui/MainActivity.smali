@@ -2312,6 +2312,8 @@
     .line 308
     .line 309
     .line 310
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->install(Landroid/app/Activity;)V
+
     return-void
 .end method
 
@@ -3203,6 +3205,8 @@
 
     .line 1
     invoke-super {p0}, Lh/i;->onResume()V
+
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->resume(Landroid/app/Activity;)V
 
     .line 2
     .line 3

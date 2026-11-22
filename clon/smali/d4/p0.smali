@@ -56,7 +56,7 @@
 
     .line 10
     .line 11
-    invoke-static {v0, v1, v2, v4}, LS3/a;->H(Landroid/content/Context;JLjava/lang/String;)Z
+    invoke-static {v0, v1, v2, v4}, Lcom/mcp2p/tv/HomeScreen;->toggleFavorite(Landroid/content/Context;JLjava/lang/String;)Z
 
     .line 12
     .line 13
@@ -76,7 +76,9 @@
 
     .line 20
     :cond_0
-    const-string v1, "Eliminado de favoritos"
+    invoke-static {}, Lcom/mcp2p/tv/HomeScreen;->favToast()Ljava/lang/String;
+
+    move-result-object v1
 
     .line 21
     .line 22

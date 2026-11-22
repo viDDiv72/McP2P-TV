@@ -25,6 +25,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
+## [Sin publicar] · rama `ui-nueva`
+Solo local: no tiene etiqueta ni release. Pendiente de probar en la TVBox.
+
+### Añadido (solo en TV)
+- Inicio nuevo: Reproducir ID o enlace, Añadir lista por QR, Cargar desde USB, Mis listas (máx. 4) y
+  Favoritos grandes (máx. 12), con menú lateral y el logo McP2P.
+- Al abrir una lista desde el Inicio se ven directamente todos sus enlaces (Volver → categorías).
+
+### Corregido
+- Consulta SQL de «todos los canales de una lista» (alias `e` sin declarar); no se usaba hasta ahora.
+
 ## [1.7.1] · 2026-11-22
 **Pre-release** · versionCode 25 · etiqueta `v1.7.1`
 

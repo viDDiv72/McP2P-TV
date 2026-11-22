@@ -713,7 +713,7 @@
     .line 272
     .line 273
     .line 274
-    invoke-virtual {p0}, Lcom/mcp2p/app/ui/PlaylistDetailActivity;->v()V
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->openPlaylist(Landroid/app/Activity;)V
 
     .line 275
     .line 276

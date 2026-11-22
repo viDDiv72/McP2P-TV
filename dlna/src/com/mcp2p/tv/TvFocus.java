@@ -90,7 +90,15 @@ public final class TvFocus {
 
     // ------------------------------------------------------------------ indicador de foco
 
+    private static final int OWN_KEY = 0x6d637033;
+
+    /** Vistas que ya pintan su propio foco (Inicio nuevo): no se les añade borde ni aumento. */
+    public static void markOwnStyle(View v) {
+        v.setTag(OWN_KEY, Boolean.TRUE);
+    }
+
     private static boolean decorates(View v) {
+        if (v != null && Boolean.TRUE.equals(v.getTag(OWN_KEY))) return false;
         if (v == null || v instanceof EditText || v instanceof SurfaceView || v instanceof TextureView
                 || v instanceof AbsSeekBar) return false;
         String n = v.getClass().getName();

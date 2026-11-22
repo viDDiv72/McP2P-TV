@@ -101,6 +101,21 @@ Módulo `com.mcp2p.tv.TvFocus`, solo en TV, enganchado desde `Mcp2pApplication.o
 
 Pendiente para la fase de interfaz: CH+/CH− para cambiar de canal desde el reproductor (necesita pasarle la lista).
 
+### 6. Inicio nuevo para TV (rama `ui-nueva`, sin publicar)
+Diseño acordado en `ui/prototipo/index.html`, hecho nativo en `com.mcp2p.tv.HomeScreen` (solo en TV; en el móvil
+se mantiene la pantalla original). Si algo falla al montarlo, se queda la pantalla original.
+- **Abrir contenido:** Reproducir ID o enlace (con Pegar y recientes; usa `MainActivity.E`, igual que la casilla
+  original), Añadir lista por QR y Cargar desde USB (abren los importadores originales, clase `d4.w`).
+- **Mis listas (máx. 4):** las listas importadas con su nombre y número de enlaces. OK abre **todos los enlaces**
+  directamente; MENÚ: ver por categorías o quitar la lista. Con 4 listas no deja añadir otra desde el Inicio.
+- **Favoritos (máx. 12)** en tarjetas grandes con logo. OK reproduce; MENÚ: quitar. El ♡ de la lista de canales
+  avisa al llegar a 12 (`d4/p0.smali` → `HomeScreen.toggleFavorite`).
+- Menú lateral con el logo McP2P: Inicio, Listas (pantalla original de gestión), Favoritos, Mediateca, Buscar, Ajustes.
+- Enganches smali: `MainActivity.H()` → `install`, `MainActivity.onResume` → `resume`,
+  `PlaylistDetailActivity.onCreate` → `openPlaylist` (modo «todos los enlaces»).
+- **Arreglo de paso:** la consulta de «toda la lista» (`S3/a.smali`, método `l`) usaba el alias `e.` sin declararlo;
+  la app original nunca la llamaba. Ahora es la que usa «todos los enlaces».
+
 **Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).
 A televisores DLNA que no son McP2P-TV se les envía el puente del móvil, así que el móvil debe seguir reproduciendo.
 Las cabeceras HTTP/DRM de algunos canales no viajan por DLNA.

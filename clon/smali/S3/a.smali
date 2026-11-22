@@ -4450,7 +4450,7 @@
     move-result-object p1
 
     .line 42
-    const-string p2, "SELECT title, input, entry_type, tvg_id, tvg_logo, tvg_group_title, favorite FROM playlist_entries WHERE playlist_id=? ORDER BY CASE WHEN tvg_group_title=\'\' THEN 1 ELSE 0 END ASC, e.tvg_group_title COLLATE NOCASE ASC, e.position ASC LIMIT ? OFFSET ?"
+    const-string p2, "SELECT title, input, entry_type, tvg_id, tvg_logo, tvg_group_title, favorite FROM playlist_entries e WHERE playlist_id=? ORDER BY CASE WHEN tvg_group_title=\'\' THEN 1 ELSE 0 END ASC, e.tvg_group_title COLLATE NOCASE ASC, e.position ASC LIMIT ? OFFSET ?"
 
     .line 43
     .line 44
