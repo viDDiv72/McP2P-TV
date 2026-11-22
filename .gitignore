@@ -8,3 +8,4 @@ jadx.log
 *.keystore
 clon/build/
 clon/dist/
+dlna/test/out/

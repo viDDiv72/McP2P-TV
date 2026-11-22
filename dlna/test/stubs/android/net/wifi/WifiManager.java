@@ -1,0 +1,1 @@
+package android.net.wifi; public class WifiManager { public MulticastLock createMulticastLock(String t){return new MulticastLock();} public class MulticastLock { public void setReferenceCounted(boolean b){} public void acquire(){} public void release(){} } }

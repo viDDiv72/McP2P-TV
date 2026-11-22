@@ -15,3 +15,16 @@
     .line 4
     return-void
 .end method
+
+
+# virtual methods
+.method public onCreate()V
+    .locals 0
+
+    invoke-super {p0}, Landroid/app/Application;->onCreate()V
+
+    # McP2P-TV: receptor DLNA en TVBox / Android TV
+    invoke-static {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->startIfTv(Landroid/app/Application;)V
+
+    return-void
+.end method

@@ -1,0 +1,2 @@
+package android.net; public class Uri { private final java.net.URI u; private Uri(String s){u=java.net.URI.create(s);} public static Uri parse(String s){return new Uri(s);}
+ public String getQueryParameter(String k){ String q=u.getRawQuery(); if(q==null) return null; for(String p:q.split("&")){int i=p.indexOf('='); if(i>0&&p.substring(0,i).equals(k)) try{return java.net.URLDecoder.decode(p.substring(i+1),"UTF-8");}catch(Exception e){} } return null;} }

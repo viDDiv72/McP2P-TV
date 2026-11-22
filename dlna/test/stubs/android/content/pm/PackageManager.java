@@ -1,0 +1,1 @@
+package android.content.pm; public class PackageManager { public static final String FEATURE_LEANBACK="leanback",FEATURE_TOUCHSCREEN="touch"; public boolean hasSystemFeature(String f){return false;} }

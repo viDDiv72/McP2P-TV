@@ -26,6 +26,9 @@ if [ ! -f "$KEYSTORE" ]; then
     -dname "CN=McP2P Clon, OU=Dev, O=Local, C=ES" >/dev/null
 fi
 
+echo "== módulo DLNA (Java -> smali)"
+"$ROOT/dlna/build-dlna.sh"
+
 echo "== apktool build"
 java -jar "$APKTOOL" b -f "$ROOT/clon" -o "$OUT/McP2P-clon-unsigned.apk"
 

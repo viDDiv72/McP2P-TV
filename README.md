@@ -50,7 +50,19 @@ adb install build/McP2P-clon-signed.apk
   al pintar el primer canal → la Activity se cierra.
 - **Arreglo:** layout de TV reescrito con la misma estructura que el de móvil y medidas para TV.
 
-## Pendiente / ideas detectadas
-- El motor Go expone `dlnaSearch/dlnaPlay/dlnaState/dlnaStop` y `listen(Receiver)`, pero **ninguna pantalla
-  los usa**: solo existe Google Cast, que las TVBox no certificadas (como la Vontar X4) no traen.
-  Cablear DLNA permitiría enviar canales del móvil a la TVBox.
+### 2. Enviar canales a la TVBox por DLNA (v1.6.0)
+Módulo Java propio en `dlna/src` (compilado a smali por `dlna/build-dlna.sh` en `clon/smali_classes2`).
+No usa las funciones `dlna*` del motor Go porque su formato no se puede verificar sin descompilar el `.so`.
+- **Emisor (móvil):** botón «📺 Enviar a TV» en el reproductor (se oculta solo; reaparece al tocar).
+  Busca MediaRenderers por SSDP y envía `SetAVTransportURI` + `Play`. Para canales P2P usa el puente
+  LAN de Cast (`PlayerActivity.z0` → `T3.e.D()`) y añade `?mcp2p=<ID>` a la URL.
+- **Receptor (TVBox/Android TV):** al abrir la app se anuncia como «McP2P-TV (modelo)», un MediaRenderer
+  DLNA estándar (AVTransport, RenderingControl, ConnectionManager; puerto HTTP 49494).
+  Si la URL trae `mcp2p=`, reproduce el ID con **su propio motor P2P**; si no, reproduce la URL.
+- Los sockets se atan a la red física (Wi-Fi/Ethernet) para que WARP no se lleve el tráfico LAN.
+- Enganches smali: `Mcp2pApplication.onCreate` → `DlnaRenderer.startIfTv`, `PlayerActivity.onCreate` → `DlnaUi.attach`.
+- Prueba en PC (JVM con stubs de Android, sin emulador): `dlna/test` (`Harness.java`).
+
+**Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).
+A televisores DLNA que no son McP2P-TV se les envía el puente del móvil, así que el móvil debe seguir reproduciendo.
+Las cabeceras HTTP/DRM de algunos canales no viajan por DLNA.

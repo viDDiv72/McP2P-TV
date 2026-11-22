@@ -1,0 +1,1 @@
+package android.app; public class Activity extends android.content.Context { public boolean isFinishing(){return false;} public void finish(){} public boolean isChangingConfigurations(){return false;} }

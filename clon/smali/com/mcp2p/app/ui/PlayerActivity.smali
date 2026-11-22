@@ -8456,6 +8456,9 @@
     .line 12
     invoke-virtual {p0, p1}, Lh/i;->setContentView(I)V
 
+    # McP2P-TV: botón «Enviar a TV» (emisor DLNA)
+    invoke-static {p0}, Lcom/mcp2p/dlna/DlnaUi;->attach(Landroid/app/Activity;)V
+
     .line 13
     .line 14
     .line 15
