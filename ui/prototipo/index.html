@@ -271,11 +271,11 @@
           <div class="action f" data-act="usbmodal"><div class="ic">⇪</div><div><b>Cargar desde USB</b><small>Listas M3U y vídeos</small></div></div>
         </div></div>
       </div>
-      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row">
         <h2>Mis listas <span id="nlists"></span></h2>
         <div class="rowvp"><div class="cards" id="homeLists"></div></div>
       </div>
+      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
     </div></div>
     <div class="hint"><span><span class="k">OK</span>Abrir</span><span><span class="k">←</span>Menú</span><span><span class="k">MENÚ</span>Opciones</span></div>
   </section>
@@ -460,13 +460,16 @@ renderLists();
 function listHeader(){const l=LISTS[curList];
   document.getElementById('lname').textContent=l.n;
   document.getElementById('lmeta').textContent=`${l.c.toLocaleString('es-ES')} enlaces · ${l.via}: ${l.src}`;}
-function openList(i){curList=i;listHeader();curCat=LISTS[i].cats[0];renderCats();renderChans();go('list');setFocus(document.querySelector('#chlist .crow'));}
-let curCat=1;
-function renderCats(){const ids=[0,...LISTS[curList].cats];document.getElementById('cats').innerHTML=ids.map(i=>{const c=CATS[i];return `<div class="cat f ${i===curCat?'cur':''}" data-cat="${i}" data-act="cat:${i}"><span class="ic">${c.ic}</span>${c.n}<span class="n">${c.c}</span></div>`;}).join('');}
+/* «Todos los enlaces»: al abrir una lista se ven ya todos sus enlaces, sin elegir categoría */
+const ALL=CATS.push({ic:'≡',n:'Todos los enlaces',c:0})-1;
+function openList(i){curList=i;listHeader();curCat=ALL;renderCats();renderChans();go('list');setFocus(document.querySelector('#chlist .crow'));}
+let curCat=ALL;
+function renderCats(){CATS[ALL].c=LISTS[curList].c.toLocaleString('es-ES');const ids=[ALL,0,...LISTS[curList].cats];document.getElementById('cats').innerHTML=ids.map(i=>{const c=CATS[i];return `<div class="cat f ${i===curCat?'cur':''}" data-cat="${i}" data-act="cat:${i}"><span class="ic">${c.ic}</span>${c.n}<span class="n">${c.c}</span></div>`;}).join('');}
 const LINK=(n,i)=>{let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))>>>0;const x=(h.toString(16)+'a3f9c1e7').slice(0,8);return i%4===3?'http://…/'+x.slice(0,4)+'.m3u8':'ace '+x.slice(0,4)+'…'+x.slice(4,8);};
 function renderChans(){
   const el=document.getElementById('chlist');el.style.transform='';
-  el.innerHTML=chans(CATS[curCat].n).map((c,i)=>`
+  const rows=curCat===ALL?LISTS[curList].cats.flatMap(i=>chans(CATS[i].n)):chans(CATS[curCat].n);
+  el.innerHTML=rows.map((c,i)=>`
     <div class="crow f wide" data-act="play:${c.no} · ${c.name}">
       <div class="no">${c.no}</div>${logo(c.name,i+curCat,78)}
       <div class="tt"><b><span class="nm">${c.name}</span><code>${LINK(c.name,i)}</code></b><div class="now"><em>AHORA</em>${c.now} · ${c.t}</div><div class="prog"><i style="width:${c.p}%"></i></div></div>
