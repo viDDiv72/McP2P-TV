@@ -275,7 +275,7 @@
         <h2>Mis listas <span id="nlists"></span></h2>
         <div class="rowvp"><div class="cards" id="homeLists"></div></div>
       </div>
-      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
+      <div class="row"><h2>Favoritos <span id="nfavs"></span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
     </div></div>
     <div class="hint"><span><span class="k">OK</span>Abrir</span><span><span class="k">←</span>Menú</span><span><span class="k">MENÚ</span>Opciones</span></div>
   </section>
@@ -400,15 +400,17 @@ const CATS=[{ic:'★',n:'Favoritos',c:6},{ic:'⚽',n:'Deportes',c:84},{ic:'🎬'
 const BASE={Deportes:['Deportes 1 HD','Deportes 2 HD','Deportes 3','Motor TV','Golf+','Basket Live','Tenis Pro','Ciclismo TV'],
   Cine:['Cine Estreno','Cine Clásico','Acción HD','Comedia','Drama TV','Suspense','Animación','Western'],
   Noticias:['Noticias 24h','Última Hora','Economía TV','Meteo','Debate','Internacional','Reportajes','Parlamento'],
-  Favoritos:['Deportes 1 HD','Noticias 24h','Cine Estreno','Infantil Club','Música Top','Docu Planeta']};
+  Favoritos:null};
+const FAVS=['Deportes 1 HD','Noticias 24h','Cine Estreno','Infantil Club','Música Top','Docu Planeta','Deportes 2 HD','Motor TV','Cine Clásico','Última Hora','Acción HD','Tenis Pro'];
+BASE.Favoritos=FAVS;
 const SHOWS={Deportes:['Liga · Jornada 14','Fútbol internacional','Baloncesto: Euroliga','Motor: Gran Premio','Golf: Open','Tenis: Masters','Ciclismo: Clásica','Resumen deportivo'],
   Cine:['Estreno: La última frontera','Ciclo clásicos','Persecución','Vacaciones','El faro','Ecos','Nubes','Polvo'],
   Noticias:['Informativo 21h','Última hora','Economía hoy','El tiempo','Debate de la noche','Internacional','Reportaje','Pleno'],
-  Favoritos:['Liga · Jornada 14','Informativo 21h','Estreno: La última frontera','Dibujos de la tarde','Top 40','Planeta azul']};
+  Favoritos:['Liga · Jornada 14','Informativo 21h','Estreno: La última frontera','Dibujos de la tarde','Top 40','Planeta azul','Fútbol internacional','Motor: Gran Premio','Clásicos del oeste','Boletín de última hora','Acción de madrugada','Tenis: Masters']};
 function chans(cat){
   const base=BASE[cat]||Array.from({length:8},(_,i)=>cat+' '+(i+1)),shows=SHOWS[cat]||base.map(n=>'Programa de '+n),ci=Math.max(0,CATS.findIndex(c=>c.n===cat));
   return base.map((n,i)=>({no:100+ci*20+i+1,name:n,now:shows[i%shows.length],t:['21:00 – 23:00','20:30 – 22:00','21:15 – 22:45','20:00 – 21:30'][i%4],
-    p:[46,72,18,88,35,60,12,95][i%8],next:['Resumen de la jornada','Cine de medianoche','Noticias noche','Documental','Concierto','Tertulia'][i%6],fav:i%3===0}));
+    p:[46,72,18,88,35,60,12,95][i%8],next:['Resumen de la jornada','Cine de medianoche','Noticias noche','Documental','Concierto','Tertulia'][i%6],fav:FAVS.includes(n)}));
 }
 const initials=n=>n.replace(/[^A-Za-zÁÉÍÓÚÑ0-9 ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 const logo=(n,i,s)=>`<div class="logo" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.36)}px;background:${COLORS[i%COLORS.length]}">${initials(n)}</div>`;
@@ -435,9 +437,22 @@ function posterArt(m,big){const [t,y,,,r,c,q]=m;
 const posterCard=(m,i)=>`<div class="poster f" data-act="movie:${i}">${posterArt(m)}<div class="cap">${m[0]}</div></div>`;
 
 /* render */
-document.getElementById('favs').innerHTML=chans('Favoritos').map((c,i)=>`
+/* favoritos: máximo 12 en el inicio */
+const MAX_FAVS=12;
+function renderFavs(){
+  CATS[0].c=FAVS.length;
+  document.getElementById('nfavs').textContent=`${FAVS.length} de ${MAX_FAVS}`;
+  document.getElementById('favs').innerHTML=FAVS.length?chans('Favoritos').map((c,i)=>`
   <div class="ch f" data-act="play:${c.no} · ${c.name}"><div class="hd">${logo(c.name,i,84)}<span class="num">${c.no}</span></div>
-  <b>${c.name}</b><small>${c.now}</small><div class="prog"><i style="width:${c.p}%"></i></div></div>`).join('');
+  <b>${c.name}</b><small>${c.now}</small><div class="prog"><i style="width:${c.p}%"></i></div></div>`).join(''):
+  `<div class="pl add f" data-act="toast:Pulsa ♡ en cualquier canal para añadirlo"><b>Sin favoritos</b><small>Pulsa ♡ en un canal</small></div>`;
+}
+function toggleFav(n){const k=FAVS.indexOf(n);
+  if(k>=0){FAVS.splice(k,1);toast(`Quitado de favoritos · ${FAVS.length} de ${MAX_FAVS}`);}
+  else if(FAVS.length>=MAX_FAVS){toast(`Máximo ${MAX_FAVS} favoritos: quita uno para añadir otro`);return false;}
+  else{FAVS.push(n);toast(`♥ Añadido a favoritos · ${FAVS.length} de ${MAX_FAVS}`);}
+  renderFavs();return true;}
+renderFavs();
 const GROUPS=[['Recién añadidas',[0,3,10,6,1,4,8,2]],['Acción y aventura',[3,10,0,8,5,1]],['Para toda la familia',[4,6,7,10,11,2]],['Mejor valoradas',[7,4,0,10,2,11,8]]];
 document.getElementById('mrows').innerHTML=GROUPS.map(([g,ids])=>`<div class="row"><h2>${g} <span>${ids.length} películas</span></h2><div class="rowvp"><div class="cards">${ids.map(i=>posterCard(MOVIES[i],i)).join('')}</div></div></div>`).join('');
 
@@ -449,13 +464,19 @@ const LISTS=[
 ];
 const GR=[['#1f8a4c','#0e3b24'],['#d35400','#5a2300'],['#16a085','#0b3f36']];
 let curList=0;
+/* máximo 4 listas en el inicio */
+const MAX_LISTS=4,FULL_MSG=`Ya tienes ${MAX_LISTS} listas: quita una (MENÚ sobre la lista) para añadir otra`;
 function renderLists(){
-  document.getElementById('nlists').textContent=LISTS.length+' listas';
-  document.getElementById('homeLists').innerHTML=LISTS.map((l,i)=>`<div class="pl f" style="background:linear-gradient(135deg,${l.g[0]},${l.g[1]})" data-act="list:${i}">
+  document.getElementById('nlists').textContent=`${LISTS.length} de ${MAX_LISTS}`;
+  document.getElementById('homeLists').innerHTML=LISTS.map((l,i)=>`<div class="pl f" style="background:linear-gradient(135deg,${l.g[0]},${l.g[1]})" data-act="list:${i}" data-list="${i}">
     <b>${l.n}</b><div><small>${l.c.toLocaleString('es-ES')} enlaces · ${l.when}</small><div class="src"><i>${l.via}</i>${l.src}</div></div></div>`).join('')+
-    `<div class="pl add f" data-act="toast:Añadir lista: URL, archivo, QR o USB · le pones el nombre que quieras"><b>＋ Añadir lista</b><small>URL, archivo, QR o USB</small></div>`;
+    (LISTS.length<MAX_LISTS?`<div class="pl add f" data-act="toast:Añadir lista: URL, archivo, QR o USB · le pones el nombre que quieras"><b>＋ Añadir lista</b><small>Puedes añadir ${MAX_LISTS-LISTS.length} más</small></div>`:'');
 }
-function addList(n,via,src,c,cats){LISTS.push({n,via,src,c,cats,when:'añadida ahora',g:GR[LISTS.length%GR.length]});renderLists();}
+function addList(n,via,src,c,cats){if(LISTS.length>=MAX_LISTS){toast(FULL_MSG);return false;}
+  LISTS.push({n,via,src,c,cats,when:'añadida ahora',g:GR[LISTS.length%GR.length]});renderLists();return true;}
+function removeList(i){const l=LISTS.splice(i,1)[0];if(curList>=LISTS.length)curList=0;renderLists();
+  setFocus(document.querySelector(`#homeLists [data-list="${Math.min(i,LISTS.length-1)}"]`)||document.querySelector('#homeLists .pl'));
+  toast(`Lista «${l.n}» quitada · ${LISTS.length} de ${MAX_LISTS}`);}
 renderLists();
 function listHeader(){const l=LISTS[curList];
   document.getElementById('lname').textContent=l.n;
@@ -474,7 +495,7 @@ function renderChans(){
       <div class="no">${c.no}</div>${logo(c.name,i+curCat,78)}
       <div class="tt"><b><span class="nm">${c.name}</span><code>${LINK(c.name,i)}</code></b><div class="now"><em>AHORA</em>${c.now} · ${c.t}</div><div class="prog"><i style="width:${c.p}%"></i></div></div>
       <div class="next"><span>Después</span>${c.next}</div>
-      <div class="acts"><div class="mini f ${c.fav?'fav':''}" data-act="toast:${c.fav?'Quitado de':'Añadido a'} favoritos">${c.fav?'♥':'♡'}</div><div class="mini f" data-act="toast:Guía de ${c.name}">▦</div></div>
+      <div class="acts"><div class="mini f ${c.fav?'fav':''}" data-act="fav:${c.name}">${c.fav?'♥':'♡'}</div><div class="mini f" data-act="toast:Guía de ${c.name}">▦</div></div>
     </div>`).join('');
 }
 listHeader();renderCats();renderChans();
@@ -596,8 +617,10 @@ function act(el){
     closeModal();setPlaying('ID · '+(val.length>26?val.slice(0,24)+'…':val),null);const pl=document.getElementById('plogo');pl.textContent='▶';pl.style.background='linear-gradient(135deg,#2f6bff,#9b3cff)';
     document.getElementById('pnow').textContent='Contenido P2P';document.getElementById('plive').style.display='none';go('player');}
   else if(k==='list')openList(+v);
-  else if(k==='qrok'){closeModal();addList('Lista del móvil','QR','enviada desde el móvil',236,[1,3,4]);toast('Lista «Lista del móvil» añadida a Mis listas · 236 enlaces');}
-  else if(k==='usblist'){closeModal();const [f,n]=v.split('|');addList(f.replace(/\.m3u8?$/,''),'USB',f,+n,f.startsWith('dep')?[1]:[2,3,5]);toast(`Lista «${f}» añadida a Mis listas · ${n} enlaces`);}
+  else if(k==='qrok'){closeModal();if(addList('Lista del móvil','QR','enviada desde el móvil',236,[1,3,4]))toast(`Lista «Lista del móvil» añadida · ${LISTS.length} de ${MAX_LISTS}`);}
+  else if(k==='usblist'){closeModal();const [f,n]=v.split('|');if(addList(f.replace(/\.m3u8?$/,''),'USB',f,+n,f.startsWith('dep')?[1]:[2,3,5]))toast(`Lista «${f}» añadida · ${LISTS.length} de ${MAX_LISTS}`);}
+  else if(k==='fav'){const rows=[...document.querySelectorAll('#chlist .crow')],idx=rows.indexOf(el.closest('.crow'));
+    if(toggleFav(v)){renderCats();renderChans();const r=document.querySelectorAll('#chlist .crow')[idx];setFocus(r?r.querySelector('.mini'):document.querySelector('#chlist .crow'));}}
   else if(k==='usbok'){closeModal();toast(v);}
   else if(k==='play'){setPlaying(v,el);document.getElementById('pnow').textContent='Liga · Jornada 14';document.getElementById('plive').style.display='';go('player');}
   else if(k==='movie'){if(screen!=='movies')go('movies');openMovie(+v);}
@@ -632,7 +655,7 @@ document.addEventListener('keydown',e=>{
   if(map[e.key]){e.preventDefault();move(map[e.key]);}
   else if(e.key==='Enter'||e.key===' '){e.preventDefault();if(focused)act(focused);}
   else if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();back();}
-  else if(e.key==='m'||e.key==='M')toast('Opciones: ocultar, mover, renombrar…');
+  else if(e.key==='m'||e.key==='M'){if(focused&&focused.dataset.list!==undefined)removeList(+focused.dataset.list);else toast('Opciones: ocultar, mover, renombrar…');}
   else if(e.key==='PageUp'){e.preventDefault();zapStep(-1);}else if(e.key==='PageDown'){e.preventDefault();zapStep(1);}
   else if(e.key>='1'&&e.key<='5'&&!modal)go(['home','list','movies','player','settings'][+e.key-1]);
 });
