@@ -7,8 +7,8 @@ sdkInfo:
   minSdkVersion: 24
   targetSdkVersion: 35
 versionInfo:
-  versionCode: 20
-  versionName: 1.5.6
+  versionCode: 21
+  versionName: 1.5.6-tvfix
 resourcesInfo:
   packageId: 127
 doNotCompress:

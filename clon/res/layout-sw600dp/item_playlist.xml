@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView android:focusable="true" android:clickable="true" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp" android:foreground="?selectableItemBackground" app:cardBackgroundColor="@color/mcp_surface" app:cardCornerRadius="16.0dp" app:cardElevation="0.0dp" app:strokeColor="@color/mcp_outline" app:strokeWidth="1.0dp"
+<!--
+  FIX TVBox (Vontar X4 y cualquier pantalla >= 600dp):
+  la versión original de este layout no contenía item_channel_card,
+  item_favorite_action, item_epg_action ni item_favorite_icon. El adaptador
+  d4.v0 (C1793v0.onBindViewHolder) los usa sin comprobar null, así que al entrar
+  en una categoría se producía un NullPointerException y la app volvía al menú
+  principal. Este layout replica la estructura del layout de móvil con
+  medidas adaptadas a TV.
+-->
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:focusable="false" android:clickable="false" android:clipChildren="false" android:clipToPadding="false" android:descendantFocusability="afterDescendants" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8.0dp"
   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:paddingTop="9.0dp" android:paddingBottom="9.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="112.0dp" android:paddingStart="12.0dp" android:paddingEnd="7.0dp">
-        <FrameLayout android:background="@drawable/bg_item_icon" android:layout_width="72.0dp" android:layout_height="72.0dp">
-            <ImageView android:id="@id/item_logo" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:contentDescription="Logo del canal" />
-            <TextView android:textSize="19.0sp" android:textStyle="bold" android:textColor="@color/mcp_accent" android:gravity="center" android:id="@id/item_icon" android:layout_width="match_parent" android:layout_height="match_parent" android:text="TV" />
-        </FrameLayout>
-        <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="12.0dp">
-            <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:ellipsize="end" android:id="@id/item_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" />
-            <TextView android:textSize="15.0sp" android:textColor="@color/mcp_text_muted" android:ellipsize="end" android:id="@id/item_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3.0dp" android:maxLines="1" />
-            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dp">
-                <ProgressBar android:id="@id/item_program_progress" android:visibility="gone" android:layout_width="0.0dp" android:layout_height="4.0dp" android:max="100" android:progress="0" android:layout_weight="1.0" android:progressTint="@color/mcp_accent" android:progressBackgroundTint="@color/mcp_outline" style="?android:progressBarStyleHorizontal" />
-                <TextView android:textSize="14.0sp" android:textColor="@color/mcp_text_muted" android:id="@id/item_program_end" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8.0dp" />
+    <com.google.android.material.card.MaterialCardView android:id="@id/item_channel_card" android:focusable="true" android:focusableInTouchMode="false" android:nextFocusRight="@id/item_favorite_action" android:clickable="true" android:layout_width="0.0dp" android:layout_height="wrap_content" android:foreground="?selectableItemBackground" android:minHeight="112.0dp" android:layout_weight="1.0" android:layout_marginEnd="8.0dp" app:cardBackgroundColor="@color/mcp_surface" app:cardCornerRadius="16.0dp" app:cardElevation="0.0dp" app:strokeColor="@color/mcp_outline" app:strokeWidth="1.0dp">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:paddingTop="9.0dp" android:paddingBottom="9.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="112.0dp" android:paddingStart="12.0dp" android:paddingEnd="7.0dp">
+            <FrameLayout android:background="@drawable/bg_item_icon" android:layout_width="72.0dp" android:layout_height="72.0dp">
+                <ImageView android:id="@id/item_logo" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:contentDescription="Logo del canal" />
+                <TextView android:textSize="19.0sp" android:textStyle="bold" android:textColor="@color/mcp_accent" android:gravity="center" android:id="@id/item_icon" android:layout_width="match_parent" android:layout_height="match_parent" android:text="TV" />
+            </FrameLayout>
+            <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="12.0dp">
+                <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="@color/mcp_accent" android:id="@id/item_group" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="3.0dp" android:letterSpacing="0.08" />
+                <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:ellipsize="end" android:id="@id/item_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" />
+                <TextView android:textSize="15.0sp" android:textColor="@color/mcp_text_muted" android:ellipsize="end" android:id="@id/item_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3.0dp" android:maxLines="1" />
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dp">
+                    <ProgressBar android:id="@id/item_program_progress" android:visibility="gone" android:layout_width="0.0dp" android:layout_height="4.0dp" android:max="100" android:progress="0" android:layout_weight="1.0" android:progressTint="@color/mcp_accent" android:progressBackgroundTint="@color/mcp_outline" style="?android:progressBarStyleHorizontal" />
+                    <TextView android:textSize="14.0sp" android:textColor="@color/mcp_text_muted" android:id="@id/item_program_end" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8.0dp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="7.0dp">
-            <ImageButton android:id="@id/item_remove" android:background="?selectableItemBackgroundBorderless" android:focusable="true" android:visibility="gone" android:layout_width="44.0dp" android:layout_height="44.0dp" android:src="@android:drawable/ic_menu_close_clear_cancel" android:contentDescription="Quitar elemento" app:tint="@color/mcp_text_muted" />
-        </LinearLayout>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView android:id="@id/item_favorite_action" android:focusable="true" android:focusableInTouchMode="false" android:nextFocusLeft="@id/item_channel_card" android:nextFocusRight="@id/item_epg_action" android:clickable="true" android:layout_width="72.0dp" android:layout_height="112.0dp" android:contentDescription="Añadir a favoritos" android:layout_marginEnd="8.0dp" app:cardBackgroundColor="@color/mcp_surface" app:cardCornerRadius="14.0dp" app:cardElevation="0.0dp" app:strokeColor="@color/mcp_outline" app:strokeWidth="1.0dp">
+        <TextView android:textSize="32.0sp" android:textColor="@color/mcp_accent" android:gravity="center" android:id="@id/item_favorite_icon" android:layout_width="match_parent" android:layout_height="match_parent" android:text="♡" />
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView android:id="@id/item_epg_action" android:focusable="true" android:focusableInTouchMode="false" android:nextFocusLeft="@id/item_favorite_action" android:clickable="true" android:layout_width="72.0dp" android:layout_height="112.0dp" android:contentDescription="Ver programación EPG" app:cardBackgroundColor="@color/mcp_surface" app:cardCornerRadius="14.0dp" app:cardElevation="0.0dp" app:strokeColor="@color/mcp_outline" app:strokeWidth="1.0dp">
+        <TextView android:textSize="30.0sp" android:textColor="@color/mcp_accent" android:gravity="center" android:id="@id/item_epg_icon" android:layout_width="match_parent" android:layout_height="match_parent" android:text="▦" />
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>
