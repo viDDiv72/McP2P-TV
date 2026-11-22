@@ -95,6 +95,11 @@
   .pl{width:340px;height:176px;flex:none;border-radius:24px;padding:26px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.08)}
   .pl b{font-size:29px}
   .pl small{font-size:19px;color:rgba(255,255,255,.85)}
+  .pl .src{font-size:17px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:8px}
+  .pl .src i{font-style:normal;font-size:14px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.3)}
+  .crow b{display:flex!important;align-items:baseline;min-width:0}
+  .crow b .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .crow b code{flex:none;font:500 17px/1 ui-monospace,Consolas,monospace;color:var(--dim);margin-left:12px;letter-spacing:0}
   .pl.add{background:transparent;border:2px dashed var(--outline);align-items:center;justify-content:center;gap:10px;color:var(--muted)}
   .pl.add b{font-size:25px;color:var(--text)}
   /* pósters */
@@ -268,13 +273,8 @@
       </div>
       <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row">
-        <h2>Mis listas <span>3 listas</span></h2>
-        <div class="rowvp"><div class="cards">
-          <div class="pl f" style="background:linear-gradient(135deg,#2f6bff,#1b2a7a)" data-act="go:list"><b>Lista IPTV</b><small>1.248 canales · actualizada hoy</small></div>
-          <div class="pl f" style="background:linear-gradient(135deg,#7d3cff,#2d1e6b)" data-act="go:list"><b>Deportes</b><small>212 canales · hace 2 días</small></div>
-          <div class="pl f" style="background:linear-gradient(135deg,#b03a8a,#4a1a4f)" data-act="go:movies"><b>Películas</b><small>86 entradas · hace 1 semana</small></div>
-          <div class="pl add f" data-act="toast:Añadir lista desde URL, archivo o QR"><b>＋ Añadir lista</b><small>URL, archivo o QR</small></div>
-        </div></div>
+        <h2>Mis listas <span id="nlists"></span></h2>
+        <div class="rowvp"><div class="cards" id="homeLists"></div></div>
       </div>
     </div></div>
     <div class="hint"><span><span class="k">OK</span>Abrir</span><span><span class="k">←</span>Menú</span><span><span class="k">MENÚ</span>Opciones</span></div>
@@ -283,7 +283,7 @@
   <!-- LISTA -->
   <section class="screen" id="list">
     <nav class="rail" data-rail="list"></nav>
-    <div class="lhead"><h1>Lista IPTV</h1><div class="meta">1.248 canales · EPG 18:02</div>
+    <div class="lhead"><h1 id="lname">Lista</h1><div class="meta" id="lmeta"></div>
       <div class="search f" data-act="toast:Buscar canal (también por voz)">⌕&nbsp; Buscar canal…</div><div class="clock" data-clock>--:--</div></div>
     <div class="cats"><div id="cats" data-scroll></div></div>
     <div class="chans"><div id="chlist" data-scroll></div></div>
@@ -373,8 +373,8 @@
   <div class="modal" id="m-usb"><div class="mbox">
     <h2>Cargar desde USB</h2>
     <div class="usbdev"><span class="dot"></span>Kingston DataTraveler · 32 GB · /storage/1A2B-3C4D</div>
-    <div class="uitem f wide" data-act="usbok:Lista «canales_es.m3u» importada · 184 canales"><span class="ic">☰</span>canales_es.m3u<small>Lista M3U · 2,3 MB</small></div>
-    <div class="uitem f wide" data-act="usbok:Lista «deportes.m3u8» importada · 42 canales"><span class="ic">☰</span>deportes.m3u8<small>Lista M3U · 380 KB</small></div>
+    <div class="uitem f wide" data-act="usblist:canales_es.m3u|184"><span class="ic">☰</span>canales_es.m3u<small>Lista M3U · 2,3 MB</small></div>
+    <div class="uitem f wide" data-act="usblist:deportes.m3u8|42"><span class="ic">☰</span>deportes.m3u8<small>Lista M3U · 380 KB</small></div>
     <div class="uitem f wide" data-act="usbok:Reproduciendo vacaciones_2024.mkv"><span class="ic">🎬</span>vacaciones_2024.mkv<small>Vídeo · 1,4 GB</small></div>
     <div class="uitem f wide" data-act="usbok:Abriendo carpeta Películas"><span class="ic">📁</span>Películas<small>12 elementos</small></div>
     <div class="ctr"><div class="btn f" data-act="close"><span class="ic">✕</span>Cerrar</div></div>
@@ -441,19 +441,40 @@ document.getElementById('favs').innerHTML=chans('Favoritos').map((c,i)=>`
 const GROUPS=[['Recién añadidas',[0,3,10,6,1,4,8,2]],['Acción y aventura',[3,10,0,8,5,1]],['Para toda la familia',[4,6,7,10,11,2]],['Mejor valoradas',[7,4,0,10,2,11,8]]];
 document.getElementById('mrows').innerHTML=GROUPS.map(([g,ids])=>`<div class="row"><h2>${g} <span>${ids.length} películas</span></h2><div class="rowvp"><div class="cards">${ids.map(i=>posterCard(MOVIES[i],i)).join('')}</div></div></div>`).join('');
 
+/* listas cargadas por el usuario (con el nombre que les pone al añadirlas) */
+const LISTS=[
+  {n:'Lista de casa',via:'URL',src:'http://mi-servidor/lista.m3u',c:1248,cats:[1,2,3,4,5,6,7,8],when:'actualizada hoy',g:['#2f6bff','#1b2a7a']},
+  {n:'Fútbol AceStream',via:'QR',src:'enviada desde el móvil',c:212,cats:[1,7],when:'hace 2 días',g:['#7d3cff','#2d1e6b']},
+  {n:'Cine y series',via:'USB',src:'peliculas.m3u',c:86,cats:[2,6],when:'hace 1 semana',g:['#b03a8a','#4a1a4f']},
+];
+const GR=[['#1f8a4c','#0e3b24'],['#d35400','#5a2300'],['#16a085','#0b3f36']];
+let curList=0;
+function renderLists(){
+  document.getElementById('nlists').textContent=LISTS.length+' listas';
+  document.getElementById('homeLists').innerHTML=LISTS.map((l,i)=>`<div class="pl f" style="background:linear-gradient(135deg,${l.g[0]},${l.g[1]})" data-act="list:${i}">
+    <b>${l.n}</b><div><small>${l.c.toLocaleString('es-ES')} enlaces · ${l.when}</small><div class="src"><i>${l.via}</i>${l.src}</div></div></div>`).join('')+
+    `<div class="pl add f" data-act="toast:Añadir lista: URL, archivo, QR o USB · le pones el nombre que quieras"><b>＋ Añadir lista</b><small>URL, archivo, QR o USB</small></div>`;
+}
+function addList(n,via,src,c,cats){LISTS.push({n,via,src,c,cats,when:'añadida ahora',g:GR[LISTS.length%GR.length]});renderLists();}
+renderLists();
+function listHeader(){const l=LISTS[curList];
+  document.getElementById('lname').textContent=l.n;
+  document.getElementById('lmeta').textContent=`${l.c.toLocaleString('es-ES')} enlaces · ${l.via}: ${l.src}`;}
+function openList(i){curList=i;listHeader();curCat=LISTS[i].cats[0];renderCats();renderChans();go('list');setFocus(document.querySelector('#chlist .crow'));}
 let curCat=1;
-function renderCats(){document.getElementById('cats').innerHTML=CATS.map((c,i)=>`<div class="cat f ${i===curCat?'cur':''}" data-cat="${i}" data-act="cat:${i}"><span class="ic">${c.ic}</span>${c.n}<span class="n">${c.c}</span></div>`).join('');}
+function renderCats(){const ids=[0,...LISTS[curList].cats];document.getElementById('cats').innerHTML=ids.map(i=>{const c=CATS[i];return `<div class="cat f ${i===curCat?'cur':''}" data-cat="${i}" data-act="cat:${i}"><span class="ic">${c.ic}</span>${c.n}<span class="n">${c.c}</span></div>`;}).join('');}
+const LINK=(n,i)=>{let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))>>>0;const x=(h.toString(16)+'a3f9c1e7').slice(0,8);return i%4===3?'http://…/'+x.slice(0,4)+'.m3u8':'ace '+x.slice(0,4)+'…'+x.slice(4,8);};
 function renderChans(){
   const el=document.getElementById('chlist');el.style.transform='';
   el.innerHTML=chans(CATS[curCat].n).map((c,i)=>`
     <div class="crow f wide" data-act="play:${c.no} · ${c.name}">
       <div class="no">${c.no}</div>${logo(c.name,i+curCat,78)}
-      <div class="tt"><b>${c.name}</b><div class="now"><em>AHORA</em>${c.now} · ${c.t}</div><div class="prog"><i style="width:${c.p}%"></i></div></div>
+      <div class="tt"><b><span class="nm">${c.name}</span><code>${LINK(c.name,i)}</code></b><div class="now"><em>AHORA</em>${c.now} · ${c.t}</div><div class="prog"><i style="width:${c.p}%"></i></div></div>
       <div class="next"><span>Después</span>${c.next}</div>
       <div class="acts"><div class="mini f ${c.fav?'fav':''}" data-act="toast:${c.fav?'Quitado de':'Añadido a'} favoritos">${c.fav?'♥':'♡'}</div><div class="mini f" data-act="toast:Guía de ${c.name}">▦</div></div>
     </div>`).join('');
 }
-renderCats();renderChans();
+listHeader();renderCats();renderChans();
 document.getElementById('zlist').innerHTML=chans('Deportes').map((c,i)=>`<div class="zrow f ${i===0?'cur':''}" data-act="play:${c.no} · ${c.name}"><div class="no">${c.no}</div>${logo(c.name,i+1,60)}<div><b>${c.name}</b><small>${c.now}</small></div></div>`).join('');
 
 const SETS=[
@@ -571,7 +592,9 @@ function act(el){
   else if(k==='idplay'){const val=idin.value.trim();if(!val){toast('Escribe o pega una ID o enlace');setFocus(idin);idin.focus();return;}
     closeModal();setPlaying('ID · '+(val.length>26?val.slice(0,24)+'…':val),null);const pl=document.getElementById('plogo');pl.textContent='▶';pl.style.background='linear-gradient(135deg,#2f6bff,#9b3cff)';
     document.getElementById('pnow').textContent='Contenido P2P';document.getElementById('plive').style.display='none';go('player');}
-  else if(k==='qrok'){closeModal();toast('Lista «Mi lista del móvil» añadida · 236 canales');}
+  else if(k==='list')openList(+v);
+  else if(k==='qrok'){closeModal();addList('Lista del móvil','QR','enviada desde el móvil',236,[1,3,4]);toast('Lista «Lista del móvil» añadida a Mis listas · 236 enlaces');}
+  else if(k==='usblist'){closeModal();const [f,n]=v.split('|');addList(f.replace(/\.m3u8?$/,''),'USB',f,+n,f.startsWith('dep')?[1]:[2,3,5]);toast(`Lista «${f}» añadida a Mis listas · ${n} enlaces`);}
   else if(k==='usbok'){closeModal();toast(v);}
   else if(k==='play'){setPlaying(v,el);document.getElementById('pnow').textContent='Liga · Jornada 14';document.getElementById('plive').style.display='';go('player');}
   else if(k==='movie'){if(screen!=='movies')go('movies');openMovie(+v);}
