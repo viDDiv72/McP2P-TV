@@ -257,7 +257,6 @@
       <div class="pills"><div class="pill"><span class="dot"></span>WARP</div><div class="pill"><span class="dot"></span>Recibiendo DLNA</div><div class="clock" data-clock>--:--</div></div>
     </div>
     <div class="page"><div data-scroll>
-      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row">
         <h2>Abrir contenido</h2>
         <div class="rowvp"><div class="cards">
@@ -267,7 +266,7 @@
           <div class="action f" data-act="usbmodal"><div class="ic">⇪</div><div><b>Cargar desde USB</b><small>Listas M3U y vídeos</small></div></div>
         </div></div>
       </div>
-      <div class="row"><h2>Películas recién añadidas <span>Mediateca</span></h2><div class="rowvp"><div class="cards" id="homeMovies"></div></div></div>
+      <div class="row"><h2>Favoritos <span>6 canales</span></h2><div class="rowvp"><div class="cards" id="favs"></div></div></div>
       <div class="row">
         <h2>Mis listas <span>3 listas</span></h2>
         <div class="rowvp"><div class="cards">
@@ -439,7 +438,6 @@ const posterCard=(m,i)=>`<div class="poster f" data-act="movie:${i}">${posterArt
 document.getElementById('favs').innerHTML=chans('Favoritos').map((c,i)=>`
   <div class="ch f" data-act="play:${c.no} · ${c.name}"><div class="hd">${logo(c.name,i,84)}<span class="num">${c.no}</span></div>
   <b>${c.name}</b><small>${c.now}</small><div class="prog"><i style="width:${c.p}%"></i></div></div>`).join('');
-document.getElementById('homeMovies').innerHTML=MOVIES.slice(0,8).map(posterCard).join('');
 const GROUPS=[['Recién añadidas',[0,3,10,6,1,4,8,2]],['Acción y aventura',[3,10,0,8,5,1]],['Para toda la familia',[4,6,7,10,11,2]],['Mejor valoradas',[7,4,0,10,2,11,8]]];
 document.getElementById('mrows').innerHTML=GROUPS.map(([g,ids])=>`<div class="row"><h2>${g} <span>${ids.length} películas</span></h2><div class="rowvp"><div class="cards">${ids.map(i=>posterCard(MOVIES[i],i)).join('')}</div></div></div>`).join('');
 
@@ -558,7 +556,7 @@ function go(s){
   if(focused)focused.classList.remove('focus');focused=null;
   if(s==='player'){document.getElementById('osd').classList.remove('hide');document.getElementById('zap').classList.remove('on');armHide();}
   const last=lastFocus[s];
-  const el=last&&last.isConnected&&!last.closest('.detail')?last:document.querySelector(({list:'#chlist .crow',settings:'#sets .sitem.cur',player:'#player .btn.main',movies:'#mrows .poster',home:'#favs .ch'})[s]);
+  const el=last&&last.isConnected&&!last.closest('.detail')?last:document.querySelector(({list:'#chlist .crow',settings:'#sets .sitem.cur',player:'#player .btn.main',movies:'#mrows .poster',home:'#home .idbox'})[s]);
   setFocus(el);
 }
 function setPlaying(name,src){document.getElementById('pchn').firstChild.textContent=name+' ';const lg=src&&src.querySelector('.logo'),pl=document.getElementById('plogo');
