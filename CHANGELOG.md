@@ -16,8 +16,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
-| 1.9.1 | 35 | Sin publicar | Hilos de la Mediateca, arranque más rápido |
-| [1.9.0](#190--2026-11-23) | 34 | Estable | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
+| [1.9.1](#191--2026-11-23) | 35 | Estable | Hilos de la Mediateca, arranque más rápido |
+| [1.9.0](#190--2026-11-23) | 34 | Anterior | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
 | [1.7.1](#171--2026-11-22) | 25 | Pre-release | Reproducción más estable en directos largos |
 | [1.7.0](#170--2026-11-22) | 24 | Pre-release | Navegación con mando en TV |
@@ -28,8 +28,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.1] · sin publicar (rama `mejoras-1.9.1`)
-versionCode 35 · solo local (`build/McP2P-TV-v1.9.1.apk`)
+## [1.9.1] · 2026-11-23
+**Estable** · versionCode 35 · etiqueta `v1.9.1`
 
 ### Corregido
 - La Mediateca dejaba 14 hilos vivos cada vez que se abría (y seguía comprobando películas al salir): ahora se
@@ -167,6 +167,7 @@ versionCode 35 · solo local (`build/McP2P-TV-v1.9.1.apk`)
 Estado exacto de la app original descompilada con apktool, sin ningún cambio. Sirve para comparar
 cualquier versión con el original: `git diff v1.5.6-original v1.7.1 -- clon/`.
 
+[1.9.1]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.9.1
 [1.9.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.9.0
 [1.8.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.8.0
 [1.7.1]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.7.1
