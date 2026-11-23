@@ -66,7 +66,24 @@ public final class MediaTests {
         ok("Origen: sin versiones en inglés ni subtituladas", !anyEn);
         ok("Origen: infohash válidos", allEs);
         ok("Origen: primero las que tienen semillas", sorted);
-        eq("Origen: la primera es 4K", "4K", origen.get(0).quality);
+        eq("Origen: primero la de más semillas (46), aunque no sea 4K", 46, origen.get(0).seeds);
+        ok("Origen: la primera va marcada como recomendada", origen.get(0).recommended && !origen.get(1).recommended);
+        Sources.Stream huge = null;
+        for (Sources.Stream x : origen) if (x.size > 60L * 1073741824L && x.seeds > 0) huge = x;
+        ok("Origen: un 4K de 60+ GB no va entre las 3 primeras", huge == null || origen.indexOf(huge) >= 3);
+
+        // ---- precarga
+        eq("precarga mínima 32 MB", 32L * 1048576L, TorrentFiles.bufferBytes(2L * 1073741824L));
+        eq("precarga 1 % (80 MB en 8 GB)", 8L * 1073741824L / 100, TorrentFiles.bufferBytes(8L * 1073741824L));
+        eq("precarga máxima 128 MB", 128L * 1048576L, TorrentFiles.bufferBytes(60L * 1073741824L));
+        eq("precarga de un archivo pequeño = el archivo", 10L * 1048576L, TorrentFiles.bufferBytes(10L * 1048576L));
+        java.util.List<Integer> pl = TorrentFiles.plan(0, 2L * 1073741824L, 4 * 1048576, 512);
+        eq("plan: 8 piezas de comienzo + 2 finales", 10, pl.size());
+        eq("plan: empieza en la primera pieza", 0, pl.get(0));
+        eq("plan: acaba en la última pieza", 511, pl.get(pl.size() - 1));
+        java.util.List<Integer> pk = TorrentFiles.plan(100L * 1048576L, 50L * 1048576L, 16 * 1048576, 100);
+        eq("plan en un pack: primera pieza del archivo", 6, pk.get(0));
+        ok("plan en un pack: no pide piezas de otros archivos", pk.get(pk.size() - 1) <= 9);
         int merged = 0;
         for (Sources.Stream s : origen) if (s.addon.contains("+")) merged++;
         ok("Origen: duplicados unidos (Peerflix + Torrentio)", merged >= 5);

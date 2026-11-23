@@ -26,8 +26,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.0-beta.2] · rama `ui-limpia` (sin publicar)
-versionCode 28 · solo local (`build/McP2P-TV-v1.9.0-beta.2.apk`), pendiente de probar en la Vontar X4.
+## [1.9.0-beta.3] · rama `ui-limpia` (sin publicar)
+versionCode 29 · solo local (`build/McP2P-TV-v1.9.0-beta.3.apk`), pendiente de probar en la Vontar X4.
 
 ### Añadido
 - Mediateca nueva: catálogo de TMDB con carátulas y fuentes **solo en castellano** de Peerflix y Torrentio;
@@ -36,6 +36,13 @@ versionCode 28 · solo local (`build/McP2P-TV-v1.9.0-beta.2.apk`), pendiente de 
 - Inicio de TV con el diseño limpio: menú lateral fino con el logo, Abrir contenido (Reproducir, Lista por QR,
   Desde USB), Mis listas en 4 huecos y Favoritos en rejilla de 6.
 - Prototipos de interfaz limpia (`ui/prototipo/limpio.html`) y de la Mediateca (`ui/prototipo/mediateca.html`).
+
+### Corregido
+- Películas por magnet a trompicones: el reproductor arrancaba sin nada descargado y libtorrent bajaba trozos
+  sueltos de toda la película. Ahora hay **precarga** (1 % del archivo, 32–128 MB, más el final del archivo)
+  con progreso, velocidad y fuentes en pantalla, y **descarga en orden** (`com.mcp2p.media.StreamTuner`).
+- Las fuentes se ordenan por probabilidad de verse sin cortes (semillas frente a tamaño), con la mejor marcada
+  como «Recomendada» y aviso en las «Muy pesadas» (más de 25 GB); antes iban primero los 4K de 60 GB.
 
 ### Cambiado
 - La Mediateca deja de usar listas de AceStream.

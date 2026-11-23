@@ -30,6 +30,7 @@ public final class Sources {
         public String file;         // archivo dentro del torrent (si se conoce)
         public boolean pack;        // el torrent trae varias películas: se reproduce `file`
         public boolean dualEnglish; // además del castellano trae inglés
+        public boolean recommended; // la que más probabilidades tiene de verse sin cortes
         public int seeds;
         public long size;
         public String provider;
@@ -207,12 +208,27 @@ public final class Sources {
     /** Primero las que tienen semillas; después mejor calidad; después más semillas. */
     public static void sort(List<Stream> l) {
         Collections.sort(l, (a, b) -> {
-            int c = Boolean.compare(b.seeds > 0, a.seeds > 0);
+            int c = Double.compare(fluency(b), fluency(a));
             if (c != 0) return c;
             c = Integer.compare(rank(b.quality), rank(a.quality));
             if (c != 0) return c;
             return Integer.compare(b.seeds, a.seeds);
         });
+        for (int i = 0; i < l.size(); i++) l.get(i).recommended = i == 0 && l.get(i).seeds > 0;
+    }
+
+    /** Archivo pesado: necesita mucha velocidad para verse sin cortes (remux 4K de 30–80 GB…). */
+    public static final long HEAVY = 25L * 1073741824L;
+
+    /**
+     * Probabilidad de verse sin cortes: más semillas = más velocidad; cuanto más pesado el archivo, más velocidad
+     * necesita. Un 1080p de 4 GB con 20 semillas va antes que un 4K de 60 GB con 8.
+     */
+    static double fluency(Stream s) {
+        if (s.seeds <= 0) return 0;
+        double gb = s.size <= 0 ? 8 : s.size / 1073741824.0;
+        double factor = gb <= 8 ? 1.0 : gb <= 16 ? 0.7 : gb <= 30 ? 0.4 : 0.15;
+        return s.seeds * factor;
     }
 
     // ------------------------------------------------------------ reproducción

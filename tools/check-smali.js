@@ -45,6 +45,11 @@ const checks = [
   ['Mediateca: el motor de magnets respeta el archivo indicado', () =>
     /invoke-static \{v10, v11, v4\}, Lcom\/mcp2p\/media\/TorrentFiles;->choose\(Ljava\/lang\/String;ILjava\/lang\/Object;\)I\s+move-result v11\s+if-ltz v11, :cond_16/
       .test(read('smali/T3/c.smali'))],
+  ['Magnets: precarga y descarga en orden antes de abrir el reproductor', () =>
+    read('smali/T3/c.smali').includes('invoke-static {v1, v2, v3, v0}, Lcom/mcp2p/media/StreamTuner;->ready(')
+      && !read('smali/T3/c.smali').includes('invoke-virtual {v2, v3}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z')],
+  ['Magnets: la pantalla de carga muestra el progreso de la precarga', () =>
+    method(read('smali/com/mcp2p/app/ui/PlayerActivity.smali'), 'public final V(JLjava/lang/String;)V').includes('StreamTuner;->overlay(')],
   // Seguridad (v1.6.1)
   ['Copias de seguridad desactivadas', () => read('AndroidManifest.xml').includes('android:allowBackup="false"')],
   ['Arranque: CrashLog, TvFocus y DLNA enganchados', () => {

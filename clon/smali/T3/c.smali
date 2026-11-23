@@ -2592,7 +2592,8 @@
     .line 726
     .line 727
     .line 728
-    invoke-virtual {v2, v3}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+    # McP2P-TV: precarga y descarga en orden antes de abrir el reproductor (com.mcp2p.media.StreamTuner)
+    invoke-static {v1, v2, v3, v0}, Lcom/mcp2p/media/StreamTuner;->ready(Ljava/lang/Object;Landroid/os/Handler;Ljava/lang/Runnable;Ljava/lang/Object;)V
 
     .line 729
     .line 730

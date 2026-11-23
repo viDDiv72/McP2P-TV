@@ -6865,6 +6865,19 @@
 .method public final V(JLjava/lang/String;)V
     .locals 18
 
+    # McP2P-TV: durante la precarga de un magnet, la pantalla de carga muestra el progreso (StreamTuner)
+    move-object/from16 v0, p0
+
+    invoke-static {v0}, Lcom/mcp2p/media/StreamTuner;->overlay(Ljava/lang/Object;)Z
+
+    move-result v1
+
+    if-eqz v1, :mcp2p_overlay_normal
+
+    return-void
+
+    :mcp2p_overlay_normal
+
     .line 1
     move-object/from16 v0, p0
 

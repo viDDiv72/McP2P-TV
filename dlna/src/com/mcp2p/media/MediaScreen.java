@@ -826,7 +826,7 @@ public final class MediaScreen {
 
     static final class Row {
         final LinearLayout root;
-        final TextView q, title, sub, seeds, seedsLbl;
+        final TextView q, title, sub, seeds, seedsLbl, rec;
         final Screen s;
 
         Row(Screen s) {
@@ -855,6 +855,12 @@ public final class MediaScreen {
             sub.setPadding(0, s.dp(4), 0, 0);
             tx.addView(sub);
             root.addView(tx, new LinearLayout.LayoutParams(0, -2, 1f));
+            rec = s.text(s.tv ? "★ RECOMENDADA" : "★", s.tv ? 10.5f : 12, 0xFF0B0C14, true);
+            rec.setPadding(s.dp(8), s.dp(4), s.dp(8), s.dp(4));
+            rec.setBackground(s.round(OK, 6));
+            LinearLayout.LayoutParams rl = new LinearLayout.LayoutParams(-2, -2);
+            rl.rightMargin = s.dp(s.tv ? 16 : 10);
+            root.addView(rec, rl);
             LinearLayout sd = new LinearLayout(s.a);
             sd.setOrientation(LinearLayout.VERTICAL);
             sd.setGravity(Gravity.END);
@@ -885,6 +891,8 @@ public final class MediaScreen {
             if (!size.isEmpty()) b.append("   ").append(size);
             if (s.tv) b.append("   ").append(st.addon);
             if (st.pack && s.tv) b.append("   (de un pack)");
+            if (st.size > Sources.HEAVY) b.append(s.tv ? "   ·  Muy pesada: necesita mucha velocidad" : "   · Muy pesada");
+            rec.setVisibility(st.recommended ? View.VISIBLE : View.GONE);
             sub.setText(b.toString());
             seeds.setText("👤 " + st.seeds);
             seeds.setTextColor(st.seeds > 0 ? TEXT : DIM);
