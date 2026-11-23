@@ -136,7 +136,7 @@ public final class Catalog {
         collect(t, Sources.TORRENTIO, got, failed);
         // (String.join es de API 26; la app admite Android 7, API 24)
         if (got.isEmpty()) throw new IOException("No se pudo conectar con Peerflix ni con Torrentio");
-        return new Found(Sources.merge(got), failed);
+        return new Found(Sources.best(Sources.merge(got)), failed);
     }
 
     private static void collect(Future<List<Sources.Stream>> f, String name, List<List<Sources.Stream>> got, List<String> failed) {

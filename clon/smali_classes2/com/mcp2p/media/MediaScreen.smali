@@ -6,6 +6,7 @@
 # annotations
 .annotation system Ldalvik/annotation/MemberClasses;
     value = {
+        Lcom/mcp2p/media/MediaScreen$PlayerTracker;,
         Lcom/mcp2p/media/MediaScreen$Screen;,
         Lcom/mcp2p/media/MediaScreen$BackKeys;,
         Lcom/mcp2p/media/MediaScreen$MoreOnScroll;,
@@ -101,6 +102,13 @@
 
     .line 64
     :try_start_0
+    invoke-virtual {p0}, Landroid/app/Activity;->getApplication()Landroid/app/Application;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->install(Landroid/app/Application;)V
+
+    .line 65
     new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen;
 
     invoke-direct {v0, p0}, Lcom/mcp2p/media/MediaScreen$Screen;-><init>(Landroid/app/Activity;)V
@@ -118,7 +126,7 @@
 
     const-string v1, "No se pudo montar la Mediateca nueva; se mantiene la original"
 
-    .line 66
+    .line 67
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0

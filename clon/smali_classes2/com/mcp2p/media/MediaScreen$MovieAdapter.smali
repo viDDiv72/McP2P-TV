@@ -22,10 +22,10 @@
 .method constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
-    .line 676
+    .line 736
     invoke-direct {p0}, Landroid/widget/BaseAdapter;-><init>()V
 
-    .line 677
+    .line 737
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
@@ -36,7 +36,7 @@
 .method public getCount()I
     .locals 1
 
-    .line 681
+    .line 741
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget-object v0, v0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
@@ -51,7 +51,7 @@
 .method public getItem(I)Ljava/lang/Object;
     .locals 1
 
-    .line 685
+    .line 745
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget-object v0, v0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
@@ -66,7 +66,7 @@
 .method public getItemId(I)J
     .locals 2
 
-    .line 689
+    .line 749
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget-object v0, v0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
@@ -87,22 +87,22 @@
 
     if-nez p2, :cond_0
 
-    .line 695
+    .line 755
     new-instance p2, Lcom/mcp2p/media/MediaScreen$Cell;
 
     iget-object p3, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     invoke-direct {p2, p3}, Lcom/mcp2p/media/MediaScreen$Cell;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
-    .line 696
+    .line 756
     iget-object p3, p2, Lcom/mcp2p/media/MediaScreen$Cell;->root:Landroid/widget/LinearLayout;
 
-    .line 697
+    .line 757
     invoke-virtual {p3, p2}, Landroid/view/View;->setTag(Ljava/lang/Object;)V
 
     goto :goto_0
 
-    .line 699
+    .line 759
     :cond_0
     invoke-virtual {p2}, Landroid/view/View;->getTag()Ljava/lang/Object;
 
@@ -116,7 +116,7 @@
 
     move-object p2, v7
 
-    .line 701
+    .line 761
     :goto_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
@@ -128,14 +128,14 @@
 
     check-cast v0, Lcom/mcp2p/media/Catalog$Movie;
 
-    .line 702
+    .line 762
     iget-object v1, p2, Lcom/mcp2p/media/MediaScreen$Cell;->title:Landroid/widget/TextView;
 
     iget-object v2, v0, Lcom/mcp2p/media/Catalog$Movie;->title:Ljava/lang/String;
 
     invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 703
+    .line 763
     iget-object v1, p2, Lcom/mcp2p/media/MediaScreen$Cell;->year:Landroid/widget/TextView;
 
     iget v2, v0, Lcom/mcp2p/media/Catalog$Movie;->year:I
@@ -158,7 +158,7 @@
     :goto_1
     invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 704
+    .line 764
     iget-object v1, p2, Lcom/mcp2p/media/MediaScreen$Cell;->img:Landroid/widget/ImageView;
 
     invoke-static {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->poster(Lcom/mcp2p/media/Catalog$Movie;)Ljava/lang/String;
@@ -171,7 +171,7 @@
 
     invoke-static {v1, v2, v4}, Lcom/mcp2p/media/Images;->load(Landroid/widget/ImageView;Ljava/lang/String;I)V
 
-    .line 705
+    .line 765
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget-object v1, v1, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
@@ -194,31 +194,31 @@
 
     if-nez v1, :cond_2
 
-    .line 707
+    .line 767
     iget-object v1, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
     const-string v3, "\u2026"
 
     invoke-virtual {v1, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 708
+    .line 768
     iget-object v1, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
     invoke-virtual {v1, v4}, Landroid/widget/TextView;->setTextColor(I)V
 
-    .line 709
+    .line 769
     iget-object p2, p2, Lcom/mcp2p/media/MediaScreen$Cell;->img:Landroid/widget/ImageView;
 
     invoke-virtual {p2, v2}, Landroid/widget/ImageView;->setAlpha(F)V
 
-    .line 710
+    .line 770
     iget-object p2, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     invoke-virtual {p2, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->check(Lcom/mcp2p/media/Catalog$Movie;)V
 
     goto :goto_4
 
-    .line 711
+    .line 771
     :cond_2
     invoke-virtual {v1}, Ljava/lang/Integer;->intValue()I
 
@@ -226,7 +226,7 @@
 
     if-lez v0, :cond_6
 
-    .line 712
+    .line 772
     iget-object v0, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
     iget-object v4, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
@@ -286,21 +286,21 @@
     :goto_3
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 713
+    .line 773
     iget-object v0, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
     const v1, -0xb02f76
 
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setTextColor(I)V
 
-    .line 714
+    .line 774
     iget-object p2, p2, Lcom/mcp2p/media/MediaScreen$Cell;->img:Landroid/widget/ImageView;
 
     invoke-virtual {p2, v2}, Landroid/widget/ImageView;->setAlpha(F)V
 
     goto :goto_4
 
-    .line 716
+    .line 776
     :cond_6
     iget-object v0, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
@@ -308,19 +308,19 @@
 
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 717
+    .line 777
     iget-object v0, p2, Lcom/mcp2p/media/MediaScreen$Cell;->badge:Landroid/widget/TextView;
 
     invoke-virtual {v0, v4}, Landroid/widget/TextView;->setTextColor(I)V
 
-    .line 718
+    .line 778
     iget-object p2, p2, Lcom/mcp2p/media/MediaScreen$Cell;->img:Landroid/widget/ImageView;
 
     const v0, 0x3ecccccd    # 0.4f
 
     invoke-virtual {p2, v0}, Landroid/widget/ImageView;->setAlpha(F)V
 
-    .line 720
+    .line 780
     :goto_4
     iget-object p2, p0, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 

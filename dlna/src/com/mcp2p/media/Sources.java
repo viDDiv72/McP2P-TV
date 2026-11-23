@@ -217,6 +217,42 @@ public final class Sources {
         for (int i = 0; i < l.size(); i++) l.get(i).recommended = i == 0 && l.get(i).seeds > 0;
     }
 
+    /** Semillas mínimas para mostrar una fuente: con menos, lo normal es que no arranque o vaya a saltos. */
+    public static final int MIN_SEEDS = 10;
+    /** Tamaño máximo: un archivo mayor necesita más velocidad de la que suele dar una conexión doméstica. */
+    public static final long MAX_SIZE = 20L * 1073741824L;
+    /** Opciones que se ofrecen como máximo (las mejores). */
+    public static final int MAX_OPTIONS = 5;
+
+    /**
+     * Solo las fuentes con las que la reproducción es fiable: 10 semillas o más y 20 GB como máximo;
+     * las 5 mejores, ya ordenadas, con la primera marcada como recomendada.
+     */
+    public static List<Stream> best(List<Stream> sorted) {
+        List<Stream> ok = new ArrayList<>();
+        for (Stream s : sorted) {
+            if (s.seeds < MIN_SEEDS) continue;
+            if (s.size > MAX_SIZE) continue;
+            ok.add(s);
+        }
+        // Entre las fiables: primero las de más semillas por grupos (50+, 20+, 10+) y, dentro de cada grupo,
+        // la mejor calidad; así sale la mejor imagen que se puede ver sin cortes.
+        Collections.sort(ok, (a, b) -> {
+            int c = Integer.compare(tier(b.seeds), tier(a.seeds));
+            if (c != 0) return c;
+            c = Integer.compare(rank(b.quality), rank(a.quality));
+            if (c != 0) return c;
+            return Integer.compare(b.seeds, a.seeds);
+        });
+        List<Stream> out = new ArrayList<>(ok.subList(0, Math.min(MAX_OPTIONS, ok.size())));
+        for (int i = 0; i < out.size(); i++) out.get(i).recommended = i == 0;
+        return out;
+    }
+
+    static int tier(int seeds) {
+        return seeds >= 50 ? 2 : seeds >= 20 ? 1 : 0;
+    }
+
     /** Archivo pesado: necesita mucha velocidad para verse sin cortes (remux 4K de 30–80 GB…). */
     public static final long HEAVY = 25L * 1073741824L;
 

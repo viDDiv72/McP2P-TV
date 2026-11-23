@@ -3,32 +3,38 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/View$OnClickListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
+.field public final synthetic f$1:Lcom/mcp2p/media/Catalog$Movie;
+
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;Lcom/mcp2p/media/Catalog$Movie;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
+    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$1:Lcom/mcp2p/media/Catalog$Movie;
+
     return-void
 .end method
 
 
 # virtual methods
-.method public final onClick(Landroid/view/View;)V
-    .locals 1
+.method public final run()V
+    .locals 2
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildHero$16$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
+    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$1:Lcom/mcp2p/media/Catalog$Movie;
+
+    invoke-virtual {v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$check$7$com-mcp2p-media-MediaScreen$Screen(Lcom/mcp2p/media/Catalog$Movie;)V
 
     return-void
 .end method

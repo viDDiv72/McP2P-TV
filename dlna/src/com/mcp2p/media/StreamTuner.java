@@ -31,6 +31,12 @@ public final class StreamTuner {
 
     private StreamTuner() {}
 
+    /**
+     * Progreso de la precarga por infohash: {piezas listas, piezas necesarias, último avance (ms), terminada (0/1)}.
+     * Lo consulta la Mediateca para pasar a otra fuente si esta no avanza.
+     */
+    public static final Map<String, long[]> PROGRESS = new ConcurrentHashMap<>();
+
     static String speed(int bytesPerSec) {
         if (bytesPerSec <= 0) return "0 KB/s";
         if (bytesPerSec >= MB) return String.format(Locale.forLanguageTag("es-ES"), "%.1f MB/s", bytesPerSec / (double) MB);
@@ -78,6 +84,8 @@ public final class StreamTuner {
             android.util.Log.i(TAG, "Precarga: " + need.size() + " piezas de " + (g.pieceLength / 1024) + " KB ("
                     + (TorrentFiles.bufferBytes(g.size) / MB) + " MB del comienzo + final del archivo)");
             long start = System.currentTimeMillis();
+            long lastChange = start;
+            int lastDone = -1;
             while (true) {
                 if (closed != null && closed.get()) {
                     endOverlay();
@@ -85,6 +93,11 @@ public final class StreamTuner {
                 }
                 int done = 0;
                 for (int p : need) if (Boolean.TRUE.equals(have.invoke(handle, p))) done++;
+                if (done != lastDone) {
+                    lastDone = done;
+                    lastChange = System.currentTimeMillis();
+                }
+                PROGRESS.put(hash, new long[]{done, need.size(), lastChange, 0});
                 if (done >= need.size()) break;
                 if (System.currentTimeMillis() - start > MAX_WAIT_MS) {
                     android.util.Log.w(TAG, "Precarga incompleta tras 4 min (" + done + "/" + need.size() + "): se arranca igualmente");
@@ -94,6 +107,7 @@ public final class StreamTuner {
                 Thread.sleep(700);
             }
             endOverlay();
+            PROGRESS.put(hash, new long[]{need.size(), need.size(), System.currentTimeMillis(), 1});
             android.util.Log.i(TAG, "Precarga lista en " + (System.currentTimeMillis() - start) / 1000 + " s");
             if (closed == null || !closed.get()) {
                 main.post(openPlayer);

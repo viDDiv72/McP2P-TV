@@ -61,6 +61,7 @@ public final class MediaScreen {
 
     public static void install(Activity a) {
         try {
+            PlayerTracker.install(a.getApplication());
             new Screen(a).show();
         } catch (Throwable t) {
             Log.w(TAG, "No se pudo montar la Mediateca nueva; se mantiene la original", t);
@@ -431,7 +432,7 @@ public final class MediaScreen {
             bar.setPadding(0, dp(4), 0, dp(10));
             LinearLayout t = new LinearLayout(a);
             t.setGravity(Gravity.BOTTOM);
-            t.addView(text("Fuentes en castellano", 16, TEXT, true));
+            t.addView(text("Mejores fuentes en castellano", 16, TEXT, true));
             srcCount = text("", 13, DIM, false);
             srcCount.setPadding(dp(8), 0, 0, dp(1));
             t.addView(srcCount);
@@ -488,10 +489,11 @@ public final class MediaScreen {
             List<Sources.Stream> all = f.streams;
             srcCount.setText(all.isEmpty() ? "" : String.valueOf(all.size()));
             String empty = all.isEmpty()
-                    ? "Todavía no hay ninguna versión en castellano en Peerflix ni en Torrentio. Vuelve a mirarlo en unos días."
+                    ? "Ahora mismo no hay ninguna versión en castellano con suficientes fuentes para verse bien (mínimo " + Sources.MIN_SEEDS + " semillas). Vuelve a mirarlo más adelante."
                     : null;
             if (!f.failed.isEmpty() && !all.isEmpty())
                 Toast.makeText(a, "Sin respuesta de " + f.failed.get(0) + ": se muestran las demás fuentes", Toast.LENGTH_LONG).show();
+            shownStreams = new ArrayList<>(all);
             sourceAdapter.set(all, empty);
             if (tv) list.post(this::focusFirstRow);
         }
@@ -521,17 +523,75 @@ public final class MediaScreen {
         void play(Sources.Stream s) {
             try {
                 TorrentFiles.hint(s.infoHash, s.fileIdx);
+                TorrentFiles.FILES.remove(s.infoHash);
+                StreamTuner.PROGRESS.remove(s.infoHash);
+                watch(s);
                 Intent i = new Intent();
                 i.setClassName(a, "com.mcp2p.app.ui.PlayerActivity");
                 i.putExtra("com.mcp2p.app.extra.P2P_INPUT", Sources.magnet(s, cur.title));
                 i.putExtra("com.mcp2p.app.extra.TITLE", cur.title + " · " + s.quality);
                 a.startActivity(i);
-                if (s.seeds == 0)
-                    Toast.makeText(a, "Esta fuente no tiene semillas ahora mismo: puede tardar o no arrancar", Toast.LENGTH_LONG).show();
             } catch (Throwable t) {
                 Log.w(TAG, "No se pudo abrir el reproductor", t);
                 Toast.makeText(a, "No se ha podido abrir el reproductor", Toast.LENGTH_LONG).show();
             }
+        }
+
+        // ---------------------------------------------------------------- si una fuente no responde, la siguiente
+
+        List<Sources.Stream> shownStreams = new ArrayList<>();
+        int watchGen;
+        static final long NO_METADATA_MS = 45_000, NO_PROGRESS_MS = 60_000;
+
+        /**
+         * Vigila el intento de reproducción: si en 45 s no llegan los datos del torrent (nadie lo comparte de verdad)
+         * o la precarga sigue a 0 durante 1 min, cierra el reproductor y prueba la siguiente fuente de la lista.
+         */
+        void watch(final Sources.Stream s) {
+            final int g = ++watchGen;
+            final long t0 = System.currentTimeMillis();
+            final Catalog.Movie m = cur;
+            Thread t = new Thread(() -> {
+                Activity started = null;
+                try {
+                    while (g == watchGen) {
+                        Thread.sleep(2000);
+                        Activity p = PlayerTracker.player(t0);
+                        if (p != null) started = p;
+                        if (started != null && (started.isFinishing() || started.isDestroyed())) return; // ha salido
+                        long[] pr = StreamTuner.PROGRESS.get(s.infoHash);
+                        if (pr != null && pr[3] == 1) return; // precarga lista: se está viendo
+                        long now = System.currentTimeMillis();
+                        boolean meta = TorrentFiles.FILES.containsKey(s.infoHash);
+                        boolean dead = (!meta && now - t0 > NO_METADATA_MS)
+                                || (meta && pr != null && pr[0] == 0 && now - pr[2] > NO_PROGRESS_MS);
+                        if (dead) {
+                            final Activity toClose = started;
+                            main.post(() -> fallback(g, s, m, toClose));
+                            return;
+                        }
+                    }
+                } catch (InterruptedException ignored) {}
+            }, "mcp2p-vigila-fuente");
+            t.setDaemon(true);
+            t.start();
+        }
+
+        void fallback(int g, Sources.Stream failed, Catalog.Movie m, Activity player) {
+            if (g != watchGen || m != cur) return;
+            int i = shownStreams.indexOf(failed);
+            Sources.Stream next = i >= 0 && i + 1 < shownStreams.size() ? shownStreams.get(i + 1) : null;
+            Log.i(TAG, "La fuente " + failed.infoHash + " no responde; " + (next == null ? "no quedan más" : "se prueba la siguiente"));
+            if (player != null && !player.isFinishing()) player.finish();
+            if (next == null) {
+                Toast.makeText(a, "Ninguna fuente ha respondido ahora mismo. Prueba más tarde u otra película.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Toast.makeText(a, "Esa fuente no responde: probando la siguiente (" + (i + 2) + " de " + shownStreams.size() + ")…",
+                    Toast.LENGTH_LONG).show();
+            main.postDelayed(() -> {
+                if (m == cur) play(next);
+            }, 800);
         }
 
         /** ATRÁS: de la ficha al catálogo; de una búsqueda a Populares; si no, como siempre. */
@@ -747,10 +807,10 @@ public final class MediaScreen {
             title = s.text("", s.tv ? 13.5f : 12, TEXT, true);
             title.setSingleLine(true);
             title.setEllipsize(TextUtils.TruncateAt.END);
-            title.setPadding(0, s.dp(7), 0, 0);
+            title.setPadding(s.dp(6), s.dp(8), s.dp(6), 0);
             root.addView(title);
             year = s.text("", 11.5f, DIM, false);
-            year.setPadding(0, s.dp(2), 0, 0);
+            year.setPadding(s.dp(6), s.dp(2), s.dp(6), s.dp(4));
             root.addView(year);
         }
     }
@@ -915,6 +975,38 @@ public final class MediaScreen {
         @Override public void onScroll(AbsListView v, int first, int visible, int total) {
             if (total > 0 && first + visible >= total - s.cols * 2) s.loadMore();
         }
+    }
+
+    /** Recuerda la última PlayerActivity abierta (para cerrarla si su fuente no responde). */
+    static final class PlayerTracker implements android.app.Application.ActivityLifecycleCallbacks {
+        private static boolean installed;
+        private static volatile java.lang.ref.WeakReference<Activity> last;
+        private static volatile long lastAt;
+
+        static synchronized void install(android.app.Application app) {
+            if (installed || app == null) return;
+            installed = true;
+            app.registerActivityLifecycleCallbacks(new PlayerTracker());
+        }
+
+        /** El reproductor abierto después de t0, o null. */
+        static Activity player(long t0) {
+            java.lang.ref.WeakReference<Activity> r = last;
+            return r != null && lastAt >= t0 - 1000 ? r.get() : null;
+        }
+
+        @Override public void onActivityCreated(Activity a, android.os.Bundle b) {
+            if (a.getClass().getName().endsWith("PlayerActivity")) {
+                last = new java.lang.ref.WeakReference<>(a);
+                lastAt = System.currentTimeMillis();
+            }
+        }
+        @Override public void onActivityStarted(Activity a) {}
+        @Override public void onActivityResumed(Activity a) {}
+        @Override public void onActivityPaused(Activity a) {}
+        @Override public void onActivityStopped(Activity a) {}
+        @Override public void onActivitySaveInstanceState(Activity a, android.os.Bundle b) {}
+        @Override public void onActivityDestroyed(Activity a) {}
     }
 
     /** Tecla ATRÁS (mando y gesto del móvil). */

@@ -1088,9 +1088,11 @@
     :cond_0
     const/16 p1, 0x17c
 
+    const/high16 p4, 0x3f800000    # 1.0f
+
     if-lt p2, p1, :cond_1
 
-    const p1, 0x3f828f5c    # 1.02f
+    move p1, p4
 
     goto :goto_0
 
@@ -1132,9 +1134,7 @@
 
     move-result p2
 
-    const/high16 p3, 0x3f800000    # 1.0f
-
-    invoke-direct {p1, v3, p2, p3}, Landroid/widget/LinearLayout$LayoutParams;-><init>(IIF)V
+    invoke-direct {p1, v3, p2, p4}, Landroid/widget/LinearLayout$LayoutParams;-><init>(IIF)V
 
     .line 691
     :goto_1

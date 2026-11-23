@@ -77,6 +77,75 @@ public final class TvFocus {
         vto.addOnGlobalLayoutListener(() -> safe(() -> scheduleRecovery(s)));
         Window w = a.getWindow();
         w.setCallback(new KeyCallback(w.getCallback(), s));
+        hidePointer(a, decor);
+    }
+
+    // ------------------------------------------------------------ puntero del ratón
+
+    /**
+     * Algunos mandos (Vontar X4 y otros Amlogic) muestran un puntero de ratón. Dentro de la app se oculta: se navega
+     * de caja en caja con las flechas. Si el mando está en modo ratón, moverlo selecciona la caja que hay debajo.
+     */
+    static void hidePointer(Activity a, View decor) {
+        try {
+            decor.setPointerIcon(android.view.PointerIcon.getSystemIcon(a, android.view.PointerIcon.TYPE_NULL));
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudo ocultar el puntero", t);
+        }
+    }
+
+    /** Modo ratón: la caja enfocable bajo el puntero pasa a estar seleccionada (como con las flechas). */
+    static boolean onPointer(State s, android.view.MotionEvent e) {
+        int act = e.getActionMasked();
+        if (act != android.view.MotionEvent.ACTION_HOVER_MOVE && act != android.view.MotionEvent.ACTION_HOVER_ENTER) return false;
+        if (s.activity.getClass().getName().endsWith("PlayerActivity")) return false;
+        View decor = s.activity.getWindow().getDecorView();
+        int x = (int) e.getX(), y = (int) e.getY();
+        View target = focusableAt(decor, x, y);
+        if (target instanceof android.widget.AbsListView) {
+            // Rejillas y listas: se selecciona el elemento que hay bajo el puntero
+            android.widget.AbsListView lv = (android.widget.AbsListView) target;
+            lv.getLocationInWindow(LOC);
+            int pos = lv.pointToPosition(x - LOC[0], y - LOC[1]);
+            if (!lv.isFocused()) lv.requestFocus();
+            if (pos != android.widget.AdapterView.INVALID_POSITION) stepTo(lv, pos);
+        } else if (target != null && !target.isFocused()) {
+            target.requestFocus();
+        }
+        return false; // el evento sigue su curso normal
+    }
+
+    private static final int[] LOC = new int[2];
+
+    /** Lleva la selección de una rejilla/lista al elemento indicado con pulsaciones de flecha (sin saltos). */
+    private static void stepTo(android.widget.AbsListView lv, int pos) {
+        int cols = lv instanceof android.widget.GridView ? Math.max(1, ((android.widget.GridView) lv).getNumColumns()) : 1;
+        for (int guard = 0; guard < 24; guard++) {
+            int sel = lv.getSelectedItemPosition();
+            if (sel == android.widget.AdapterView.INVALID_POSITION || sel == pos) return;
+            int dr = pos / cols - sel / cols, dc = pos % cols - sel % cols;
+            int key = dr > 0 ? KeyEvent.KEYCODE_DPAD_DOWN : dr < 0 ? KeyEvent.KEYCODE_DPAD_UP
+                    : dc > 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT;
+            lv.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+            lv.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+            if (lv.getSelectedItemPosition() == sel) return; // no se ha movido (borde): parar
+        }
+    }
+
+    private static View focusableAt(View v, int x, int y) {
+        if (!v.isShown()) return null;
+        v.getLocationInWindow(LOC);
+        if (x < LOC[0] || y < LOC[1] || x >= LOC[0] + v.getWidth() || y >= LOC[1] + v.getHeight()) return null;
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            if (g.getDescendantFocusability() != ViewGroup.FOCUS_BLOCK_DESCENDANTS) {
+                for (int i = g.getChildCount() - 1; i >= 0; i--) {
+                    View r = focusableAt(g.getChildAt(i), x, y);
+                    if (r != null) return r;
+                }
+            }
+        }
+        return usable(v) ? v : null;
     }
 
     /** Un fallo en la ayuda de foco nunca debe cerrar la app: se registra y se ignora. */
@@ -307,6 +376,15 @@ public final class TvFocus {
                 Log.w(TAG, "Tecla MENÚ (ignorado)", t);
             }
             return super.dispatchKeyEvent(e);
+        }
+
+        @Override public boolean dispatchGenericMotionEvent(android.view.MotionEvent e) {
+            try {
+                onPointer(s, e);
+            } catch (Throwable t) {
+                Log.w(TAG, "Puntero (ignorado)", t);
+            }
+            return super.dispatchGenericMotionEvent(e);
         }
     }
 }

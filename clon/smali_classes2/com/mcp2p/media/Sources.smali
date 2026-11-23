@@ -32,6 +32,12 @@
 
 .field private static final LATINO:Ljava/util/regex/Pattern;
 
+.field public static final MAX_OPTIONS:I = 0x5
+
+.field public static final MAX_SIZE:J = 0x500000000L
+
+.field public static final MIN_SEEDS:I = 0xa
+
 .field private static final PACK:Ljava/util/regex/Pattern;
 
 .field public static final PEERFLIX:Ljava/lang/String; = "Peerflix"
@@ -145,13 +151,142 @@
     return-void
 .end method
 
+.method public static best(Ljava/util/List;)Ljava/util/List;
+    .locals 6
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Ljava/util/List<",
+            "Lcom/mcp2p/media/Sources$Stream;",
+            ">;)",
+            "Ljava/util/List<",
+            "Lcom/mcp2p/media/Sources$Stream;",
+            ">;"
+        }
+    .end annotation
+
+    .line 232
+    new-instance v0, Ljava/util/ArrayList;
+
+    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+
+    .line 233
+    invoke-interface {p0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
+
+    move-result-object p0
+
+    :goto_0
+    invoke-interface {p0}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v1
+
+    if-eqz v1, :cond_2
+
+    invoke-interface {p0}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v1
+
+    check-cast v1, Lcom/mcp2p/media/Sources$Stream;
+
+    .line 234
+    iget v2, v1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
+
+    const/16 v3, 0xa
+
+    if-ge v2, v3, :cond_0
+
+    goto :goto_0
+
+    .line 235
+    :cond_0
+    iget-wide v2, v1, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    const-wide v4, 0x500000000L
+
+    cmp-long v2, v2, v4
+
+    if-lez v2, :cond_1
+
+    goto :goto_0
+
+    .line 236
+    :cond_1
+    invoke-interface {v0, v1}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    goto :goto_0
+
+    .line 240
+    :cond_2
+    new-instance p0, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;
+
+    invoke-direct {p0}, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;-><init>()V
+
+    invoke-static {v0, p0}, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
+
+    .line 247
+    new-instance p0, Ljava/util/ArrayList;
+
+    const/4 v1, 0x5
+
+    invoke-interface {v0}, Ljava/util/List;->size()I
+
+    move-result v2
+
+    invoke-static {v1, v2}, Ljava/lang/Math;->min(II)I
+
+    move-result v1
+
+    const/4 v2, 0x0
+
+    invoke-interface {v0, v2, v1}, Ljava/util/List;->subList(II)Ljava/util/List;
+
+    move-result-object v0
+
+    invoke-direct {p0, v0}, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+
+    move v0, v2
+
+    .line 248
+    :goto_1
+    invoke-interface {p0}, Ljava/util/List;->size()I
+
+    move-result v1
+
+    if-ge v0, v1, :cond_4
+
+    invoke-interface {p0, v0}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v1
+
+    check-cast v1, Lcom/mcp2p/media/Sources$Stream;
+
+    if-nez v0, :cond_3
+
+    const/4 v3, 0x1
+
+    goto :goto_2
+
+    :cond_3
+    move v3, v2
+
+    :goto_2
+    iput-boolean v3, v1, Lcom/mcp2p/media/Sources$Stream;->recommended:Z
+
+    add-int/lit8 v0, v0, 0x1
+
+    goto :goto_1
+
+    :cond_4
+    return-object p0
+.end method
+
 .method static enc(Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
     :try_start_0
     const-string v0, "UTF-8"
 
-    .line 247
+    .line 283
     invoke-static {p0, v0}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
@@ -173,7 +308,7 @@
 .method static fluency(Lcom/mcp2p/media/Sources$Stream;)D
     .locals 7
 
-    .line 228
+    .line 264
     iget v0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     if-gtz v0, :cond_0
@@ -182,7 +317,7 @@
 
     return-wide v0
 
-    .line 229
+    .line 265
     :cond_0
     iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
 
@@ -241,7 +376,7 @@
     :cond_4
     const-wide v0, 0x3fc3333333333333L    # 0.15
 
-    .line 231
+    .line 267
     :goto_1
     iget p0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
@@ -415,6 +550,65 @@
     return v1
 .end method
 
+.method static synthetic lambda$best$1(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
+    .locals 2
+
+    .line 241
+    iget v0, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
+
+    invoke-static {v0}, Lcom/mcp2p/media/Sources;->tier(I)I
+
+    move-result v0
+
+    iget v1, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
+
+    invoke-static {v1}, Lcom/mcp2p/media/Sources;->tier(I)I
+
+    move-result v1
+
+    invoke-static {v0, v1}, Ljava/lang/Integer;->compare(II)I
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    return v0
+
+    .line 243
+    :cond_0
+    iget-object v0, p1, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
+
+    invoke-static {v0}, Lcom/mcp2p/media/Sources;->rank(Ljava/lang/String;)I
+
+    move-result v0
+
+    iget-object v1, p0, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
+
+    invoke-static {v1}, Lcom/mcp2p/media/Sources;->rank(Ljava/lang/String;)I
+
+    move-result v1
+
+    invoke-static {v0, v1}, Ljava/lang/Integer;->compare(II)I
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    return v0
+
+    .line 245
+    :cond_1
+    iget p1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
+
+    iget p0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
+
+    invoke-static {p1, p0}, Ljava/lang/Integer;->compare(II)I
+
+    move-result p0
+
+    return p0
+.end method
+
 .method static synthetic lambda$sort$0(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
     .locals 4
 
@@ -473,7 +667,7 @@
 .method public static magnet(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
-    .line 238
+    .line 274
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "magnet:?xt=urn:btih:"
@@ -486,7 +680,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 239
+    .line 275
     invoke-virtual {p1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -503,7 +697,7 @@
 
     invoke-virtual {v0, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 240
+    .line 276
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -536,7 +730,7 @@
 
     goto :goto_0
 
-    .line 241
+    .line 277
     :cond_1
     iget p1, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
@@ -550,7 +744,7 @@
 
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
-    .line 242
+    .line 278
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -1610,7 +1804,7 @@
 
     const-string v0, "es-ES"
 
-    .line 256
+    .line 292
     invoke-static {v0}, Ljava/util/Locale;->forLanguageTag(Ljava/lang/String;)Ljava/util/Locale;
 
     move-result-object v0
@@ -1637,7 +1831,7 @@
 
     return-object p0
 
-    .line 257
+    .line 293
     :cond_1
     new-instance v0, Ljava/lang/StringBuilder;
 
@@ -1741,9 +1935,9 @@
     .end annotation
 
     .line 210
-    new-instance v0, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;
+    new-instance v0, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda1;
 
-    invoke-direct {v0}, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;-><init>()V
+    invoke-direct {v0}, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda1;-><init>()V
 
     invoke-static {p0, v0}, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
 
@@ -1793,6 +1987,33 @@
 
     :cond_1
     return-void
+.end method
+
+.method static tier(I)I
+    .locals 1
+
+    const/16 v0, 0x32
+
+    if-lt p0, v0, :cond_0
+
+    const/4 p0, 0x2
+
+    goto :goto_0
+
+    :cond_0
+    const/16 v0, 0x14
+
+    if-lt p0, v0, :cond_1
+
+    const/4 p0, 0x1
+
+    goto :goto_0
+
+    :cond_1
+    const/4 p0, 0x0
+
+    :goto_0
+    return p0
 .end method
 
 .method static yearMatches(Ljava/lang/String;I)Z

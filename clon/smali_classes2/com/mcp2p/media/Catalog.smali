@@ -1176,6 +1176,10 @@
 
     move-result-object v0
 
+    invoke-static {v0}, Lcom/mcp2p/media/Sources;->best(Ljava/util/List;)Ljava/util/List;
+
+    move-result-object v0
+
     invoke-direct {p1, v0, v2}, Lcom/mcp2p/media/Catalog$Found;-><init>(Ljava/util/List;Ljava/util/List;)V
 
     return-object p1

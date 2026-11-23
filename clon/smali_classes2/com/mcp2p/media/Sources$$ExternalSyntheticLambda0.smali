@@ -24,7 +24,7 @@
 
     check-cast p2, Lcom/mcp2p/media/Sources$Stream;
 
-    invoke-static {p1, p2}, Lcom/mcp2p/media/Sources;->lambda$sort$0(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
+    invoke-static {p1, p2}, Lcom/mcp2p/media/Sources;->lambda$best$1(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
 
     move-result p1
 

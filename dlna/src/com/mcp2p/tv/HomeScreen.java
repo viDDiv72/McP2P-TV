@@ -685,7 +685,7 @@ public final class HomeScreen {
             c.setPadding(dp(16), dp(12), dp(16), dp(12));
             c.setOnClickListener(click);
             if (longClick != null) c.setOnLongClickListener(longClick);
-            ownFocus(c, wdp >= 380 ? 1.02f : 1.04f);
+            ownFocus(c, wdp >= 380 ? 1.0f : 1.04f);
             LinearLayout.LayoutParams lp = wdp > 0 ? new LinearLayout.LayoutParams(dp(wdp), dp(hdp))
                     : new LinearLayout.LayoutParams(0, dp(hdp), 1f);
             lp.rightMargin = dp(12);

@@ -3,34 +3,32 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/widget/TextView$OnEditorActionListener;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
-.field public final synthetic f$0:Ljava/lang/Runnable;
+.field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
 
 # direct methods
-.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;->f$0:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+.method public final onClick(Landroid/view/View;)V
     .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;->f$0:Ljava/lang/Runnable;
+    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-static {v0, p1, p2, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$11(Ljava/lang/Runnable;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildHero$16$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
 
-    move-result p1
-
-    return p1
+    return-void
 .end method

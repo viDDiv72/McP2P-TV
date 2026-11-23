@@ -34,17 +34,17 @@
 .method constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 1
 
-    .line 763
+    .line 823
     invoke-direct {p0}, Landroid/widget/BaseAdapter;-><init>()V
 
-    .line 760
+    .line 820
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
     iput-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->items:Ljava/util/List;
 
-    .line 764
+    .line 824
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
@@ -55,7 +55,7 @@
 .method public getCount()I
     .locals 1
 
-    .line 775
+    .line 835
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
     if-eqz v0, :cond_0
@@ -78,7 +78,7 @@
 .method public getItem(I)Ljava/lang/Object;
     .locals 1
 
-    .line 779
+    .line 839
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
     if-eqz v0, :cond_0
@@ -107,7 +107,7 @@
 .method public getItemViewType(I)I
     .locals 0
 
-    .line 791
+    .line 851
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
     if-eqz p1, :cond_0
@@ -126,12 +126,12 @@
 .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
     .locals 3
 
-    .line 799
+    .line 859
     iget-object p3, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
     if-eqz p3, :cond_1
 
-    .line 800
+    .line 860
     instance-of p1, p2, Landroid/widget/TextView;
 
     if-eqz p1, :cond_0
@@ -155,7 +155,7 @@
 
     move-result-object p2
 
-    .line 801
+    .line 861
     :goto_0
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
@@ -163,10 +163,10 @@
 
     const/16 p1, 0x11
 
-    .line 802
+    .line 862
     invoke-virtual {p2, p1}, Landroid/widget/TextView;->setGravity(I)V
 
-    .line 803
+    .line 863
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     const/high16 p3, 0x40400000    # 3.0f
@@ -181,7 +181,7 @@
 
     invoke-virtual {p2, p1, p3}, Landroid/widget/TextView;->setLineSpacing(FF)V
 
-    .line 804
+    .line 864
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     const/high16 p3, 0x41a00000    # 20.0f
@@ -212,7 +212,7 @@
 
     invoke-virtual {p2, p1, v0, p3, v1}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 805
+    .line 865
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     const p3, -0xebe9db
@@ -230,7 +230,7 @@
     :cond_1
     if-eqz p2, :cond_3
 
-    .line 809
+    .line 869
     invoke-virtual {p2}, Landroid/view/View;->getTag()Ljava/lang/Object;
 
     move-result-object p3
@@ -241,7 +241,7 @@
 
     goto :goto_1
 
-    .line 814
+    .line 874
     :cond_2
     invoke-virtual {p2}, Landroid/view/View;->getTag()Ljava/lang/Object;
 
@@ -251,7 +251,7 @@
 
     goto :goto_2
 
-    .line 810
+    .line 870
     :cond_3
     :goto_1
     new-instance p3, Lcom/mcp2p/media/MediaScreen$Row;
@@ -260,13 +260,13 @@
 
     invoke-direct {p3, p2}, Lcom/mcp2p/media/MediaScreen$Row;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
-    .line 811
+    .line 871
     iget-object p2, p3, Lcom/mcp2p/media/MediaScreen$Row;->root:Landroid/widget/LinearLayout;
 
-    .line 812
+    .line 872
     invoke-virtual {p2, p3}, Landroid/view/View;->setTag(Ljava/lang/Object;)V
 
-    .line 816
+    .line 876
     :goto_2
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->items:Ljava/util/List;
 
@@ -276,17 +276,17 @@
 
     check-cast v0, Lcom/mcp2p/media/Sources$Stream;
 
-    .line 817
+    .line 877
     invoke-virtual {p3, v0}, Lcom/mcp2p/media/MediaScreen$Row;->bind(Lcom/mcp2p/media/Sources$Stream;)V
 
-    .line 818
+    .line 878
     iget-object v1, p3, Lcom/mcp2p/media/MediaScreen$Row;->root:Landroid/widget/LinearLayout;
 
     iget-object v2, v0, Lcom/mcp2p/media/Sources$Stream;->title:Ljava/lang/String;
 
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->setContentDescription(Ljava/lang/CharSequence;)V
 
-    .line 819
+    .line 879
     iget-object v1, p3, Lcom/mcp2p/media/MediaScreen$Row;->root:Landroid/widget/LinearLayout;
 
     if-nez p1, :cond_4
@@ -303,7 +303,7 @@
 
     invoke-virtual {v1, v2, p1}, Landroid/widget/LinearLayout;->setTag(ILjava/lang/Object;)V
 
-    .line 820
+    .line 880
     iget-object p1, p3, Lcom/mcp2p/media/MediaScreen$Row;->root:Landroid/widget/LinearLayout;
 
     new-instance p3, Lcom/mcp2p/media/MediaScreen$SourceAdapter$$ExternalSyntheticLambda0;
@@ -326,7 +326,7 @@
 .method public isEnabled(I)Z
     .locals 0
 
-    .line 795
+    .line 855
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
     if-nez p1, :cond_0
@@ -345,7 +345,7 @@
 .method synthetic lambda$getView$0$com-mcp2p-media-MediaScreen$SourceAdapter(Lcom/mcp2p/media/Sources$Stream;Landroid/view/View;)V
     .locals 0
 
-    .line 820
+    .line 880
     iget-object p2, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     invoke-virtual {p2, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->play(Lcom/mcp2p/media/Sources$Stream;)V
@@ -366,19 +366,19 @@
         }
     .end annotation
 
-    .line 768
+    .line 828
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->items:Ljava/util/List;
 
     invoke-interface {v0}, Ljava/util/List;->clear()V
 
     if-eqz p1, :cond_0
 
-    .line 769
+    .line 829
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->items:Ljava/util/List;
 
     invoke-interface {v0, p1}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
 
-    .line 770
+    .line 830
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->items:Ljava/util/List;
 
@@ -401,7 +401,7 @@
     :goto_0
     iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->message:Ljava/lang/String;
 
-    .line 771
+    .line 831
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->notifyDataSetChanged()V
 
     return-void

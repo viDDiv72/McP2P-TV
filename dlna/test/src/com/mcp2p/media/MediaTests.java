@@ -72,6 +72,24 @@ public final class MediaTests {
         for (Sources.Stream x : origen) if (x.size > 60L * 1073741824L && x.seeds > 0) huge = x;
         ok("Origen: un 4K de 60+ GB no va entre las 3 primeras", huge == null || origen.indexOf(huge) >= 3);
 
+        // ---- solo fuentes fiables (las que se muestran)
+        eq("Origen: ninguna fiable (la de 46 semillas pesa 39 GB)", 0, Sources.best(origen).size());
+        java.util.List<Sources.Stream> fake = new java.util.ArrayList<>();
+        long G = 1073741824L;
+        long[][] spec = {{50, 5, 3}, {12, 30, 4}, {400, 25, 5}, {10, 2, 4}, {9, 1, 4}, {60, 12, 5}, {15, 4, 4}, {11, 6, 3}, {70, 3, 3}};
+        for (long[] x : spec) { Sources.Stream f = new Sources.Stream(); f.seeds = (int) x[0]; f.size = x[1] * G;
+            f.quality = x[2] == 5 ? "4K" : x[2] == 4 ? "1080p" : "720p"; f.infoHash = "h" + x[0]; f.addon = "T"; fake.add(f); }
+        Sources.sort(fake);
+        java.util.List<Sources.Stream> bf = Sources.best(fake);
+        eq("máximo 5 opciones", 5, bf.size());
+        boolean okSeeds = true, okSize = true;
+        for (Sources.Stream x : bf) { if (x.seeds < 10) okSeeds = false; if (x.size > Sources.MAX_SIZE) okSize = false; }
+        ok("todas con 10 semillas o más", okSeeds);
+        ok("ninguna de más de 20 GB (fuera la de 25 y la de 30)", okSize);
+        eq("primero la mejor calidad entre las de 50+ semillas (4K de 12 GB y 60 semillas)", 60, bf.get(0).seeds);
+        eq("después, en el mismo grupo, 1080p/720p por calidad", 70, bf.get(1).seeds == 50 ? 70 : bf.get(1).seeds == 70 ? 70 : -1);
+        ok("solo la primera recomendada", bf.get(0).recommended && !bf.get(1).recommended);
+
         // ---- precarga
         eq("precarga mínima 32 MB", 32L * 1048576L, TorrentFiles.bufferBytes(2L * 1073741824L));
         eq("precarga 1 % (80 MB en 8 GB)", 8L * 1073741824L / 100, TorrentFiles.bufferBytes(8L * 1073741824L));
@@ -101,6 +119,7 @@ public final class MediaTests {
         Sources.Stream idx4 = null;
         for (Sources.Stream s : noche) if (s.fileIdx == 4) idx4 = s;
         ok("Noche: se conserva fileIdx 4", idx4 != null);
+        eq("Noche: ninguna fuente fiable (máx. 3 semillas)", 0, Sources.best(noche).size());
 
         // ---- magnet
         Sources.Stream m = new Sources.Stream();
