@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
+| 1.9.1 | 35 | Sin publicar | Hilos de la Mediateca, arranque más rápido |
 | [1.9.0](#190--2026-11-23) | 34 | Estable | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
 | [1.7.1](#171--2026-11-22) | 25 | Pre-release | Reproducción más estable en directos largos |
@@ -24,6 +25,22 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 | [1.6.0](#160--2026-11-22) | 22 | Estable | Enviar canales a la TVBox por DLNA |
 | [1.5.6-tvfix](#156-tvfix--2026-11-22) | 21 | Estable | Arreglo de las carpetas en TV |
 | [1.5.6-original](#156-original) | 20 | Referencia | App original sin modificar (punto de partida del clon) |
+
+---
+
+## [1.9.1] · sin publicar (rama `mejoras-1.9.1`)
+versionCode 35 · solo local (`build/McP2P-TV-v1.9.1.apk`)
+
+### Corregido
+- La Mediateca dejaba 14 hilos vivos cada vez que se abría (y seguía comprobando películas al salir): ahora se
+  cierran al salir de la pantalla.
+- El vigilante del mando (captura del puntero) se acumulaba en cada pantalla: ahora se borra al cerrarla.
+- Si la red no deja hablar con los trackers, ya no se esperan ~12 s por cada película: se recuerda 10 min.
+
+### Mejorado
+- Arranque más rápido de las películas: libtorrent abre más conexiones al empezar (150/s y 100 por película,
+  antes 30), cola de peticiones mayor y las piezas atascadas se vuelven a pedir a los 10 s (antes 20).
+- Con la misma calidad y grupo de semillas, primero la versión más ligera (empieza y descarga antes).
 
 ---
 

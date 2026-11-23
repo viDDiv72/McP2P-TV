@@ -90,6 +90,13 @@ public final class MediaTests {
         eq("después, en el mismo grupo, 1080p/720p por calidad", 70, bf.get(1).seeds == 50 ? 70 : bf.get(1).seeds == 70 ? 70 : -1);
         ok("solo la primera recomendada", bf.get(0).recommended && !bf.get(1).recommended);
 
+        // ---- misma calidad y grupo de semillas: primero la más ligera
+        java.util.List<Sources.Stream> twoK = new java.util.ArrayList<>();
+        Sources.Stream heavy4k = new Sources.Stream(); heavy4k.seeds = 300; heavy4k.size = 17L * G; heavy4k.quality = "4K"; heavy4k.infoHash = "a"; heavy4k.addon = "T";
+        Sources.Stream light4k = new Sources.Stream(); light4k.seeds = 120; light4k.size = 11L * G; light4k.quality = "4K"; light4k.infoHash = "b"; light4k.addon = "T";
+        twoK.add(heavy4k); twoK.add(light4k);
+        ok("4K de 11 GB antes que 4K de 17 GB (ambos 50+ semillas)", Sources.best(twoK).get(0) == light4k);
+
         // ---- arranque según la velocidad
         long g11 = 11L * 1073741824L, MBy = 1048576L;
         long fast = TorrentFiles.startBytes(g11, 7200, 3.0 * MBy);

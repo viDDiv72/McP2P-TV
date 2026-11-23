@@ -223,7 +223,7 @@
 
     invoke-static {v0, p0}, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
 
-    .line 247
+    .line 248
     new-instance p0, Ljava/util/ArrayList;
 
     const/4 v1, 0x5
@@ -246,7 +246,7 @@
 
     move v0, v2
 
-    .line 248
+    .line 249
     :goto_1
     invoke-interface {p0}, Ljava/util/List;->size()I
 
@@ -286,7 +286,7 @@
     :try_start_0
     const-string v0, "UTF-8"
 
-    .line 283
+    .line 284
     invoke-static {p0, v0}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
@@ -308,7 +308,7 @@
 .method static fluency(Lcom/mcp2p/media/Sources$Stream;)D
     .locals 7
 
-    .line 264
+    .line 265
     iget v0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     if-gtz v0, :cond_0
@@ -317,7 +317,7 @@
 
     return-wide v0
 
-    .line 265
+    .line 266
     :cond_0
     iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
 
@@ -376,7 +376,7 @@
     :cond_4
     const-wide v0, 0x3fc3333333333333L    # 0.15
 
-    .line 267
+    .line 268
     :goto_1
     iget p0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
@@ -551,7 +551,7 @@
 .end method
 
 .method static synthetic lambda$best$1(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
-    .locals 2
+    .locals 4
 
     .line 241
     iget v0, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
@@ -598,6 +598,48 @@
 
     .line 245
     :cond_1
+    iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    const-wide/16 v2, 0x0
+
+    cmp-long v0, v0, v2
+
+    if-lez v0, :cond_2
+
+    iget-wide v0, p1, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    cmp-long v0, v0, v2
+
+    if-lez v0, :cond_2
+
+    iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    iget-wide v2, p1, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    sub-long/2addr v0, v2
+
+    invoke-static {v0, v1}, Ljava/lang/Math;->abs(J)J
+
+    move-result-wide v0
+
+    const-wide/32 v2, 0x20000000
+
+    cmp-long v0, v0, v2
+
+    if-lez v0, :cond_2
+
+    iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    iget-wide p0, p1, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    invoke-static {v0, v1, p0, p1}, Ljava/lang/Long;->compare(JJ)I
+
+    move-result p0
+
+    return p0
+
+    .line 246
+    :cond_2
     iget p1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     iget p0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
@@ -667,7 +709,7 @@
 .method public static magnet(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
-    .line 274
+    .line 275
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "magnet:?xt=urn:btih:"
@@ -680,7 +722,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 275
+    .line 276
     invoke-virtual {p1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -697,7 +739,7 @@
 
     invoke-virtual {v0, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 276
+    .line 277
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -730,7 +772,7 @@
 
     goto :goto_0
 
-    .line 277
+    .line 278
     :cond_1
     iget p1, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
@@ -744,7 +786,7 @@
 
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
-    .line 278
+    .line 279
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -1804,7 +1846,7 @@
 
     const-string v0, "es-ES"
 
-    .line 292
+    .line 293
     invoke-static {v0}, Ljava/util/Locale;->forLanguageTag(Ljava/lang/String;)Ljava/util/Locale;
 
     move-result-object v0
@@ -1831,7 +1873,7 @@
 
     return-object p0
 
-    .line 293
+    .line 294
     :cond_1
     new-instance v0, Ljava/lang/StringBuilder;
 

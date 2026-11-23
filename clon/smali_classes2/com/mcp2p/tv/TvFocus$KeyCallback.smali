@@ -22,10 +22,10 @@
 .method constructor <init>(Landroid/view/Window$Callback;Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 0
 
-    .line 482
+    .line 499
     invoke-direct {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;-><init>(Landroid/view/Window$Callback;)V
 
-    .line 483
+    .line 500
     iput-object p2, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
     return-void
@@ -38,7 +38,7 @@
 
     const/16 v0, 0x2002
 
-    .line 499
+    .line 516
     :try_start_0
     invoke-virtual {p1, v0}, Landroid/view/MotionEvent;->isFromSource(I)Z
 
@@ -46,7 +46,7 @@
 
     if-eqz v0, :cond_0
 
-    .line 500
+    .line 517
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
     iget-object v0, v0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
@@ -61,7 +61,7 @@
 
     invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->requestCapture(Landroid/view/View;)V
 
-    .line 502
+    .line 519
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
@@ -78,10 +78,10 @@
 
     const-string v2, "Puntero (ignorado)"
 
-    .line 504
+    .line 521
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 506
+    .line 523
     :goto_0
     invoke-super {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;->dispatchGenericMotionEvent(Landroid/view/MotionEvent;)Z
 
@@ -93,7 +93,7 @@
 .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
     .locals 3
 
-    .line 488
+    .line 505
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
@@ -116,10 +116,10 @@
 
     const-string v2, "Tecla MEN\u00da (ignorado)"
 
-    .line 490
+    .line 507
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 492
+    .line 509
     :cond_0
     invoke-super {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;->dispatchKeyEvent(Landroid/view/KeyEvent;)Z
 

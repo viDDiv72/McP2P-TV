@@ -8,6 +8,7 @@
     value = {
         Lcom/mcp2p/media/MediaScreen$PlayerTracker;,
         Lcom/mcp2p/media/MediaScreen$Screen;,
+        Lcom/mcp2p/media/MediaScreen$Closer;,
         Lcom/mcp2p/media/MediaScreen$BackKeys;,
         Lcom/mcp2p/media/MediaScreen$MoreOnScroll;,
         Lcom/mcp2p/media/MediaScreen$Row;,
@@ -98,7 +99,7 @@
 .end method
 
 .method public static install(Landroid/app/Activity;)V
-    .locals 2
+    .locals 3
 
     .line 64
     :try_start_0
@@ -113,7 +114,19 @@
 
     invoke-direct {v0, p0}, Lcom/mcp2p/media/MediaScreen$Screen;-><init>(Landroid/app/Activity;)V
 
+    .line 66
     invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->show()V
+
+    .line 67
+    invoke-virtual {p0}, Landroid/app/Activity;->getApplication()Landroid/app/Application;
+
+    move-result-object v1
+
+    new-instance v2, Lcom/mcp2p/media/MediaScreen$Closer;
+
+    invoke-direct {v2, p0, v0}, Lcom/mcp2p/media/MediaScreen$Closer;-><init>(Landroid/app/Activity;Lcom/mcp2p/media/MediaScreen$Screen;)V
+
+    invoke-virtual {v1, v2}, Landroid/app/Application;->registerActivityLifecycleCallbacks(Landroid/app/Application$ActivityLifecycleCallbacks;)V
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
@@ -126,7 +139,7 @@
 
     const-string v1, "No se pudo montar la Mediateca nueva; se mantiene la original"
 
-    .line 67
+    .line 69
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0

@@ -57,6 +57,7 @@ public final class TvFocus {
         View highlighted;
         boolean recoveryPosted;
         float accX, accY;
+        DeviceWatcher deviceWatcher;
         long lastMotion, quietUntil;
 
         State(Activity a) {
@@ -108,7 +109,10 @@ public final class TvFocus {
             // Mando que cambia a modo ratón / touchpad que se conecta: Android suelta la captura; se recupera.
             android.hardware.input.InputManager im =
                     (android.hardware.input.InputManager) s.activity.getSystemService(android.content.Context.INPUT_SERVICE);
-            if (im != null) im.registerInputDeviceListener(new DeviceWatcher(decor), new android.os.Handler(android.os.Looper.getMainLooper()));
+            if (im != null) {
+                s.deviceWatcher = new DeviceWatcher(decor);
+                im.registerInputDeviceListener(s.deviceWatcher, new android.os.Handler(android.os.Looper.getMainLooper()));
+            }
         } catch (Throwable t) {
             Log.w(TAG, "No se pudo capturar el puntero", t);
         }
@@ -446,7 +450,20 @@ public final class TvFocus {
         @Override public void onActivityPaused(Activity a) {}
         @Override public void onActivityStopped(Activity a) {}
         @Override public void onActivitySaveInstanceState(Activity a, Bundle b) {}
-        @Override public void onActivityDestroyed(Activity a) {}
+        @Override public void onActivityDestroyed(Activity a) {
+            // Se deja de vigilar los dispositivos de entrada de esta pantalla (antes se acumulaban)
+            try {
+                Object st = a.getWindow().getDecorView().getTag(TAG_KEY);
+                if (st instanceof State && ((State) st).deviceWatcher != null) {
+                    android.hardware.input.InputManager im =
+                            (android.hardware.input.InputManager) a.getSystemService(android.content.Context.INPUT_SERVICE);
+                    if (im != null) im.unregisterInputDeviceListener(((State) st).deviceWatcher);
+                    ((State) st).deviceWatcher = null;
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudo dejar de vigilar el mando", t);
+            }
+        }
     }
 
     /** Estática a propósito (d8 de build-tools 34). Vuelve a pedir la captura cuando cambian los dispositivos. */

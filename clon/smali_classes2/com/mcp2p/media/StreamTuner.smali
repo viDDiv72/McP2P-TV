@@ -63,13 +63,13 @@
 
     const/4 v0, 0x0
 
-    .line 211
+    .line 228
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 212
+    .line 229
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
-    .line 213
+    .line 230
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
 
     return-void
@@ -83,7 +83,7 @@
         }
     .end annotation
 
-    .line 248
+    .line 265
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -92,7 +92,7 @@
 
     move-result-object p1
 
-    .line 249
+    .line 266
     invoke-virtual {p1, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p0
@@ -109,7 +109,7 @@
 
     return-object v0
 
-    .line 237
+    .line 254
     :cond_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -130,18 +130,18 @@
 
     const/4 v5, 0x1
 
-    .line 239
+    .line 256
     :try_start_0
     invoke-virtual {v4, v5}, Ljava/lang/reflect/Field;->setAccessible(Z)V
 
-    .line 240
+    .line 257
     invoke-virtual {v4, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v4
 
     if-eqz v4, :cond_1
 
-    .line 241
+    .line 258
     invoke-virtual {v4}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v5
@@ -184,7 +184,7 @@
 .method static synthetic lambda$show$1(Ljava/lang/Object;)V
     .locals 0
 
-    .line 204
+    .line 221
     invoke-static {p0}, Lcom/mcp2p/media/StreamTuner;->overlay(Ljava/lang/Object;)Z
 
     return-void
@@ -195,11 +195,11 @@
 
     const/4 v0, 0x0
 
-    .line 222
+    .line 239
     :try_start_0
     sget-object v1, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 223
+    .line 240
     sget-object v2, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
     sget-object v3, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
@@ -210,7 +210,7 @@
 
     if-eqz p0, :cond_3
 
-    .line 224
+    .line 241
     invoke-virtual {v1}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
 
     move-result-object v1
@@ -222,19 +222,19 @@
     :cond_0
     const-string v1, "o0"
 
-    .line 225
+    .line 242
     invoke-static {p0, v1}, Lcom/mcp2p/media/StreamTuner;->field(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object v1
 
     const-string v4, "p0"
 
-    .line 226
+    .line 243
     invoke-static {p0, v4}, Lcom/mcp2p/media/StreamTuner;->field(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object p0
 
-    .line 227
+    .line 244
     instance-of v4, v1, Landroid/widget/TextView;
 
     if-eqz v4, :cond_1
@@ -243,7 +243,7 @@
 
     invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 228
+    .line 245
     :cond_1
     instance-of v1, p0, Landroid/widget/TextView;
 
@@ -1358,6 +1358,120 @@
     return-void
 .end method
 
+.method private static setInt(Ljava/lang/Object;Ljava/lang/String;I)V
+    .locals 8
+
+    :try_start_0
+    const-string v0, "org.libtorrent4j.swig.settings_pack$int_types"
+
+    .line 195
+    invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
+
+    move-result-object v0
+
+    .line 196
+    invoke-virtual {v0, p1}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
+
+    move-result-object v1
+
+    const/4 v2, 0x0
+
+    invoke-virtual {v1, v2}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object v1
+
+    const-string v2, "swigValue"
+
+    const/4 v3, 0x0
+
+    new-array v4, v3, [Ljava/lang/Class;
+
+    .line 197
+    invoke-virtual {v0, v2, v4}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+
+    move-result-object v0
+
+    new-array v2, v3, [Ljava/lang/Object;
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/lang/Integer;
+
+    invoke-virtual {v0}, Ljava/lang/Integer;->intValue()I
+
+    move-result v0
+
+    .line 198
+    invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object v1
+
+    const-string v2, "setInteger"
+
+    const/4 v4, 0x2
+
+    new-array v5, v4, [Ljava/lang/Class;
+
+    sget-object v6, Ljava/lang/Integer;->TYPE:Ljava/lang/Class;
+
+    aput-object v6, v5, v3
+
+    sget-object v6, Ljava/lang/Integer;->TYPE:Ljava/lang/Class;
+
+    const/4 v7, 0x1
+
+    aput-object v6, v5, v7
+
+    invoke-virtual {v1, v2, v5}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+
+    move-result-object v1
+
+    new-array v2, v4, [Ljava/lang/Object;
+
+    invoke-static {v0}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v0
+
+    aput-object v0, v2, v3
+
+    invoke-static {p2}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object p2
+
+    aput-object p2, v2, v7
+
+    invoke-virtual {v1, p0, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    :try_end_0
+    .catchall {:try_start_0 .. :try_end_0} :catchall_0
+
+    goto :goto_0
+
+    :catchall_0
+    move-exception p0
+
+    .line 200
+    new-instance p2, Ljava/lang/StringBuilder;
+
+    const-string v0, "Ajuste de libtorrent no disponible: "
+
+    invoke-direct {p2, v0}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+
+    invoke-virtual {p2, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {p2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object p1
+
+    const-string p2, "Mcp2pStream"
+
+    invoke-static {p2, p1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+
+    :goto_0
+    return-void
+.end method
+
 .method private static show(Landroid/os/Handler;Ljava/lang/Object;JJILjava/lang/Object;Z)V
     .locals 3
 
@@ -1368,7 +1482,7 @@
     :cond_0
     const/4 p8, 0x0
 
-    .line 193
+    .line 210
     :try_start_0
     invoke-virtual {p7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -1388,7 +1502,7 @@
 
     move-result-object p7
 
-    .line 194
+    .line 211
     invoke-virtual {p7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -1434,7 +1548,7 @@
 
     mul-long/2addr p2, v0
 
-    .line 196
+    .line 213
     div-long/2addr p2, p4
 
     const-wide/16 p4, 0x63
@@ -1445,7 +1559,7 @@
 
     long-to-int p8, p2
 
-    .line 197
+    .line 214
     :goto_1
     new-instance p2, Ljava/lang/StringBuilder;
 
@@ -1463,7 +1577,7 @@
 
     move-result-object p2
 
-    .line 198
+    .line 215
     new-instance p3, Ljava/lang/StringBuilder;
 
     invoke-direct {p3}, Ljava/lang/StringBuilder;-><init>()V
@@ -1507,7 +1621,7 @@
     :cond_3
     const-string p4, ""
 
-    .line 200
+    .line 217
     :goto_3
     invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
@@ -1515,20 +1629,20 @@
 
     move-result-object p3
 
-    .line 201
+    .line 218
     sput-object p2, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
-    .line 202
+    .line 219
     sput-object p3, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
 
-    .line 203
+    .line 220
     new-instance p2, Ljava/lang/ref/WeakReference;
 
     invoke-direct {p2, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     sput-object p2, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 204
+    .line 221
     new-instance p2, Lcom/mcp2p/media/StreamTuner$$ExternalSyntheticLambda1;
 
     invoke-direct {p2, p1}, Lcom/mcp2p/media/StreamTuner$$ExternalSyntheticLambda1;-><init>(Ljava/lang/Object;)V
@@ -1742,9 +1856,37 @@
 
     invoke-virtual {v4, v1, v5}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
+    const-string v2, "connection_speed"
+
+    const/16 v4, 0x96
+
+    .line 183
+    invoke-static {v1, v2, v4}, Lcom/mcp2p/media/StreamTuner;->setInt(Ljava/lang/Object;Ljava/lang/String;I)V
+
+    const-string v2, "torrent_connect_boost"
+
+    const/16 v4, 0x64
+
+    .line 184
+    invoke-static {v1, v2, v4}, Lcom/mcp2p/media/StreamTuner;->setInt(Ljava/lang/Object;Ljava/lang/String;I)V
+
+    const-string v2, "max_out_request_queue"
+
+    const/16 v4, 0x5dc
+
+    .line 185
+    invoke-static {v1, v2, v4}, Lcom/mcp2p/media/StreamTuner;->setInt(Ljava/lang/Object;Ljava/lang/String;I)V
+
+    const-string v2, "piece_timeout"
+
+    const/16 v4, 0xa
+
+    .line 186
+    invoke-static {v1, v2, v4}, Lcom/mcp2p/media/StreamTuner;->setInt(Ljava/lang/Object;Ljava/lang/String;I)V
+
     const-string v2, "applySettings"
 
-    .line 181
+    .line 187
     filled-new-array {v3}, [Ljava/lang/Class;
 
     move-result-object v3
@@ -1770,7 +1912,7 @@
 
     const-string v1, "No se pudieron ajustar las conexiones de libtorrent"
 
-    .line 183
+    .line 189
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0

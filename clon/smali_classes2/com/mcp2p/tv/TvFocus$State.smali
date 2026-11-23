@@ -21,6 +21,8 @@
 
 .field final activity:Landroid/app/Activity;
 
+.field deviceWatcher:Lcom/mcp2p/tv/TvFocus$DeviceWatcher;
+
 .field highlighted:Landroid/view/View;
 
 .field final history:Ljava/util/Deque;
@@ -46,7 +48,7 @@
 .method constructor <init>(Landroid/app/Activity;)V
     .locals 3
 
-    .line 62
+    .line 63
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     .line 55
@@ -56,10 +58,10 @@
 
     iput-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->history:Ljava/util/Deque;
 
-    .line 63
+    .line 64
     iput-object p1, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
-    .line 64
+    .line 65
     invoke-virtual {p1}, Landroid/app/Activity;->getResources()Landroid/content/res/Resources;
 
     move-result-object p1
@@ -70,7 +72,7 @@
 
     iget p1, p1, Landroid/util/DisplayMetrics;->density:F
 
-    .line 65
+    .line 66
     new-instance v0, Landroid/graphics/drawable/GradientDrawable;
 
     invoke-direct {v0}, Landroid/graphics/drawable/GradientDrawable;-><init>()V
@@ -79,7 +81,7 @@
 
     const/4 v1, 0x0
 
-    .line 66
+    .line 67
     invoke-virtual {v0, v1}, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
 
     const/high16 v1, 0x40400000    # 3.0f
@@ -94,14 +96,14 @@
 
     const v2, -0xb72638
 
-    .line 67
+    .line 68
     invoke-virtual {v0, v1, v2}, Landroid/graphics/drawable/GradientDrawable;->setStroke(II)V
 
     const/high16 v1, 0x41600000    # 14.0f
 
     mul-float/2addr p1, v1
 
-    .line 68
+    .line 69
     invoke-virtual {v0, p1}, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
 
     return-void

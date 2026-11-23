@@ -236,12 +236,13 @@ public final class Sources {
             ok.add(s);
         }
         // Entre las fiables: primero las de más semillas por grupos (50+, 20+, 10+) y, dentro de cada grupo,
-        // la mejor calidad; así sale la mejor imagen que se puede ver sin cortes.
+        // la mejor calidad; con la misma calidad, primero la más ligera (empieza y descarga antes).
         Collections.sort(ok, (a, b) -> {
             int c = Integer.compare(tier(b.seeds), tier(a.seeds));
             if (c != 0) return c;
             c = Integer.compare(rank(b.quality), rank(a.quality));
             if (c != 0) return c;
+            if (a.size > 0 && b.size > 0 && Math.abs(a.size - b.size) > 512L * 1048576L) return Long.compare(a.size, b.size);
             return Integer.compare(b.seeds, a.seeds);
         });
         List<Stream> out = new ArrayList<>(ok.subList(0, Math.min(MAX_OPTIONS, ok.size())));

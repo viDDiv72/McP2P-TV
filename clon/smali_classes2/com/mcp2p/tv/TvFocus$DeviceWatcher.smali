@@ -33,10 +33,10 @@
 .method constructor <init>(Landroid/view/View;)V
     .locals 1
 
-    .line 456
+    .line 473
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 457
+    .line 474
     new-instance v0, Ljava/lang/ref/WeakReference;
 
     invoke-direct {v0, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -49,7 +49,7 @@
 .method private again()V
     .locals 4
 
-    .line 461
+    .line 478
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->decor:Ljava/lang/ref/WeakReference;
 
     invoke-virtual {v0}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
@@ -60,7 +60,7 @@
 
     if-eqz v0, :cond_0
 
-    .line 462
+    .line 479
     new-instance v1, Lcom/mcp2p/tv/TvFocus$DeviceWatcher$$ExternalSyntheticLambda0;
 
     invoke-direct {v1, v0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher$$ExternalSyntheticLambda0;-><init>(Landroid/view/View;)V
@@ -76,7 +76,7 @@
 .method static synthetic lambda$again$0(Landroid/view/View;)V
     .locals 0
 
-    .line 462
+    .line 479
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->requestCapture(Landroid/view/View;)V
 
     return-void
@@ -87,7 +87,7 @@
 .method public onInputDeviceAdded(I)V
     .locals 0
 
-    .line 466
+    .line 483
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void
@@ -96,7 +96,7 @@
 .method public onInputDeviceChanged(I)V
     .locals 0
 
-    .line 474
+    .line 491
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void
@@ -105,7 +105,7 @@
 .method public onInputDeviceRemoved(I)V
     .locals 0
 
-    .line 470
+    .line 487
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void

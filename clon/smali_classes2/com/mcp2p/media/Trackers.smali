@@ -6,9 +6,13 @@
 # static fields
 .field static final DEFAULT:[[Ljava/lang/String;
 
+.field static final RETRY_MS:J = 0x927c0L
+
 .field private static final RND:Ljava/security/SecureRandom;
 
 .field static final TIMEOUT_MS:I = 0xfa0
+
+.field private static volatile unreachableUntil:J
 
 
 # direct methods
@@ -73,7 +77,7 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 32
+    .line 36
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -95,7 +99,7 @@
 
     add-int/lit8 v4, v3, 0x2
 
-    .line 117
+    .line 123
     invoke-virtual {p0, v3, v4}, Ljava/lang/String;->substring(II)Ljava/lang/String;
 
     move-result-object v3
@@ -128,7 +132,7 @@
 
     const/4 v0, 0x0
 
-    .line 43
+    .line 48
     aget-object v0, p0, v0
 
     const/4 v1, 0x1
@@ -165,7 +169,7 @@
 
     const/4 v0, 0x0
 
-    .line 77
+    .line 83
     :try_start_0
     new-instance v1, Ljava/net/DatagramSocket;
 
@@ -175,16 +179,16 @@
 
     const/16 v2, 0xfa0
 
-    .line 78
+    .line 84
     :try_start_1
     invoke-virtual {v1, v2}, Ljava/net/DatagramSocket;->setSoTimeout(I)V
 
-    .line 79
+    .line 85
     invoke-static {p0}, Ljava/net/InetAddress;->getByName(Ljava/lang/String;)Ljava/net/InetAddress;
 
     move-result-object p0
 
-    .line 81
+    .line 87
     sget-object v2, Lcom/mcp2p/media/Trackers;->RND:Ljava/security/SecureRandom;
 
     invoke-virtual {v2}, Ljava/security/SecureRandom;->nextInt()I
@@ -193,14 +197,14 @@
 
     const/16 v4, 0x10
 
-    .line 82
+    .line 88
     invoke-static {v4}, Ljava/nio/ByteBuffer;->allocate(I)Ljava/nio/ByteBuffer;
 
     move-result-object v5
 
     const-wide v6, 0x41727101980L
 
-    .line 83
+    .line 89
     invoke-virtual {v5, v6, v7}, Ljava/nio/ByteBuffer;->putLong(J)Ljava/nio/ByteBuffer;
 
     move-result-object v6
@@ -213,7 +217,7 @@
 
     invoke-virtual {v6, v3}, Ljava/nio/ByteBuffer;->putInt(I)Ljava/nio/ByteBuffer;
 
-    .line 84
+    .line 90
     new-instance v6, Ljava/net/DatagramPacket;
 
     invoke-virtual {v5}, Ljava/nio/ByteBuffer;->array()[B
@@ -228,15 +232,15 @@
 
     new-array v6, v5, [B
 
-    .line 86
+    .line 92
     new-instance v8, Ljava/net/DatagramPacket;
 
     invoke-direct {v8, v6, v5}, Ljava/net/DatagramPacket;-><init>([BI)V
 
-    .line 87
+    .line 93
     invoke-virtual {v1, v8}, Ljava/net/DatagramSocket;->receive(Ljava/net/DatagramPacket;)V
 
-    .line 88
+    .line 94
     invoke-virtual {v8}, Ljava/net/DatagramPacket;->getLength()I
 
     move-result v9
@@ -245,7 +249,7 @@
 
     move-result-object v9
 
-    .line 89
+    .line 95
     invoke-virtual {v8}, Ljava/net/DatagramPacket;->getLength()I
 
     move-result v8
@@ -266,18 +270,18 @@
 
     goto/16 :goto_4
 
-    .line 90
+    .line 96
     :cond_0
     invoke-virtual {v9}, Ljava/nio/ByteBuffer;->getLong()J
 
     move-result-wide v8
 
-    .line 92
+    .line 98
     invoke-virtual {v2}, Ljava/security/SecureRandom;->nextInt()I
 
     move-result v2
 
-    .line 93
+    .line 99
     invoke-interface {p2}, Ljava/util/List;->size()I
 
     move-result v3
@@ -290,7 +294,7 @@
 
     move-result-object v3
 
-    .line 94
+    .line 100
     invoke-virtual {v3, v8, v9}, Ljava/nio/ByteBuffer;->putLong(J)Ljava/nio/ByteBuffer;
 
     move-result-object v4
@@ -303,7 +307,7 @@
 
     invoke-virtual {v4, v2}, Ljava/nio/ByteBuffer;->putInt(I)Ljava/nio/ByteBuffer;
 
-    .line 95
+    .line 101
     invoke-interface {p2}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object v4
@@ -329,7 +333,7 @@
 
     goto :goto_0
 
-    .line 96
+    .line 102
     :cond_1
     new-instance v4, Ljava/net/DatagramPacket;
 
@@ -345,15 +349,15 @@
 
     invoke-virtual {v1, v4}, Ljava/net/DatagramSocket;->send(Ljava/net/DatagramPacket;)V
 
-    .line 97
+    .line 103
     new-instance p0, Ljava/net/DatagramPacket;
 
     invoke-direct {p0, v6, v5}, Ljava/net/DatagramPacket;-><init>([BI)V
 
-    .line 98
+    .line 104
     invoke-virtual {v1, p0}, Ljava/net/DatagramSocket;->receive(Ljava/net/DatagramPacket;)V
 
-    .line 99
+    .line 105
     invoke-virtual {p0}, Ljava/net/DatagramPacket;->getLength()I
 
     move-result p1
@@ -362,7 +366,7 @@
 
     move-result-object p1
 
-    .line 100
+    .line 106
     invoke-virtual {p0}, Ljava/net/DatagramPacket;->getLength()I
 
     move-result p0
@@ -385,13 +389,13 @@
 
     goto :goto_3
 
-    .line 101
+    .line 107
     :cond_2
     new-instance p0, Ljava/util/HashMap;
 
     invoke-direct {p0}, Ljava/util/HashMap;-><init>()V
 
-    .line 102
+    .line 108
     invoke-interface {p2}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object p2
@@ -409,7 +413,7 @@
 
     check-cast v2, Ljava/lang/String;
 
-    .line 103
+    .line 109
     invoke-virtual {p1}, Ljava/nio/ByteBuffer;->remaining()I
 
     move-result v3
@@ -420,19 +424,19 @@
 
     goto :goto_2
 
-    .line 104
+    .line 110
     :cond_3
     invoke-virtual {p1}, Ljava/nio/ByteBuffer;->getInt()I
 
     move-result v3
 
-    .line 105
+    .line 111
     invoke-virtual {p1}, Ljava/nio/ByteBuffer;->getInt()I
 
-    .line 106
+    .line 112
     invoke-virtual {p1}, Ljava/nio/ByteBuffer;->getInt()I
 
-    .line 107
+    .line 113
     sget-object v4, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
 
     invoke-virtual {v2, v4}, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
@@ -453,7 +457,7 @@
 
     goto :goto_1
 
-    .line 110
+    .line 116
     :cond_4
     :goto_2
     :try_start_2
@@ -478,7 +482,7 @@
     :catchall_0
     move-exception p0
 
-    .line 77
+    .line 83
     :try_start_3
     invoke-virtual {v1}, Ljava/net/DatagramSocket;->close()V
     :try_end_3
@@ -518,14 +522,14 @@
         }
     .end annotation
 
-    .line 67
+    .line 73
     new-instance v0, Ljava/util/HashMap;
 
     invoke-direct {v0}, Ljava/util/HashMap;-><init>()V
 
     const/4 v1, 0x0
 
-    .line 68
+    .line 74
     :goto_0
     invoke-interface {p2}, Ljava/util/List;->size()I
 
@@ -533,7 +537,7 @@
 
     if-ge v1, v2, :cond_2
 
-    .line 69
+    .line 75
     invoke-interface {p2}, Ljava/util/List;->size()I
 
     move-result v2
@@ -554,7 +558,7 @@
 
     if-nez v1, :cond_1
 
-    .line 70
+    .line 76
     invoke-interface {v0}, Ljava/util/Map;->isEmpty()Z
 
     move-result p0
@@ -566,7 +570,7 @@
     :cond_0
     return-object v0
 
-    .line 71
+    .line 77
     :cond_1
     invoke-interface {v0, v1}, Ljava/util/Map;->putAll(Ljava/util/Map;)V
 
@@ -579,7 +583,7 @@
 .end method
 
 .method public static seeders(Ljava/util/List;)Ljava/util/Map;
-    .locals 7
+    .locals 8
     .annotation system Ldalvik/annotation/Signature;
         value = {
             "(",
@@ -593,7 +597,7 @@
         }
     .end annotation
 
-    .line 39
+    .line 43
     invoke-interface {p0}, Ljava/util/List;->isEmpty()Z
 
     move-result v0
@@ -606,63 +610,77 @@
 
     return-object p0
 
-    .line 40
+    .line 44
     :cond_0
-    sget-object v0, Lcom/mcp2p/media/Trackers;->DEFAULT:[[Ljava/lang/String;
+    invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
-    array-length v1, v0
+    move-result-wide v0
 
-    invoke-static {v1}, Ljava/util/concurrent/Executors;->newFixedThreadPool(I)Ljava/util/concurrent/ExecutorService;
+    sget-wide v2, Lcom/mcp2p/media/Trackers;->unreachableUntil:J
 
-    move-result-object v1
+    cmp-long v0, v0, v2
 
-    .line 42
-    :try_start_0
-    new-instance v2, Ljava/util/ArrayList;
+    const/4 v1, 0x0
 
-    invoke-direct {v2}, Ljava/util/ArrayList;-><init>()V
+    if-gez v0, :cond_1
 
-    .line 43
-    array-length v3, v0
-
-    const/4 v4, 0x0
-
-    :goto_0
-    if-ge v4, v3, :cond_1
-
-    aget-object v5, v0, v4
-
-    new-instance v6, Lcom/mcp2p/media/Trackers$$ExternalSyntheticLambda0;
-
-    invoke-direct {v6, v5, p0}, Lcom/mcp2p/media/Trackers$$ExternalSyntheticLambda0;-><init>([Ljava/lang/String;Ljava/util/List;)V
-
-    invoke-interface {v1, v6}, Ljava/util/concurrent/ExecutorService;->submit(Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
-
-    move-result-object v5
-
-    invoke-interface {v2, v5}, Ljava/util/List;->add(Ljava/lang/Object;)Z
-
-    add-int/lit8 v4, v4, 0x1
-
-    goto :goto_0
+    return-object v1
 
     .line 45
     :cond_1
-    invoke-interface {v2}, Ljava/util/List;->iterator()Ljava/util/Iterator;
+    sget-object v0, Lcom/mcp2p/media/Trackers;->DEFAULT:[[Ljava/lang/String;
+
+    array-length v2, v0
+
+    invoke-static {v2}, Ljava/util/concurrent/Executors;->newFixedThreadPool(I)Ljava/util/concurrent/ExecutorService;
+
+    move-result-object v2
+
+    .line 47
+    :try_start_0
+    new-instance v3, Ljava/util/ArrayList;
+
+    invoke-direct {v3}, Ljava/util/ArrayList;-><init>()V
+
+    .line 48
+    array-length v4, v0
+
+    const/4 v5, 0x0
+
+    :goto_0
+    if-ge v5, v4, :cond_2
+
+    aget-object v6, v0, v5
+
+    new-instance v7, Lcom/mcp2p/media/Trackers$$ExternalSyntheticLambda0;
+
+    invoke-direct {v7, v6, p0}, Lcom/mcp2p/media/Trackers$$ExternalSyntheticLambda0;-><init>([Ljava/lang/String;Ljava/util/List;)V
+
+    invoke-interface {v2, v7}, Ljava/util/concurrent/ExecutorService;->submit(Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
+
+    move-result-object v6
+
+    invoke-interface {v3, v6}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    add-int/lit8 v5, v5, 0x1
+
+    goto :goto_0
+
+    .line 50
+    :cond_2
+    invoke-interface {v3}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object p0
 
-    const/4 v0, 0x0
+    move-object v0, v1
 
-    move-object v2, v0
-
-    :cond_2
+    :cond_3
     :goto_1
     invoke-interface {p0}, Ljava/util/Iterator;->hasNext()Z
 
     move-result v3
 
-    if-eqz v3, :cond_7
+    if-eqz v3, :cond_8
 
     invoke-interface {p0}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
@@ -672,7 +690,7 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 48
+    .line 53
     :try_start_1
     sget-object v4, Ljava/util/concurrent/TimeUnit;->MILLISECONDS:Ljava/util/concurrent/TimeUnit;
 
@@ -690,24 +708,24 @@
     goto :goto_2
 
     :catch_0
-    move-object v3, v0
+    move-object v3, v1
 
     :goto_2
-    if-nez v3, :cond_3
+    if-nez v3, :cond_4
 
     goto :goto_1
 
-    :cond_3
-    if-nez v2, :cond_4
-
-    .line 53
-    :try_start_2
-    new-instance v2, Ljava/util/HashMap;
-
-    invoke-direct {v2}, Ljava/util/HashMap;-><init>()V
-
-    .line 54
     :cond_4
+    if-nez v0, :cond_5
+
+    .line 58
+    :try_start_2
+    new-instance v0, Ljava/util/HashMap;
+
+    invoke-direct {v0}, Ljava/util/HashMap;-><init>()V
+
+    .line 59
+    :cond_5
     invoke-interface {v3}, Ljava/util/Map;->entrySet()Ljava/util/Set;
 
     move-result-object v3
@@ -716,13 +734,13 @@
 
     move-result-object v3
 
-    :cond_5
+    :cond_6
     :goto_3
     invoke-interface {v3}, Ljava/util/Iterator;->hasNext()Z
 
     move-result v4
 
-    if-eqz v4, :cond_2
+    if-eqz v4, :cond_3
 
     invoke-interface {v3}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
@@ -730,20 +748,20 @@
 
     check-cast v4, Ljava/util/Map$Entry;
 
-    .line 55
+    .line 60
     invoke-interface {v4}, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
 
     move-result-object v5
 
-    invoke-interface {v2, v5}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-interface {v0, v5}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v5
 
     check-cast v5, Ljava/lang/Integer;
 
-    if-eqz v5, :cond_6
+    if-eqz v5, :cond_7
 
-    .line 56
+    .line 61
     invoke-interface {v4}, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
 
     move-result-object v6
@@ -758,9 +776,9 @@
 
     move-result v5
 
-    if-le v6, v5, :cond_5
+    if-le v6, v5, :cond_6
 
-    :cond_6
+    :cond_7
     invoke-interface {v4}, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
 
     move-result-object v5
@@ -773,23 +791,42 @@
 
     check-cast v4, Ljava/lang/Integer;
 
-    invoke-interface {v2, v5, v4}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-    :try_end_2
-    .catchall {:try_start_2 .. :try_end_2} :catchall_0
+    invoke-interface {v0, v5, v4}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
     goto :goto_3
 
-    .line 61
-    :cond_7
-    invoke-interface {v1}, Ljava/util/concurrent/ExecutorService;->shutdownNow()Ljava/util/List;
+    :cond_8
+    if-nez v0, :cond_9
 
-    return-object v2
+    .line 64
+    invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
+
+    move-result-wide v3
+
+    const-wide/32 v5, 0x927c0
+
+    add-long/2addr v3, v5
+
+    goto :goto_4
+
+    :cond_9
+    const-wide/16 v3, 0x0
+
+    :goto_4
+    sput-wide v3, Lcom/mcp2p/media/Trackers;->unreachableUntil:J
+    :try_end_2
+    .catchall {:try_start_2 .. :try_end_2} :catchall_0
+
+    .line 67
+    invoke-interface {v2}, Ljava/util/concurrent/ExecutorService;->shutdownNow()Ljava/util/List;
+
+    return-object v0
 
     :catchall_0
     move-exception p0
 
-    invoke-interface {v1}, Ljava/util/concurrent/ExecutorService;->shutdownNow()Ljava/util/List;
+    invoke-interface {v2}, Ljava/util/concurrent/ExecutorService;->shutdownNow()Ljava/util/List;
 
-    .line 62
+    .line 68
     throw p0
 .end method

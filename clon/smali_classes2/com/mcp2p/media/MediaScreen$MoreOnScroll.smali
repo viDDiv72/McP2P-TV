@@ -25,10 +25,10 @@
 .method constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
-    .line 1039
+    .line 1058
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 1040
+    .line 1059
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$MoreOnScroll;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
@@ -43,7 +43,7 @@
 
     add-int/2addr p2, p3
 
-    .line 1046
+    .line 1065
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$MoreOnScroll;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget p1, p1, Lcom/mcp2p/media/MediaScreen$Screen;->cols:I

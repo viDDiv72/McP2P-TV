@@ -29,6 +29,10 @@ public final class Trackers {
     static final int TIMEOUT_MS = 4000;
     private static final SecureRandom RND = new SecureRandom();
 
+    /** Si ningún tracker responde (red que bloquea UDP), no se vuelve a esperar por cada película en 10 min. */
+    static final long RETRY_MS = 10 * 60 * 1000L;
+    private static volatile long unreachableUntil;
+
     private Trackers() {}
 
     /**
@@ -37,6 +41,7 @@ public final class Trackers {
      */
     public static Map<String, Integer> seeders(List<String> infoHashes) {
         if (infoHashes.isEmpty()) return new HashMap<>();
+        if (System.currentTimeMillis() < unreachableUntil) return null;
         ExecutorService pool = Executors.newFixedThreadPool(DEFAULT.length);
         try {
             List<Future<Map<String, Integer>>> fs = new ArrayList<>();
@@ -56,6 +61,7 @@ public final class Trackers {
                     if (o == null || e.getValue() > o) best.put(e.getKey(), e.getValue());
                 }
             }
+            unreachableUntil = best == null ? System.currentTimeMillis() + RETRY_MS : 0;
             return best;
         } finally {
             pool.shutdownNow();

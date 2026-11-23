@@ -178,9 +178,26 @@ public final class StreamTuner {
             p.getMethod("maxPeerlistSize", int.class).invoke(pack, 4000);
             p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) (2 * MB));
             p.getMethod("downloadRateLimit", int.class).invoke(pack, 0);
+            // Arranque más rápido: más conexiones nuevas por segundo y por película, cola de peticiones mayor y
+            // las piezas que se atascan se vuelven a pedir antes.
+            setInt(pack, "connection_speed", 150);       // por defecto 30
+            setInt(pack, "torrent_connect_boost", 100);  // por defecto 30
+            setInt(pack, "max_out_request_queue", 1500); // por defecto 500
+            setInt(pack, "piece_timeout", 10);           // por defecto 20 s
             c.getMethod("applySettings", p).invoke(sessionManager, pack);
         } catch (Throwable e) {
             android.util.Log.w(TAG, "No se pudieron ajustar las conexiones de libtorrent", e);
+        }
+    }
+
+    private static void setInt(Object pack, String name, int value) {
+        try {
+            Class<?> types = Class.forName("org.libtorrent4j.swig.settings_pack$int_types");
+            Object key = types.getField(name).get(null);
+            int id = (Integer) types.getMethod("swigValue").invoke(key);
+            pack.getClass().getMethod("setInteger", int.class, int.class).invoke(pack, id, value);
+        } catch (Throwable e) {
+            android.util.Log.w(TAG, "Ajuste de libtorrent no disponible: " + name, e);
         }
     }
 

@@ -62,7 +62,9 @@ public final class MediaScreen {
     public static void install(Activity a) {
         try {
             PlayerTracker.install(a.getApplication());
-            new Screen(a).show();
+            Screen sc = new Screen(a);
+            sc.show();
+            a.getApplication().registerActivityLifecycleCallbacks(new Closer(a, sc));
         } catch (Throwable t) {
             Log.w(TAG, "No se pudo montar la Mediateca nueva; se mantiene la original", t);
         }
@@ -121,6 +123,23 @@ public final class MediaScreen {
 
         int dp(float v) {
             return (int) (v * d + 0.5f);
+        }
+
+        /** Ejecuta en segundo plano; si la Mediateca ya se ha cerrado, no hace nada. */
+        static void exec(ExecutorService pool, Runnable r) {
+            try {
+                pool.execute(r);
+            } catch (java.util.concurrent.RejectedExecutionException ignored) {}
+        }
+
+        /** Al cerrar la Mediateca: se paran las comprobaciones pendientes y se cierran todos sus hilos. */
+        void shutdown() {
+            gen++;
+            watchGen++;
+            detailGen++;
+            io.shutdownNow();
+            checks.shutdownNow();
+            if (cat != null) cat.close();
         }
 
         void makeCatalog() {
@@ -229,7 +248,7 @@ public final class MediaScreen {
             final int g = gen, next = page + 1;
             final String k = kind, q = query;
             if (movies.isEmpty()) status.setText("Buscando películas con fuentes en castellano…");
-            io.execute(() -> {
+            exec(io, () -> {
                 List<Catalog.Movie> got = null;
                 try {
                     got = q != null ? cat.search(q, next) : cat.list(k, next);
@@ -266,7 +285,7 @@ public final class MediaScreen {
 
         /** Comprueba en segundo plano si una película tiene fuentes fiables. */
         void verify(final Catalog.Movie m, final int g) {
-            checks.execute(() -> {
+            exec(checks, () -> {
                 int n = -1;
                 try {
                     if (g != gen) return;
@@ -527,7 +546,7 @@ public final class MediaScreen {
             } else {
                 sourceAdapter.set(null, "Buscando fuentes en castellano en Peerflix y Torrentio…");
                 srcCount.setText("");
-                io.execute(() -> {
+                exec(io, () -> {
                     Catalog.Found r = null;
                     String err = null;
                     try {
@@ -1045,6 +1064,33 @@ public final class MediaScreen {
         @Override public void onScroll(AbsListView v, int first, int visible, int total) {
             if (total > 0 && first + visible >= total - s.cols * 2) s.loadMore();
         }
+    }
+
+    /** Cierra los hilos de la Mediateca cuando se destruye su pantalla (antes quedaban vivos para siempre). */
+    static final class Closer implements android.app.Application.ActivityLifecycleCallbacks {
+        private final Activity owner;
+        private final Screen screen;
+
+        Closer(Activity owner, Screen screen) {
+            this.owner = owner;
+            this.screen = screen;
+        }
+
+        @Override public void onActivityDestroyed(Activity a) {
+            if (a != owner) return;
+            try {
+                screen.shutdown();
+            } catch (Throwable t) {
+                Log.w(TAG, "Cierre de la Mediateca (ignorado)", t);
+            }
+            a.getApplication().unregisterActivityLifecycleCallbacks(this);
+        }
+        @Override public void onActivityCreated(Activity a, android.os.Bundle b) {}
+        @Override public void onActivityStarted(Activity a) {}
+        @Override public void onActivityResumed(Activity a) {}
+        @Override public void onActivityPaused(Activity a) {}
+        @Override public void onActivityStopped(Activity a) {}
+        @Override public void onActivitySaveInstanceState(Activity a, android.os.Bundle b) {}
     }
 
     /** Recuerda la última PlayerActivity abierta (para cerrarla si su fuente no responde). */
