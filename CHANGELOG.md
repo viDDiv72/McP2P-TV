@@ -26,13 +26,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.0-beta] · rama `ui-limpia` (sin publicar)
-versionCode 27 · solo local (`build/McP2P-TV-v1.9.0-beta.apk`), pendiente de probar en la Vontar X4.
+## [1.9.0-beta.2] · rama `ui-limpia` (sin publicar)
+versionCode 28 · solo local (`build/McP2P-TV-v1.9.0-beta.2.apk`), pendiente de probar en la Vontar X4.
 
 ### Añadido
 - Mediateca nueva: catálogo de TMDB con carátulas y fuentes **solo en castellano** de Peerflix y Torrentio;
   se elige la versión (semillas, tamaño) y se reproduce el archivo exacto del torrent.
   Solo calidades 4K, 1080p y 720p (fuera SD, 3D y grabaciones de cine); sin pestañas de calidad.
+- Inicio de TV con el diseño limpio: menú lateral fino con el logo, Abrir contenido (Reproducir, Lista por QR,
+  Desde USB), Mis listas en 4 huecos y Favoritos en rejilla de 6.
 - Prototipos de interfaz limpia (`ui/prototipo/limpio.html`) y de la Mediateca (`ui/prototipo/mediateca.html`).
 
 ### Cambiado

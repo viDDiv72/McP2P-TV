@@ -75,8 +75,8 @@ public final class HomeScreen {
     private static final int HOME_KEY = 0x6d637034; // tag privada en la decorView
 
     // Colores de la nueva interfaz (los mismos del prototipo)
-    static final int BG = 0xFF090A14, RAIL = 0xFF0D0F1C, SURFACE = 0xFF141729, SURFACE2 = 0xFF1C2038,
-            OUTLINE = 0xFF2A2F52, TEXT = 0xFFF3F5FF, MUTED = 0xFFAAB0CC, DIM = 0xFF717898, ACCENT = 0xFF7D6BFF;
+    static final int BG = 0xFF0B0C14, SURFACE = 0xFF141625, SURFACE2 = 0xFF1B1E31,
+            OUTLINE = 0xFF24283F, TEXT = 0xFFEEF0F8, MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF;
 
     private static volatile boolean favBlocked;
 
@@ -463,7 +463,7 @@ public final class HomeScreen {
             LinearLayout h = new LinearLayout(a);
             h.setOrientation(LinearLayout.HORIZONTAL);
             root.addView(h, new FrameLayout.LayoutParams(-1, -1));
-            h.addView(buildRail(), new LinearLayout.LayoutParams(dp(104), -1));
+            h.addView(buildRail(), new LinearLayout.LayoutParams(dp(78), -1));
 
             LinearLayout main = new LinearLayout(a);
             main.setOrientation(LinearLayout.VERTICAL);
@@ -476,25 +476,29 @@ public final class HomeScreen {
             sv.setClipToPadding(false);
             content = new LinearLayout(a);
             content.setOrientation(LinearLayout.VERTICAL);
-            content.setPadding(dp(8), 0, dp(28), dp(24));
+            // margen para que la tarjeta enfocada (que crece un poco) no se corte por los lados
+            content.setPadding(dp(18), dp(6), dp(30), dp(22));
+            content.setClipChildren(false);
             sv.addView(content, new FrameLayout.LayoutParams(-1, -2));
             main.addView(sv, new LinearLayout.LayoutParams(-1, 0, 1f));
             main.addView(buildHint(), new LinearLayout.LayoutParams(-1, -2));
 
             content.addView(header("Abrir contenido", null));
             openRow = row();
-            content.addView(scroller(openRow));
+            content.addView(openRow);
             fillOpenRow();
 
             listsHeader = new TextView(a);
             content.addView(header("Mis listas", listsHeader));
             listsRow = row();
-            content.addView(scroller(listsRow));
+            content.addView(listsRow);
 
             favsHeader = new TextView(a);
             content.addView(header("Favoritos", favsHeader));
-            favsRow = row();
-            content.addView(scroller(favsRow));
+            favsRow = new LinearLayout(a);
+            favsRow.setOrientation(LinearLayout.VERTICAL);
+            favsRow.setClipChildren(false);
+            content.addView(favsRow);
 
             a.setContentView(root);
             // Al cerrar un diálogo (importación, QR…) la ventana recupera el foco: refrescar.
@@ -511,21 +515,21 @@ public final class HomeScreen {
             LinearLayout r = new LinearLayout(a);
             r.setOrientation(LinearLayout.VERTICAL);
             r.setGravity(Gravity.CENTER_HORIZONTAL);
-            r.setBackgroundColor(RAIL);
-            r.setPadding(0, dp(20), 0, dp(16));
+            r.setBackgroundColor(BG);
+            r.setPadding(0, dp(20), 0, dp(14));
             ImageView logo = new ImageView(a);
             int res = a.getResources().getIdentifier("ic_mcp2p_logo", "drawable", a.getPackageName());
             if (res == 0) res = a.getApplicationInfo().icon;
             logo.setImageResource(res);
             logo.setContentDescription("McP2P");
             logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(60), dp(60));
-            lp.bottomMargin = dp(18);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(40), dp(40));
+            lp.bottomMargin = dp(20);
             r.addView(logo, lp);
             r.addView(nav("⌂", "Inicio", true, v -> focusKey("id")));
             r.addView(nav("☰", "Listas", false, v -> openListManager(a)));
-            r.addView(nav("♥", "Favoritos", false, v -> openActivity(a, "FavoritesActivity")));
-            r.addView(nav("▤", "Mediateca", false, v -> openActivity(a, "MediaLibraryActivity")));
+            r.addView(nav("♡", "Favoritos", false, v -> openActivity(a, "FavoritesActivity")));
+            r.addView(nav("▶", "Mediateca", false, v -> openActivity(a, "MediaLibraryActivity")));
             r.addView(nav("⌕", "Buscar", false, v -> openActivity(a, "AceSearchActivity")));
             View sp = new View(a);
             r.addView(sp, new LinearLayout.LayoutParams(1, 0, 1f));
@@ -534,44 +538,67 @@ public final class HomeScreen {
         }
 
         View nav(String icon, String label, boolean current, View.OnClickListener click) {
+            FrameLayout f = new FrameLayout(a);
             LinearLayout n = new LinearLayout(a);
             n.setOrientation(LinearLayout.VERTICAL);
             n.setGravity(Gravity.CENTER);
             n.setFocusable(true);
             n.setClickable(true);
             n.setContentDescription(label);
-            n.setBackground(states(current ? SURFACE2 : 0x00000000, current ? SURFACE2 : 0x00000000, 14, false));
+            GradientDrawable on = new GradientDrawable();
+            on.setColor(SURFACE2);
+            on.setCornerRadius(dp(12));
+            StateListDrawable s = new StateListDrawable();
+            s.addState(new int[]{android.R.attr.state_focused}, on);
+            s.addState(new int[]{android.R.attr.state_pressed}, on);
+            s.addState(new int[]{}, new GradientDrawable());
+            n.setBackground(s);
             n.setOnClickListener(click);
-            ownFocus(n, 1.08f);
-            TextView ic = text(icon, 22, current ? ACCENT : MUTED, false);
+            TvFocus.markOwnStyle(n);
+            TextView ic = text(icon, 19, current ? TEXT : DIM, false);
             ic.setGravity(Gravity.CENTER);
             n.addView(ic);
-            TextView tl = text(label, 12, current ? TEXT : MUTED, current);
+            TextView tl = text(label, 10, current ? TEXT : DIM, current);
             tl.setGravity(Gravity.CENTER);
+            tl.setPadding(0, dp(3), 0, 0);
             n.addView(tl);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(84), dp(66));
-            lp.bottomMargin = dp(6);
-            n.setLayoutParams(lp);
-            return n;
+            n.setOnFocusChangeListener((v, has) -> {
+                ic.setTextColor(has || current ? TEXT : DIM);
+                tl.setTextColor(has || current ? TEXT : DIM);
+            });
+            f.addView(n, new FrameLayout.LayoutParams(dp(58), dp(52), Gravity.CENTER));
+            if (current) {
+                View bar = new View(a);
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(ACCENT);
+                g.setCornerRadius(dp(2));
+                bar.setBackground(g);
+                f.addView(bar, new FrameLayout.LayoutParams(dp(3), dp(20), Gravity.START | Gravity.CENTER_VERTICAL));
+            }
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, dp(56));
+            lp.bottomMargin = dp(2);
+            f.setLayoutParams(lp);
+            return f;
         }
 
         View buildTop() {
             LinearLayout t = new LinearLayout(a);
             t.setOrientation(LinearLayout.HORIZONTAL);
             t.setGravity(Gravity.CENTER_VERTICAL);
-            t.setPadding(dp(8), dp(22), dp(28), dp(6));
+            t.setPadding(dp(18), dp(22), dp(32), dp(4));
             LinearLayout left = new LinearLayout(a);
             left.setOrientation(LinearLayout.VERTICAL);
-            greet = text(greeting(), 26, TEXT, true);
+            greet = text(greeting(), 21, TEXT, true);
             left.addView(greet);
-            left.addView(text("¿Qué te apetece ver hoy?", 15, MUTED, false));
+            TextView sub = text("¿Qué quieres ver?", 12.5f, MUTED, false);
+            sub.setPadding(0, dp(3), 0, 0);
+            left.addView(sub);
             t.addView(left, new LinearLayout.LayoutParams(0, -2, 1f));
             TextClock clock = new TextClock(a);
             clock.setFormat24Hour("HH:mm");
             clock.setFormat12Hour("HH:mm");
-            clock.setTextColor(TEXT);
-            clock.setTextSize(24);
-            clock.setTypeface(Typeface.DEFAULT_BOLD);
+            clock.setTextColor(MUTED);
+            clock.setTextSize(18);
             t.addView(clock);
             return t;
         }
@@ -580,25 +607,34 @@ public final class HomeScreen {
             LinearLayout b = new LinearLayout(a);
             b.setOrientation(LinearLayout.HORIZONTAL);
             b.setGravity(Gravity.CENTER_VERTICAL);
-            b.setPadding(dp(8), dp(8), dp(28), dp(14));
+            b.setPadding(dp(18), 0, dp(32), 0);
+            GradientDrawable top = new GradientDrawable();
+            top.setColor(BG);
+            b.setBackground(top);
+            b.setMinimumHeight(dp(34));
+            View line = new View(a);
+            LinearLayout wrapper = new LinearLayout(a);
+            wrapper.setOrientation(LinearLayout.VERTICAL);
+            line.setBackgroundColor(OUTLINE);
+            wrapper.addView(line, new LinearLayout.LayoutParams(-1, Math.max(1, dp(0.7f))));
             b.addView(key("OK"));
-            b.addView(text("Abrir", 13, DIM, false));
-            b.addView(gap(18));
+            b.addView(text("Abrir", 11.5f, DIM, false));
+            b.addView(gap(16));
             b.addView(key("MENÚ"));
-            b.addView(text("Opciones (quitar lista o favorito)", 13, DIM, false));
-            b.addView(gap(18));
+            b.addView(text("Opciones", 11.5f, DIM, false));
+            b.addView(gap(16));
             b.addView(key("ATRÁS"));
-            b.addView(text("Salir", 13, DIM, false));
-            return b;
+            b.addView(text("Salir", 11.5f, DIM, false));
+            wrapper.addView(b, new LinearLayout.LayoutParams(-1, dp(34)));
+            return wrapper;
         }
 
         View key(String k) {
-            TextView t = text(k, 12, TEXT, true);
-            t.setPadding(dp(8), dp(2), dp(8), dp(2));
+            TextView t = text(k, 9.5f, MUTED, false);
+            t.setPadding(dp(5), dp(1), dp(5), dp(1));
             GradientDrawable g = new GradientDrawable();
-            g.setColor(SURFACE2);
-            g.setStroke(dp(1), OUTLINE);
-            g.setCornerRadius(dp(6));
+            g.setStroke(Math.max(1, dp(0.8f)), OUTLINE);
+            g.setCornerRadius(dp(5));
             t.setBackground(g);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
             lp.rightMargin = dp(6);
@@ -616,12 +652,13 @@ public final class HomeScreen {
             LinearLayout h = new LinearLayout(a);
             h.setOrientation(LinearLayout.HORIZONTAL);
             h.setGravity(Gravity.BOTTOM);
-            h.setPadding(0, dp(18), 0, dp(10));
-            h.addView(text(title, 20, TEXT, true));
+            h.setPadding(0, dp(16), 0, dp(10));
+            h.addView(text(title, 15, TEXT, true));
             if (counter != null) {
-                counter.setTextSize(14);
+                counter.setTextSize(11.5f);
                 counter.setTextColor(DIM);
-                counter.setPadding(dp(10), 0, 0, dp(2));
+                counter.setIncludeFontPadding(false);
+                counter.setPadding(dp(8), 0, 0, dp(1));
                 h.addView(counter);
             }
             return h;
@@ -630,93 +667,78 @@ public final class HomeScreen {
         LinearLayout row() {
             LinearLayout r = new LinearLayout(a);
             r.setOrientation(LinearLayout.HORIZONTAL);
-            r.setPadding(dp(4), dp(6), dp(16), dp(10));
             r.setClipChildren(false);
             r.setClipToPadding(false);
             return r;
         }
 
-        View scroller(LinearLayout r) {
-            HorizontalScrollView hs = new HorizontalScrollView(a);
-            hs.setHorizontalScrollBarEnabled(false);
-            hs.setClipChildren(false);
-            hs.setClipToPadding(false);
-            hs.setFillViewport(false);
-            hs.addView(r);
-            return hs;
-        }
-
         // ---------------------------------------------------------------- tarjetas
 
+        /** Tarjeta enfocable. wdp = 0: ocupa una parte igual de la fila (peso 1). */
         LinearLayout card(String key, int wdp, int hdp, View.OnClickListener click, View.OnLongClickListener longClick) {
             LinearLayout c = new LinearLayout(a);
             c.setOrientation(LinearLayout.VERTICAL);
             c.setFocusable(true);
             c.setClickable(true);
             c.setTag(key);
-            c.setBackground(states(SURFACE, SURFACE2, 18, true));
-            c.setPadding(dp(16), dp(14), dp(16), dp(14));
+            c.setBackground(states(SURFACE, SURFACE2, 14, false));
+            c.setPadding(dp(16), dp(12), dp(16), dp(12));
             c.setOnClickListener(click);
             if (longClick != null) c.setOnLongClickListener(longClick);
-            ownFocus(c, 1.05f);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(wdp), dp(hdp));
-            lp.rightMargin = dp(16);
+            ownFocus(c, wdp >= 380 ? 1.02f : 1.04f);
+            LinearLayout.LayoutParams lp = wdp > 0 ? new LinearLayout.LayoutParams(dp(wdp), dp(hdp))
+                    : new LinearLayout.LayoutParams(0, dp(hdp), 1f);
+            lp.rightMargin = dp(12);
             c.setLayoutParams(lp);
             return c;
         }
 
         void fillOpenRow() {
-            LinearLayout id = card("id", 360, 116, v -> showIdDialog(), null);
+            LinearLayout id = card("id", 400, 66, v -> showIdDialog(), null);
+            id.setOrientation(LinearLayout.HORIZONTAL);
+            id.setGravity(Gravity.CENTER_VERTICAL);
+            id.setPadding(dp(18), 0, dp(11), 0);
             id.setContentDescription("Reproducir ID o enlace");
-            id.addView(text("Reproducir ID o enlace", 17, TEXT, true));
-            LinearLayout field = new LinearLayout(a);
-            field.setOrientation(LinearLayout.HORIZONTAL);
-            field.setGravity(Gravity.CENTER_VERTICAL);
-            field.setPadding(dp(12), 0, dp(6), 0);
-            GradientDrawable fg = new GradientDrawable();
-            fg.setColor(BG);
-            fg.setStroke(dp(1), OUTLINE);
-            fg.setCornerRadius(dp(12));
-            field.setBackground(fg);
-            TextView ph = text("Pega una ID AceStream, magnet o URL…", 14, DIM, false);
+            id.addView(text("Reproducir", 14, TEXT, true));
+            TextView ph = text("ID AceStream, magnet o enlace…", 13, DIM, false);
             ph.setSingleLine(true);
             ph.setEllipsize(TextUtils.TruncateAt.END);
-            field.addView(ph, new LinearLayout.LayoutParams(0, -2, 1f));
-            TextView go = text("▶", 14, Color.WHITE, true);
+            ph.setPadding(dp(12), 0, dp(10), 0);
+            id.addView(ph, new LinearLayout.LayoutParams(0, -2, 1f));
+            TextView go = text("▶", 15, Color.WHITE, false);
             go.setGravity(Gravity.CENTER);
             GradientDrawable gg = new GradientDrawable();
             gg.setColor(ACCENT);
             gg.setCornerRadius(dp(10));
             go.setBackground(gg);
-            field.addView(go, new LinearLayout.LayoutParams(dp(36), dp(32)));
-            LinearLayout.LayoutParams flp = new LinearLayout.LayoutParams(-1, dp(44));
-            flp.topMargin = dp(12);
-            id.addView(field, flp);
+            id.addView(go, new LinearLayout.LayoutParams(dp(42), dp(42)));
             openRow.addView(id);
 
-            openRow.addView(action("qr", "⌗", "Añadir lista por QR", "Envíala desde el móvil", v -> addList(2)));
-            openRow.addView(action("usb", "⇪", "Cargar desde USB", "Listas M3U del pendrive", v -> addList(0)));
+            openRow.addView(action("qr", "⌗", "Lista por QR", v -> addList(2)));
+            View usb = action("usb", "⇪", "Desde USB", v -> addList(0));
+            ((LinearLayout.LayoutParams) usb.getLayoutParams()).rightMargin = 0;
+            openRow.addView(usb);
         }
 
-        View action(String key, String icon, String title, String sub, View.OnClickListener click) {
-            LinearLayout c = card(key, 236, 116, click, null);
+        View action(String key, String icon, String title, View.OnClickListener click) {
+            LinearLayout c = card(key, 0, 66, click, null);
             c.setOrientation(LinearLayout.HORIZONTAL);
             c.setGravity(Gravity.CENTER_VERTICAL);
+            c.setPadding(dp(16), 0, dp(14), 0);
             c.setContentDescription(title);
-            TextView ic = text(icon, 26, ACCENT, true);
+            TextView ic = text(icon, 17, ACCENT2, false);
             ic.setGravity(Gravity.CENTER);
             GradientDrawable g = new GradientDrawable();
-            g.setColor(0x337D6BFF);
-            g.setCornerRadius(dp(14));
+            g.setColor(0x247D6BFF);
+            g.setCornerRadius(dp(10));
             ic.setBackground(g);
-            LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams(dp(52), dp(52));
-            ilp.rightMargin = dp(14);
+            LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams(dp(36), dp(36));
+            ilp.rightMargin = dp(12);
             c.addView(ic, ilp);
-            LinearLayout tx = new LinearLayout(a);
-            tx.setOrientation(LinearLayout.VERTICAL);
-            tx.addView(text(title, 16, TEXT, true));
-            tx.addView(text(sub, 13, MUTED, false));
-            c.addView(tx, new LinearLayout.LayoutParams(0, -2, 1f));
+            TextView t = text(title, 14, TEXT, true);
+            t.setSingleLine(true);
+            t.setEllipsize(TextUtils.TruncateAt.END);
+            c.addView(t, new LinearLayout.LayoutParams(0, -2, 1f));
             return c;
         }
 
@@ -726,46 +748,71 @@ public final class HomeScreen {
             View f = root.findFocus();
             if (f != null && f.getTag() instanceof String) pendingFocus = (String) f.getTag();
 
-            // Mis listas
+            // Mis listas: 4 huecos iguales (listas + «Añadir lista» mientras quede sitio)
             listsRow.removeAllViews();
             String extra = dt.totalLists > MAX_LISTS
                     ? "  ·  " + (dt.totalLists - MAX_LISTS) + " más en Listas" : "";
             listsHeader.setText(Math.min(dt.totalLists, MAX_LISTS) + " de " + MAX_LISTS + extra);
             for (PlaylistItem p : dt.lists) listsRow.addView(listCard(p));
             if (dt.totalLists < MAX_LISTS) {
-                int left = MAX_LISTS - dt.totalLists;
-                LinearLayout add = card("addlist", 236, 128, v -> showAddDialog(), null);
+                LinearLayout add = card("addlist", 0, 88, v -> showAddDialog(), null);
+                add.setOrientation(LinearLayout.HORIZONTAL);
                 add.setGravity(Gravity.CENTER);
+                add.setBackground(dashedStates());
                 add.setContentDescription("Añadir lista");
-                TextView plus = text("＋", 30, ACCENT, true);
-                plus.setGravity(Gravity.CENTER);
-                add.addView(plus);
-                TextView t = text("Añadir lista", 16, TEXT, true);
-                t.setGravity(Gravity.CENTER);
-                add.addView(t);
-                TextView s = text(left == 1 ? "Queda 1 hueco" : "Quedan " + left + " huecos", 13, MUTED, false);
-                s.setGravity(Gravity.CENTER);
-                add.addView(s);
+                add.addView(text("＋  Añadir lista", 13.5f, MUTED, false));
                 listsRow.addView(add);
             }
+            while (listsRow.getChildCount() < MAX_LISTS) {
+                View spacer = new View(a);
+                LinearLayout.LayoutParams sl = new LinearLayout.LayoutParams(0, dp(88), 1f);
+                sl.rightMargin = dp(12);
+                listsRow.addView(spacer, sl);
+            }
+            View lastList = listsRow.getChildAt(listsRow.getChildCount() - 1);
+            ((LinearLayout.LayoutParams) lastList.getLayoutParams()).rightMargin = 0;
 
-            // Favoritos
+            // Favoritos: rejilla de 6 columnas (2 filas como máximo)
             favsRow.removeAllViews();
             favsHeader.setText(Math.min(dt.totalFavs, MAX_FAVS) + " de " + MAX_FAVS);
             if (dt.favs.isEmpty()) {
-                LinearLayout e = card("nofavs", 420, 150, v -> {
+                LinearLayout e = card("nofavs", 0, 88, v -> {
                     if (!dt.lists.isEmpty()) openPlaylistFromHome(a, dt.lists.get(0).id, true);
                     else showAddDialog();
                 }, null);
+                ((LinearLayout.LayoutParams) e.getLayoutParams()).rightMargin = 0;
                 e.setGravity(Gravity.CENTER_VERTICAL);
                 e.setContentDescription("Sin favoritos");
-                e.addView(text("♡  Aún no tienes favoritos", 17, TEXT, true));
-                TextView s = text("Abre una lista y pulsa ♡ junto a un canal para tenerlo aquí, en grande.", 14, MUTED, false);
-                s.setPadding(0, dp(6), 0, 0);
+                e.addView(text("♡  Aún no tienes favoritos", 14, TEXT, true));
+                TextView s = text("Abre una lista y pulsa ♡ junto a un canal para tenerlo aquí.", 12.5f, MUTED, false);
+                s.setPadding(0, dp(5), 0, 0);
                 e.addView(s);
-                favsRow.addView(e);
+                LinearLayout r = row();
+                r.addView(e);
+                favsRow.addView(r, new LinearLayout.LayoutParams(-1, -2));
             }
-            for (FavItem fv : dt.favs) favsRow.addView(favCard(fv));
+            LinearLayout r = null;
+            for (int i = 0; i < dt.favs.size(); i++) {
+                if (i % 6 == 0) {
+                    r = row();
+                    LinearLayout.LayoutParams rl = new LinearLayout.LayoutParams(-1, -2);
+                    if (i > 0) rl.topMargin = dp(12);
+                    favsRow.addView(r, rl);
+                }
+                r.addView(favCard(dt.favs.get(i)));
+            }
+            if (r != null) {
+                while (r.getChildCount() < 6) {
+                    View spacer = new View(a);
+                    LinearLayout.LayoutParams sl = new LinearLayout.LayoutParams(0, dp(100), 1f);
+                    sl.rightMargin = dp(12);
+                    r.addView(spacer, sl);
+                }
+                for (int i = 0; i < favsRow.getChildCount(); i++) {
+                    LinearLayout fr = (LinearLayout) favsRow.getChildAt(i);
+                    ((LinearLayout.LayoutParams) fr.getChildAt(fr.getChildCount() - 1).getLayoutParams()).rightMargin = 0;
+                }
+            }
 
             if (pendingFocus != null) {
                 String k = pendingFocus;
@@ -774,54 +821,88 @@ public final class HomeScreen {
         }
 
         View listCard(final PlaylistItem p) {
-            LinearLayout c = card("list:" + p.id, 236, 128, v -> openPlaylistFromHome(a, p.id, true), v -> {
+            LinearLayout c = card("list:" + p.id, 0, 88, v -> openPlaylistFromHome(a, p.id, true), v -> {
                 listOptions(p);
                 return true;
             });
             c.setContentDescription(p.name);
-            TextView name = text(p.name, 17, TEXT, true);
-            name.setMaxLines(2);
-            name.setEllipsize(TextUtils.TruncateAt.END);
-            c.addView(name, new LinearLayout.LayoutParams(-1, 0, 1f));
+            FrameLayout top = new FrameLayout(a);
             String src = sourceLabel(p.source);
-            c.addView(text(String.format(Locale.getDefault(), "%,d", p.count) + (p.count == 1 ? " enlace" : " enlaces")
-                    + (src.isEmpty() ? "" : "  ·  " + src), 13, MUTED, false));
+            TextView tag = text(src.isEmpty() ? "" : src.toUpperCase(Locale.ROOT), 9.5f, DIM, false);
+            top.addView(tag, new FrameLayout.LayoutParams(-2, -2, Gravity.END | Gravity.TOP));
+            c.addView(top, new LinearLayout.LayoutParams(-1, 0, 1f));
+            TextView name = text(p.name, 14.5f, TEXT, true);
+            name.setSingleLine(true);
+            name.setEllipsize(TextUtils.TruncateAt.END);
+            c.addView(name);
+            TextView n = text(String.format(Locale.forLanguageTag("es-ES"), "%,d", p.count) + (p.count == 1 ? " enlace" : " enlaces"),
+                    11.5f, MUTED, false);
+            n.setPadding(0, dp(3), 0, 0);
+            c.addView(n);
             return c;
         }
 
         View favCard(final FavItem f) {
-            LinearLayout c = card("fav:" + f.playlistId + ":" + f.input, 190, 168,
+            LinearLayout c = card("fav:" + f.playlistId + ":" + f.input, 0, 100,
                     v -> play(a, f.input, f.title, false), v -> {
                         favOptions(f);
                         return true;
                     });
-            c.setPadding(dp(10), dp(10), dp(10), dp(12));
+            c.setPadding(dp(8), dp(10), dp(8), dp(10));
+            c.setGravity(Gravity.CENTER_HORIZONTAL);
             c.setContentDescription(f.title);
             FrameLayout art = new FrameLayout(a);
             GradientDrawable g = new GradientDrawable();
-            g.setColor(BG);
-            g.setCornerRadius(dp(12));
+            g.setColor(colorFor(f.title));
+            g.setCornerRadius(dp(11));
             art.setBackground(g);
-            TextView ini = text(initials(f.title), 30, ACCENT, true);
+            art.setClipToOutline(true);
+            TextView ini = text(initials(f.title), 14, Color.WHITE, true);
             ini.setGravity(Gravity.CENTER);
             art.addView(ini, new FrameLayout.LayoutParams(-1, -1));
             ImageView iv = new ImageView(a);
             iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            iv.setPadding(dp(10), dp(8), dp(10), dp(8));
+            iv.setPadding(dp(4), dp(4), dp(4), dp(4));
             art.addView(iv, new FrameLayout.LayoutParams(-1, -1));
             loadLogo(iv, f.logo, ini);
-            c.addView(art, new LinearLayout.LayoutParams(-1, 0, 1f));
-            TextView name = text(f.title, 15, TEXT, true);
+            // con logo, fondo neutro para que se vea bien
+            iv.addOnLayoutChangeListener((v, l, t, rr, b, ol, ot, orr, ob) -> {
+                if (iv.getDrawable() != null) g.setColor(SURFACE2);
+            });
+            c.addView(art, new LinearLayout.LayoutParams(dp(44), dp(44)));
+            TextView name = text(f.title, 11.5f, TEXT, true);
             name.setSingleLine(true);
             name.setEllipsize(TextUtils.TruncateAt.END);
-            name.setPadding(dp(4), dp(8), dp(4), 0);
-            c.addView(name);
-            TextView from = text(f.playlistName, 12, DIM, false);
-            from.setSingleLine(true);
-            from.setEllipsize(TextUtils.TruncateAt.END);
-            from.setPadding(dp(4), 0, dp(4), 0);
-            c.addView(from);
+            name.setGravity(Gravity.CENTER);
+            name.setPadding(0, dp(8), 0, 0);
+            c.addView(name, new LinearLayout.LayoutParams(-1, -2));
             return c;
+        }
+
+        GradientDrawable dashed() {
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(0x00000000);
+            g.setCornerRadius(dp(14));
+            g.setStroke(Math.max(1, dp(1.3f)), OUTLINE, dp(5), dp(4));
+            return g;
+        }
+
+        StateListDrawable dashedStates() {
+            GradientDrawable f = new GradientDrawable();
+            f.setColor(0x00000000);
+            f.setCornerRadius(dp(14));
+            f.setStroke(dp(2), ACCENT);
+            StateListDrawable s = new StateListDrawable();
+            s.addState(new int[]{android.R.attr.state_focused}, f);
+            s.addState(new int[]{android.R.attr.state_pressed}, f);
+            s.addState(new int[]{}, dashed());
+            return s;
+        }
+
+        int colorFor(String s) {
+            int[] c = {0xFF5B4BD6, 0xFFC2410C, 0xFF0F766E, 0xFF1D4ED8, 0xFF9D174D, 0xFF4D7C0F,
+                    0xFF7C3AED, 0xFFB45309, 0xFF0369A1, 0xFFBE123C, 0xFF15803D, 0xFF6D28D9};
+            return c[Math.abs((s == null ? "" : s).hashCode()) % c.length];
         }
 
         // ---------------------------------------------------------------- acciones
@@ -1058,7 +1139,7 @@ public final class HomeScreen {
             GradientDrawable f = new GradientDrawable();
             f.setColor(focused == 0 ? SURFACE2 : focused);
             f.setCornerRadius(dp(radius));
-            f.setStroke(dp(3), ACCENT);
+            f.setStroke(dp(2.5f), ACCENT);
             StateListDrawable s = new StateListDrawable();
             s.addState(new int[]{android.R.attr.state_focused}, f);
             s.addState(new int[]{android.R.attr.state_pressed}, f);

@@ -9,14 +9,18 @@
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
+.field public final synthetic f$1:Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
+
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;Lcom/mcp2p/tv/HomeScreen$PlaylistItem;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
+
+    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$1:Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
 
     return-void
 .end method
@@ -24,11 +28,13 @@
 
 # virtual methods
 .method public final onClick(Landroid/content/DialogInterface;I)V
-    .locals 1
+    .locals 2
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-virtual {v0, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$showAddDialog$17$com-mcp2p-tv-HomeScreen$Home(Landroid/content/DialogInterface;I)V
+    iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$1:Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
+
+    invoke-virtual {v0, v1, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$listOptions$20$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$PlaylistItem;Landroid/content/DialogInterface;I)V
 
     return-void
 .end method

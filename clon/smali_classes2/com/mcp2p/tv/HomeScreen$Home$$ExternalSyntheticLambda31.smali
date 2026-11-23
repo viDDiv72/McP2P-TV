@@ -7,16 +7,16 @@
 
 
 # instance fields
-.field public final synthetic f$0:Ljava/lang/Runnable;
+.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
 
 # direct methods
-.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda31;->f$0:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda31;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     return-void
 .end method
@@ -26,9 +26,9 @@
 .method public final onClick(Landroid/view/View;)V
     .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda31;->f$0:Ljava/lang/Runnable;
+    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda31;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-static {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$showIdDialog$29(Ljava/lang/Runnable;Landroid/view/View;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$fillOpenRow$9$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
 
     return-void
 .end method

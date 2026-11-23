@@ -3,32 +3,38 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/ViewTreeObserver$OnWindowFocusChangeListener;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
+.field public final synthetic f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;Lcom/mcp2p/tv/HomeScreen$FavItem;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda13;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
+    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda13;->f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+
     return-void
 .end method
 
 
 # virtual methods
-.method public final onWindowFocusChanged(Z)V
-    .locals 1
+.method public final onClick(Landroid/view/View;)V
+    .locals 2
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda13;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$show$0$com-mcp2p-tv-HomeScreen$Home(Z)V
+    iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda13;->f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+
+    invoke-virtual {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$favCard$16$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$FavItem;Landroid/view/View;)V
 
     return-void
 .end method

@@ -3,32 +3,32 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/View$OnFocusChangeListener;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
-.field public final synthetic f$0:F
+.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
 
 # direct methods
-.method public synthetic constructor <init>(F)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda30;->f$0:F
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda30;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onFocusChange(Landroid/view/View;Z)V
+.method public final onClick(Landroid/view/View;)V
     .locals 1
 
-    iget v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda30;->f$0:F
+    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda30;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-static {v0, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$ownFocus$33(FLandroid/view/View;Z)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$fillOpenRow$8$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
 
     return-void
 .end method

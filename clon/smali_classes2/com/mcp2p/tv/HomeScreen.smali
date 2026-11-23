@@ -17,9 +17,11 @@
 # static fields
 .field static final ACCENT:I = -0x829401
 
-.field static final BG:I = -0xf6f5ec
+.field static final ACCENT2:I = -0x566201
 
-.field static final DIM:I = -0x8e8768
+.field static final BG:I = -0xf4f3ec
+
+.field static final DIM:I = -0xa29d86
 
 .field public static final EXTRA_ALL_LINKS:Ljava/lang/String; = "com.mcp2p.tv.ALL_LINKS"
 
@@ -48,19 +50,17 @@
 
 .field public static final MAX_LISTS:I = 0x4
 
-.field static final MUTED:I = -0x554f34
+.field static final MUTED:I = -0x726d56
 
-.field static final OUTLINE:I = -0xd5d0ae
+.field static final OUTLINE:I = -0xdbd7c1
 
-.field static final RAIL:I = -0xf2f0e4
+.field static final SURFACE:I = -0xebe9db
 
-.field static final SURFACE:I = -0xebe8d7
-
-.field static final SURFACE2:I = -0xe3dfc8
+.field static final SURFACE2:I = -0xe4e1cf
 
 .field static final TAG:Ljava/lang/String; = "Mcp2pHome"
 
-.field static final TEXT:I = -0xc0a01
+.field static final TEXT:I = -0x110f08
 
 .field private static volatile favBlocked:Z
 
@@ -560,7 +560,7 @@
 .method static greeting()Ljava/lang/String;
     .locals 3
 
-    .line 1077
+    .line 1158
     invoke-static {}, Ljava/util/Calendar;->getInstance()Ljava/util/Calendar;
 
     move-result-object v0
@@ -753,13 +753,13 @@
 
     return-object p0
 
-    .line 1085
+    .line 1166
     :cond_0
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
 
-    .line 1086
+    .line 1167
     invoke-virtual {p0}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object p0
@@ -781,7 +781,7 @@
 
     aget-object v4, p0, v3
 
-    .line 1087
+    .line 1168
     invoke-virtual {v4}, Ljava/lang/String;->isEmpty()Z
 
     move-result v5
@@ -790,13 +790,13 @@
 
     goto :goto_1
 
-    .line 1088
+    .line 1169
     :cond_1
     invoke-virtual {v4, v2}, Ljava/lang/String;->codePointAt(I)I
 
     move-result v4
 
-    .line 1089
+    .line 1170
     invoke-static {v4}, Ljava/lang/Character;->isLetterOrDigit(I)Z
 
     move-result v5
@@ -809,7 +809,7 @@
 
     invoke-virtual {v0, v4}, Ljava/lang/StringBuilder;->appendCodePoint(I)Ljava/lang/StringBuilder;
 
-    .line 1090
+    .line 1171
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I
 
@@ -827,7 +827,7 @@
 
     goto :goto_0
 
-    .line 1092
+    .line 1173
     :cond_4
     :goto_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I

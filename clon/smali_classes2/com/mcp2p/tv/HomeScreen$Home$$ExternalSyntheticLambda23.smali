@@ -7,20 +7,16 @@
 
 
 # instance fields
-.field public final synthetic f$0:Landroid/widget/EditText;
-
-.field public final synthetic f$1:Ljava/lang/String;
+.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
 
 # direct methods
-.method public synthetic constructor <init>(Landroid/widget/EditText;Ljava/lang/String;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$0:Landroid/widget/EditText;
-
-    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$1:Ljava/lang/String;
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     return-void
 .end method
@@ -28,13 +24,11 @@
 
 # virtual methods
 .method public final onClick(Landroid/view/View;)V
-    .locals 2
+    .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$0:Landroid/widget/EditText;
+    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$1:Ljava/lang/String;
-
-    invoke-static {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$showIdDialog$26(Landroid/widget/EditText;Ljava/lang/String;Landroid/view/View;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$buildRail$6$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
 
     return-void
 .end method
