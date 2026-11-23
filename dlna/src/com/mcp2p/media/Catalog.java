@@ -136,7 +136,26 @@ public final class Catalog {
         collect(t, Sources.TORRENTIO, got, failed);
         // (String.join es de API 26; la app admite Android 7, API 24)
         if (got.isEmpty()) throw new IOException("No se pudo conectar con Peerflix ni con Torrentio");
-        return new Found(Sources.best(Sources.merge(got)), failed);
+        List<Sources.Stream> all = Sources.merge(got);
+        realSeeds(all);
+        return new Found(Sources.best(all), failed);
+    }
+
+    /**
+     * Cambia las semillas de los addons (desactualizadas) por las reales que dan ahora los trackers públicos.
+     * Si ningún tracker responde, se quedan las de los addons.
+     */
+    static void realSeeds(List<Sources.Stream> all) {
+        if (all.isEmpty()) return;
+        List<String> hashes = new ArrayList<>();
+        for (Sources.Stream s : all) hashes.add(s.infoHash);
+        java.util.Map<String, Integer> real = Trackers.seeders(hashes);
+        if (real == null) return;
+        for (Sources.Stream s : all) {
+            Integer n = real.get(s.infoHash);
+            s.seeds = n == null ? 0 : n;
+        }
+        Sources.sort(all);
     }
 
     private static void collect(Future<List<Sources.Stream>> f, String name, List<List<Sources.Stream>> got, List<String> failed) {

@@ -90,6 +90,11 @@ public final class MediaTests {
         eq("después, en el mismo grupo, 1080p/720p por calidad", 70, bf.get(1).seeds == 50 ? 70 : bf.get(1).seeds == 70 ? 70 : -1);
         ok("solo la primera recomendada", bf.get(0).recommended && !bf.get(1).recommended);
 
+        // ---- trackers (semillas reales)
+        byte[] hb = Trackers.hex("46826e610ae3b81757d3ce57cdce130f2628e29f");
+        ok("infohash a 20 bytes", hb.length == 20 && (hb[0] & 0xff) == 0x46 && (hb[19] & 0xff) == 0x9f);
+        eq("sin infohash no se pregunta a nadie", 0, Trackers.seeders(new java.util.ArrayList<String>()).size());
+
         // ---- precarga
         eq("precarga mínima 32 MB", 32L * 1048576L, TorrentFiles.bufferBytes(2L * 1073741824L));
         eq("precarga 1 % (80 MB en 8 GB)", 8L * 1073741824L / 100, TorrentFiles.bufferBytes(8L * 1073741824L));
