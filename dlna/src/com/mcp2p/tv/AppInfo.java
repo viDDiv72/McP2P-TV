@@ -20,13 +20,11 @@ public final class AppInfo {
     /** Texto de «Acerca de McP2P» con la versión que hay instalada (antes ponía siempre 1.5.6). */
     public static String about(Context c) {
         String v = "?";
-        long code = 0;
         try {
             PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
             v = pi.versionName;
-            code = Build.VERSION.SDK_INT >= 28 ? pi.getLongVersionCode() : pi.versionCode;
         } catch (Exception ignored) {}
-        return "McP2P-TV\nVersión " + v + " (" + code + ")\n\nReproductor multimedia y motor P2P.\n"
+        return "McP2P-TV\nVersión " + v + "\n\nReproductor multimedia y motor P2P.\n"
                 + "Basado en McP2P 1.5.6.\n\nAparato: " + Build.MANUFACTURER + " " + Build.MODEL
                 + " · Android " + Build.VERSION.RELEASE
                 + (lowMemory(c) ? "\nModo ligero activado (poca memoria)." : "");
