@@ -2046,6 +2046,15 @@
 
     .line 459
     :goto_8
+    # McP2P-TV: si la Mediateca indicó el archivo exacto del torrent (fileIdx), se usa ese
+    move-object/from16 v10, p0
+
+    iget-object v10, v10, LT3/c;->D:Ljava/lang/String;
+
+    invoke-static {v10, v11, v4}, Lcom/mcp2p/media/TorrentFiles;->choose(Ljava/lang/String;ILjava/lang/Object;)I
+
+    move-result v11
+
     if-ltz v11, :cond_16
 
     .line 460

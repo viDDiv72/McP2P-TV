@@ -1,6 +1,7 @@
 # Mediateca con fuentes Torrentio y Peerflix · propuesta
 
-Estado: **propuesta** (nada implementado). Comprobado el 2026-11-23 contra las APIs reales.
+Estado: **implementado en la rama `ui-limpia`** (sin publicar). Comprobado el 2026-11-23 contra las APIs reales.
+Decisión del usuario: solo Peerflix y Torrentio (sin AceStream) y solo castellano de España (ni inglés, ni latino, ni VOSE).
 
 ## Situación actual
 - La Mediateca (`MediaLibraryActivity`) importa listas M3U de películas, agrupa versiones por título/año

@@ -592,6 +592,8 @@
     .line 193
     .line 194
     .line 195
+    invoke-static {p0}, Lcom/mcp2p/media/MediaScreen;->install(Landroid/app/Activity;)V
+
     return-void
 .end method
 

@@ -1,0 +1,131 @@
+package com.mcp2p.media;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Pruebas de la Mediateca con respuestas reales de Peerflix y Torrentio guardadas en dlna/test/fixtures/media
+ * (Origen tt1375666, La noche de los muertos vivientes tt0063350; 23/11/2026).
+ * Uso: dlna/test/run-tests.sh (sale con código 1 si falla algo).
+ */
+public final class MediaTests {
+    private static int run, failed;
+
+    public static void main(String[] args) throws Exception {
+        String dir = args.length > 0 ? args[0] : "dlna/test/fixtures/media";
+
+        // ---- JSON
+        Object j = Json.parse("{\"a\":[1,2.5,\"x\\u00f1\\n\"],\"b\":{\"c\":null,\"d\":true}}");
+        eq("JSON número", 1.0, Json.arr(Json.obj(j).get("a")).get(0));
+        eq("JSON nulo", null, Json.obj(Json.obj(j).get("b")).get("c"));
+        eq("JSON escape \\u", "xñ\n", Json.arr(Json.obj(j).get("a")).get(2));
+        eq("JSON anidado", Boolean.TRUE, Json.obj(Json.obj(j).get("b")).get("d"));
+        boolean bad = false;
+        try { Json.parse("{\"a\":"); } catch (IllegalArgumentException e) { bad = true; }
+        ok("JSON roto lanza error", bad);
+
+        // ---- idioma
+        ok("castellano en el nombre", Sources.isCastilian("Torrentio", Json.obj(null), "Origen [BluRay 1080p][AC3 5.1 Castellano]"));
+        ok("[Esp]", Sources.isCastilian("Torrentio", Json.obj(null), "Película (2026) [Bluray 720p][Esp]"));
+        ok("dual con castellano", Sources.isCastilian("Torrentio", Json.obj(null), "Movie.2010.1080p.ENG.LATINO.CASTELLANO"));
+        ok("solo latino fuera", !Sources.isCastilian("Torrentio", Json.obj(null), "Movie 2010 1080p Latino"));
+        ok("inglés fuera", !Sources.isCastilian("Torrentio", Json.obj(null), "Inception.2010.1080p.BluRay.x264-SPARKS"));
+        ok("solo bandera ES en lista multilingüe fuera", !Sources.isCastilian("Torrentio", Json.obj(null), "Inception 2010 EN/ITA/FR/ES/DE"));
+        ok("VOSE fuera", !Sources.isCastilian("Torrentio", Json.obj(null), "Inception.2009.DVD.V.O.Sub.Spanish"));
+        ok("subtítulos en español fuera", !Sources.isCastilian("Torrentio", Json.obj(null), "Inception - (English / Spanish Subtitles)"));
+        ok("Peerflix es-ES dentro", Sources.isCastilian("Peerflix", Json.obj(Json.parse("{\"languages\":[\"es-ES\"]}")), "Origen [1080p]"));
+        ok("Peerflix inglés fuera", !Sources.isCastilian("Peerflix", Json.obj(Json.parse("{\"languages\":[\"en\"]}")), "Inception 1080p"));
+        ok("año que coincide", Sources.yearMatches("Iron Man (2008) 1080p", 2008));
+        ok("otro año (remake) fuera", !Sources.yearMatches("La noche de los muertos vivientes (2026) [Esp]", 1968));
+        ok("sin año se acepta", Sources.yearMatches("Origen [BluRay 1080p]", 2010));
+        eq("calidad 4K", "4K", Sources.quality("Torrentio\n4k HDR", "x"));
+        eq("calidad 1080p", "1080p", Sources.quality("Peerflix 1080p", "x"));
+        eq("calidad TS = CINE", "CINE", Sources.quality("", "Inception (2010) Spanish TS CVCD"));
+
+        // ---- respuestas reales
+        List<Sources.Stream> origen = Sources.merge(Arrays.asList(
+                Sources.parse("Peerflix", read(dir, "peerflix_tt1375666.json"), 2010),
+                Sources.parse("Torrentio", read(dir, "torrentio_tt1375666.json"), 2010)));
+        eq("Origen: 20 fuentes en castellano", 20, origen.size());
+        boolean allEs = true, anyEn = false, sorted = true;
+        for (Sources.Stream s : origen) {
+            String t = s.title.toLowerCase();
+            if (t.contains("thefarm") || t.contains("subtitles") || t.contains("начало")) anyEn = true;
+            if (s.infoHash.length() != 40) allEs = false;
+        }
+        for (int i = 1; i < origen.size(); i++) {
+            Sources.Stream a = origen.get(i - 1), b = origen.get(i);
+            if (a.seeds == 0 && b.seeds > 0) sorted = false;
+        }
+        ok("Origen: sin versiones en inglés ni subtituladas", !anyEn);
+        ok("Origen: infohash válidos", allEs);
+        ok("Origen: primero las que tienen semillas", sorted);
+        eq("Origen: la primera es 4K", "4K", origen.get(0).quality);
+        int merged = 0;
+        for (Sources.Stream s : origen) if (s.addon.contains("+")) merged++;
+        ok("Origen: duplicados unidos (Peerflix + Torrentio)", merged >= 5);
+        Sources.Stream p = null;
+        for (Sources.Stream s : origen) if (s.addon.startsWith("Peerflix") && !s.trackers.isEmpty()) { p = s; break; }
+        ok("Origen: Peerflix trae trackers", p != null);
+
+        List<Sources.Stream> noche = Sources.merge(Arrays.asList(
+                Sources.parse("Peerflix", read(dir, "peerflix_tt0063350.json"), 1968),
+                Sources.parse("Torrentio", read(dir, "torrentio_tt0063350.json"), 1968)));
+        eq("Noche de los muertos vivientes: 10 fuentes", 10, noche.size());
+        boolean remake = false;
+        for (Sources.Stream s : noche) if (s.title.contains("2026")) remake = true;
+        ok("Noche: fuera la versión de 2026", !remake);
+        Sources.Stream idx4 = null;
+        for (Sources.Stream s : noche) if (s.fileIdx == 4) idx4 = s;
+        ok("Noche: se conserva fileIdx 4", idx4 != null);
+
+        // ---- magnet
+        Sources.Stream m = new Sources.Stream();
+        m.infoHash = "46826e610ae3b81757d3ce57cdce130f2628e29f";
+        m.fileIdx = 4;
+        m.trackers.add("udp://tracker.opentrackr.org:1337/announce");
+        String mg = Sources.magnet(m, "La noche & co");
+        eq("magnet completo", "magnet:?xt=urn:btih:46826e610ae3b81757d3ce57cdce130f2628e29f&dn=La%20noche%20%26%20co"
+                + "&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&so=4", mg);
+        m.fileIdx = -1;
+        ok("magnet sin so= si no hay índice", !Sources.magnet(m, null).contains("so="));
+
+        // ---- archivo exacto del torrent
+        FakeFiles ff = new FakeFiles(new long[]{100, 0, 900, 300, 50});
+        eq("sin pista: elección del motor", 2, TorrentFiles.choose("AB", 2, ff));
+        TorrentFiles.hint("ab", 3);
+        eq("con pista: archivo indicado", 3, TorrentFiles.choose("AB", 2, ff));
+        TorrentFiles.hint("ab", 1);
+        eq("pista a archivo vacío: se ignora", 2, TorrentFiles.choose("AB", 2, ff));
+        TorrentFiles.hint("ab", 9);
+        eq("pista fuera de rango: se ignora", 2, TorrentFiles.choose("AB", 2, ff));
+        eq("objeto raro: no falla", 2, TorrentFiles.choose("AB", 2, "no es un FileStorage"));
+
+        System.out.println(run - failed + "/" + run + " pruebas de la Mediateca correctas");
+        System.exit(failed == 0 ? 0 : 1);
+    }
+
+    /** Imita org.libtorrent4j.FileStorage (numFiles / fileSize). */
+    public static final class FakeFiles {
+        private final long[] sizes;
+        FakeFiles(long[] s) { sizes = s; }
+        public int numFiles() { return sizes.length; }
+        public long fileSize(int i) { return sizes[i]; }
+    }
+
+    private static String read(String dir, String f) throws Exception {
+        return new String(Files.readAllBytes(Paths.get(dir, f)), StandardCharsets.UTF_8);
+    }
+
+    private static void eq(String name, Object exp, Object act) {
+        ok(name + " (esperado «" + exp + "», obtenido «" + act + "»)", exp == null ? act == null : exp.equals(act));
+    }
+
+    private static void ok(String name, boolean c) {
+        run++;
+        if (!c) { failed++; System.out.println("FALLO: " + name); }
+    }
+}

@@ -39,6 +39,12 @@ const checks = [
   }],
   ['SQL de toda la lista con alias e', () =>
     read('smali/S3/a.smali').includes('FROM playlist_entries e WHERE playlist_id=? ORDER BY')],
+  // Mediateca nueva (Peerflix/Torrentio)
+  ['Mediateca: MediaLibraryActivity.onCreate monta MediaScreen', () =>
+    method(read('smali/com/mcp2p/app/ui/MediaLibraryActivity.smali'), 'public final onCreate(').includes('MediaScreen;->install(')],
+  ['Mediateca: el motor de magnets respeta el archivo indicado', () =>
+    /invoke-static \{v10, v11, v4\}, Lcom\/mcp2p\/media\/TorrentFiles;->choose\(Ljava\/lang\/String;ILjava\/lang\/Object;\)I\s+move-result v11\s+if-ltz v11, :cond_16/
+      .test(read('smali/T3/c.smali'))],
   // Seguridad (v1.6.1)
   ['Copias de seguridad desactivadas', () => read('AndroidManifest.xml').includes('android:allowBackup="false"')],
   ['Arranque: CrashLog, TvFocus y DLNA enganchados', () => {

@@ -124,3 +124,17 @@ se mantiene la pantalla original). Si algo falla al montarlo, se queda la pantal
 **Limitaciones:** la app tiene que estar abierta en la TV (Android no deja abrir pantallas desde segundo plano).
 A televisores DLNA que no son McP2P-TV se les envía el puente del móvil, así que el móvil debe seguir reproduciendo.
 Las cabeceras HTTP/DRM de algunos canales no viajan por DLNA.
+
+### 7. Mediateca con Peerflix y Torrentio (rama `ui-limpia`, sin publicar)
+Paquete `com.mcp2p.media` (en `dlna/src`), montado al final de `MediaLibraryActivity.onCreate`. Sustituye la
+Mediateca de listas AceStream. Diseño y decisiones: [docs/MEDIATECA-FUENTES.md](docs/MEDIATECA-FUENTES.md);
+maqueta: `ui/prototipo/mediateca.html` (`node tools/serve-prototipo.js`).
+- **Catálogo** de TMDB en español (Populares, Estrenos, Mejor valoradas y Buscar) con carátulas. Cada carátula
+  indica cuántas fuentes en castellano tiene; sin ninguna, sale apagada.
+- **Fuentes** de Peerflix y Torrentio a la vez (`/stream/movie/tt….json`), **solo castellano**: Peerflix por su
+  campo `languages: es-ES`; Torrentio si el nombre del torrent dice Castellano/Español/[ESP]/Spanish. Fuera latino,
+  inglés, VOSE y torrents de otro año (remakes). Sin duplicados, ordenadas por semillas y calidad, con filtro de calidad.
+- **Reproducción**: magnet con trackers; el archivo exacto del torrent (`fileIdx`) llega al motor por
+  `TorrentFiles.hint` y `T3/c.smali` lo respeta (antes siempre elegía el vídeo más grande).
+- **Ajustes de fuentes** (botón ⚙): URL de configuración propia de cada addon; vacía = predeterminada.
+- Pruebas: `dlna/test/run-tests.sh` incluye 38 pruebas con respuestas reales guardadas en `dlna/test/fixtures/media`.

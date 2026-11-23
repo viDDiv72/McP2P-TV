@@ -26,6 +26,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
+## [Sin publicar] · rama `ui-limpia`
+Solo local, pendiente de probar en la Vontar X4.
+
+### Añadido
+- Mediateca nueva: catálogo de TMDB con carátulas y fuentes **solo en castellano** de Peerflix y Torrentio;
+  se elige la versión (calidad, semillas, tamaño) y se reproduce el archivo exacto del torrent.
+- Prototipos de interfaz limpia (`ui/prototipo/limpio.html`) y de la Mediateca (`ui/prototipo/mediateca.html`).
+
+### Cambiado
+- La Mediateca deja de usar listas de AceStream.
+- «Desde USB» solo en TV/TVBox/Fire TV (prototipo).
+
 ## [1.8.0] · 2026-11-22
 **Pre-release** · versionCode 26 · etiqueta `v1.8.0` · pendiente de probar en la Vontar X4
 
