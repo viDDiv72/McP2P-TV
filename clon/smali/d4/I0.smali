@@ -321,7 +321,10 @@
 
     .line 144
     .line 145
-    const-string v2, "Mcp2P\nVersi\u00f3n 1.5.6\n\nReproductor multimedia y motor P2P."
+    # McP2P-TV: versión instalada de verdad (antes ponía siempre 1.5.6)
+    invoke-static {v7}, Lcom/mcp2p/tv/AppInfo;->about(Landroid/content/Context;)Ljava/lang/String;
+
+    move-result-object v2
 
     .line 146
     .line 147

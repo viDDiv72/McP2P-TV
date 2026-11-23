@@ -31,6 +31,8 @@ public final class Sources {
         public boolean pack;        // el torrent trae varias películas: se reproduce `file`
         public boolean dualEnglish; // además del castellano trae inglés
         public boolean recommended; // la que más probabilidades tiene de verse sin cortes
+        /** Prueba real al abrir la ficha: personas que han contestado (≥1), 0 nadie contestó, -1 sin comprobar. */
+        public int reachable = -1;
         public int seeds;
         public long size;
         public String provider;
@@ -219,6 +221,13 @@ public final class Sources {
 
     /** Semillas mínimas para mostrar una fuente: con menos, lo normal es que no arranque o vaya a saltos. */
     public static final int MIN_SEEDS = 10;
+    /**
+     * Aparato con poca memoria (Mi Box S y similares): solo 1080p/720p y 10 GB como máximo, para que decodificar
+     * y descargar a la vez no lo bloquee. Lo fija la Mediateca al abrirse.
+     */
+    public static volatile boolean lowMemory;
+    public static final long LOW_MEMORY_MAX_SIZE = 10L * 1073741824L;
+
     /** Tamaño máximo: un archivo mayor necesita más velocidad de la que suele dar una conexión doméstica. */
     public static final long MAX_SIZE = 20L * 1073741824L;
     /** Opciones que se ofrecen como máximo (las mejores). */
@@ -232,7 +241,8 @@ public final class Sources {
         List<Stream> ok = new ArrayList<>();
         for (Stream s : sorted) {
             if (s.seeds < MIN_SEEDS) continue;
-            if (s.size > MAX_SIZE) continue;
+            if (s.size > (lowMemory ? LOW_MEMORY_MAX_SIZE : MAX_SIZE)) continue;
+            if (lowMemory && "4K".equals(s.quality)) continue;
             ok.add(s);
         }
         // Entre las fiables: primero las de más semillas por grupos (50+, 20+, 10+) y, dentro de cada grupo,

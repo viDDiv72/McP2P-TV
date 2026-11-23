@@ -53,7 +53,7 @@
     :try_start_0
     const-string v0, "clipboard"
 
-    .line 143
+    .line 146
     invoke-virtual {p0, v0}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object v0
@@ -62,7 +62,7 @@
 
     const-string v1, "McP2P-TV informe"
 
-    .line 144
+    .line 147
     invoke-static {v1, p1}, Landroid/content/ClipData;->newPlainText(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Landroid/content/ClipData;
 
     move-result-object p1
@@ -73,7 +73,7 @@
 
     const/4 v0, 0x0
 
-    .line 145
+    .line 148
     invoke-static {p0, p1, v0}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
     move-result-object p0
@@ -91,7 +91,7 @@
 
     const-string v0, "No se pudo copiar el informe"
 
-    .line 147
+    .line 150
     invoke-static {p1, v0, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -101,7 +101,7 @@
 .method private static file(Landroid/content/Context;)Ljava/io/File;
     .locals 2
 
-    .line 58
+    .line 61
     new-instance v0, Ljava/io/File;
 
     invoke-virtual {p0}, Landroid/content/Context;->getFilesDir()Ljava/io/File;
@@ -120,18 +120,25 @@
 
     .line 42
     :try_start_0
+    invoke-static {p0}, Lcom/mcp2p/tv/AppInfo;->init(Landroid/app/Application;)V
+    :try_end_0
+    .catchall {:try_start_0 .. :try_end_0} :catchall_0
+
+    .line 45
+    :catchall_0
+    :try_start_1
     invoke-static {}, Ljava/lang/Thread;->getDefaultUncaughtExceptionHandler()Ljava/lang/Thread$UncaughtExceptionHandler;
 
     move-result-object v0
 
-    .line 43
+    .line 46
     new-instance v1, Lcom/mcp2p/tv/CrashLog$$ExternalSyntheticLambda0;
 
     invoke-direct {v1, p0, v0}, Lcom/mcp2p/tv/CrashLog$$ExternalSyntheticLambda0;-><init>(Landroid/app/Application;Ljava/lang/Thread$UncaughtExceptionHandler;)V
 
     invoke-static {v1}, Ljava/lang/Thread;->setDefaultUncaughtExceptionHandler(Ljava/lang/Thread$UncaughtExceptionHandler;)V
 
-    .line 51
+    .line 54
     new-instance v0, Lcom/mcp2p/tv/CrashLog$Watcher;
 
     const/4 v1, 0x0
@@ -139,19 +146,19 @@
     invoke-direct {v0, v1}, Lcom/mcp2p/tv/CrashLog$Watcher;-><init>(Lcom/mcp2p/tv/CrashLog$1;)V
 
     invoke-virtual {p0, v0}, Landroid/app/Application;->registerActivityLifecycleCallbacks(Landroid/app/Application$ActivityLifecycleCallbacks;)V
-    :try_end_0
-    .catchall {:try_start_0 .. :try_end_0} :catchall_0
+    :try_end_1
+    .catchall {:try_start_1 .. :try_end_1} :catchall_1
 
     goto :goto_0
 
-    :catchall_0
+    :catchall_1
     move-exception p0
 
     const-string v0, "Mcp2pCrash"
 
     const-string v1, "No se pudo instalar el registro de cierres"
 
-    .line 53
+    .line 56
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -161,7 +168,7 @@
 .method static synthetic lambda$install$0(Landroid/app/Application;Ljava/lang/Thread$UncaughtExceptionHandler;Ljava/lang/Thread;Ljava/lang/Throwable;)V
     .locals 0
 
-    .line 45
+    .line 48
     :try_start_0
     invoke-static {p0, p2, p3}, Lcom/mcp2p/tv/CrashLog;->write(Landroid/content/Context;Ljava/lang/Thread;Ljava/lang/Throwable;)V
     :try_end_0
@@ -170,7 +177,7 @@
     :catchall_0
     if-eqz p1, :cond_0
 
-    .line 49
+    .line 52
     invoke-interface {p1, p2, p3}, Ljava/lang/Thread$UncaughtExceptionHandler;->uncaughtException(Ljava/lang/Thread;Ljava/lang/Throwable;)V
 
     :cond_0
@@ -180,7 +187,7 @@
 .method static synthetic lambda$maybeShow$1(Ljava/lang/String;Landroid/app/Activity;Landroid/content/DialogInterface;I)V
     .locals 1
 
-    .line 123
+    .line 126
     new-instance p2, Landroid/content/Intent;
 
     const-string p3, "android.intent.action.SEND"
@@ -189,25 +196,25 @@
 
     const-string p3, "text/plain"
 
-    .line 124
+    .line 127
     invoke-virtual {p2, p3}, Landroid/content/Intent;->setType(Ljava/lang/String;)Landroid/content/Intent;
 
     const-string p3, "android.intent.extra.SUBJECT"
 
     const-string v0, "McP2P-TV: informe de cierre"
 
-    .line 125
+    .line 128
     invoke-virtual {p2, p3, v0}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
     const-string p3, "android.intent.extra.TEXT"
 
-    .line 126
+    .line 129
     invoke-virtual {p2, p3, p0}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
     :try_start_0
     const-string p3, "Compartir informe"
 
-    .line 128
+    .line 131
     invoke-static {p2, p3}, Landroid/content/Intent;->createChooser(Landroid/content/Intent;Ljava/lang/CharSequence;)Landroid/content/Intent;
 
     move-result-object p2
@@ -218,7 +225,7 @@
 
     goto :goto_0
 
-    .line 130
+    .line 133
     :catch_0
     invoke-static {p1, p0}, Lcom/mcp2p/tv/CrashLog;->copy(Landroid/content/Context;Ljava/lang/String;)V
 
@@ -229,7 +236,7 @@
 .method static synthetic lambda$maybeShow$2(Landroid/app/Activity;Ljava/lang/String;Landroid/content/DialogInterface;I)V
     .locals 0
 
-    .line 133
+    .line 136
     invoke-static {p0, p1}, Lcom/mcp2p/tv/CrashLog;->copy(Landroid/content/Context;Ljava/lang/String;)V
 
     return-void
@@ -238,20 +245,20 @@
 .method private static maybeShow(Landroid/app/Activity;)V
     .locals 5
 
-    .line 106
+    .line 109
     sget-boolean v0, Lcom/mcp2p/tv/CrashLog;->shown:Z
 
     if-eqz v0, :cond_0
 
     return-void
 
-    .line 107
+    .line 110
     :cond_0
     invoke-static {p0}, Lcom/mcp2p/tv/CrashLog;->file(Landroid/content/Context;)Ljava/io/File;
 
     move-result-object v0
 
-    .line 108
+    .line 111
     invoke-virtual {v0}, Ljava/io/File;->isFile()Z
 
     move-result v1
@@ -260,24 +267,24 @@
 
     if-nez v1, :cond_1
 
-    .line 109
+    .line 112
     sput-boolean v2, Lcom/mcp2p/tv/CrashLog;->shown:Z
 
     return-void
 
-    .line 112
+    .line 115
     :cond_1
     sput-boolean v2, Lcom/mcp2p/tv/CrashLog;->shown:Z
 
-    .line 113
+    .line 116
     invoke-static {v0}, Lcom/mcp2p/tv/CrashLog;->read(Ljava/io/File;)Ljava/lang/String;
 
     move-result-object v1
 
-    .line 115
+    .line 118
     invoke-virtual {v0}, Ljava/io/File;->delete()Z
 
-    .line 116
+    .line 119
     invoke-virtual {v1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v0
@@ -286,7 +293,7 @@
 
     return-void
 
-    .line 117
+    .line 120
     :cond_2
     invoke-virtual {v1}, Ljava/lang/String;->length()I
 
@@ -321,7 +328,7 @@
     :cond_3
     move-object v0, v1
 
-    .line 118
+    .line 121
     :goto_0
     new-instance v2, Landroid/app/AlertDialog$Builder;
 
@@ -329,7 +336,7 @@
 
     const-string v3, "McP2P se cerr\u00f3 inesperadamente"
 
-    .line 119
+    .line 122
     invoke-virtual {v2, v3}, Landroid/app/AlertDialog$Builder;->setTitle(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v2
@@ -346,7 +353,7 @@
 
     move-result-object v0
 
-    .line 120
+    .line 123
     invoke-virtual {v2, v0}, Landroid/app/AlertDialog$Builder;->setMessage(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v0
@@ -357,7 +364,7 @@
 
     const-string v3, "Compartir"
 
-    .line 122
+    .line 125
     invoke-virtual {v0, v3, v2}, Landroid/app/AlertDialog$Builder;->setPositiveButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v0
@@ -368,7 +375,7 @@
 
     const-string p0, "Copiar"
 
-    .line 133
+    .line 136
     invoke-virtual {v0, p0, v2}, Landroid/app/AlertDialog$Builder;->setNeutralButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object p0
@@ -377,29 +384,29 @@
 
     const/4 v1, 0x0
 
-    .line 134
+    .line 137
     invoke-virtual {p0, v0, v1}, Landroid/app/AlertDialog$Builder;->setNegativeButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object p0
 
-    .line 135
+    .line 138
     invoke-virtual {p0}, Landroid/app/AlertDialog$Builder;->create()Landroid/app/AlertDialog;
 
     move-result-object p0
 
-    .line 136
+    .line 139
     invoke-virtual {p0}, Landroid/app/AlertDialog;->show()V
 
     const/4 v0, -0x2
 
-    .line 137
+    .line 140
     invoke-virtual {p0, v0}, Landroid/app/AlertDialog;->getButton(I)Landroid/widget/Button;
 
     move-result-object p0
 
     if-eqz p0, :cond_4
 
-    .line 138
+    .line 141
     invoke-virtual {p0}, Landroid/widget/Button;->requestFocus()Z
 
     :cond_4
@@ -411,7 +418,7 @@
 
     const-string v0, "?"
 
-    .line 62
+    .line 65
     :try_start_0
     new-instance v1, Ljava/io/BufferedReader;
 
@@ -429,7 +436,7 @@
     :try_end_0
     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 63
+    .line 66
     :try_start_1
     invoke-virtual {v1}, Ljava/io/BufferedReader;->readLine()Ljava/lang/String;
 
@@ -446,7 +453,7 @@
 
     const-string v4, ""
 
-    .line 64
+    .line 67
     invoke-virtual {v2, v3, v4}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
 
     move-result-object v2
@@ -457,7 +464,7 @@
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 65
+    .line 68
     :goto_0
     :try_start_2
     invoke-virtual {v1}, Ljava/io/BufferedReader;->close()V
@@ -469,7 +476,7 @@
     :catchall_0
     move-exception v2
 
-    .line 62
+    .line 65
     :try_start_3
     invoke-virtual {v1}, Ljava/io/BufferedReader;->close()V
     :try_end_3
@@ -497,7 +504,7 @@
 
     const-string v0, ""
 
-    .line 96
+    .line 99
     :try_start_0
     new-instance v1, Ljava/io/FileInputStream;
 
@@ -505,7 +512,7 @@
     :try_end_0
     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 97
+    .line 100
     :try_start_1
     invoke-virtual {p0}, Ljava/io/File;->length()J
 
@@ -521,7 +528,7 @@
 
     new-array p0, p0, [B
 
-    .line 98
+    .line 101
     invoke-virtual {v1, p0}, Ljava/io/FileInputStream;->read([B)I
 
     move-result v2
@@ -532,7 +539,7 @@
 
     goto :goto_0
 
-    .line 99
+    .line 102
     :cond_0
     new-instance v3, Ljava/lang/String;
 
@@ -544,7 +551,7 @@
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 100
+    .line 103
     :goto_0
     :try_start_2
     invoke-virtual {v1}, Ljava/io/FileInputStream;->close()V
@@ -556,7 +563,7 @@
     :catchall_0
     move-exception p0
 
-    .line 96
+    .line 99
     :try_start_3
     invoke-virtual {v1}, Ljava/io/FileInputStream;->close()V
     :try_end_3
@@ -587,19 +594,19 @@
         }
     .end annotation
 
-    .line 71
+    .line 74
     new-instance v0, Ljava/io/StringWriter;
 
     invoke-direct {v0}, Ljava/io/StringWriter;-><init>()V
 
-    .line 72
+    .line 75
     new-instance v1, Ljava/io/PrintWriter;
 
     invoke-direct {v1, v0}, Ljava/io/PrintWriter;-><init>(Ljava/io/Writer;)V
 
     const/4 v2, 0x0
 
-    .line 75
+    .line 78
     :try_start_0
     invoke-virtual {p0}, Landroid/content/Context;->getPackageManager()Landroid/content/pm/PackageManager;
 
@@ -613,7 +620,7 @@
 
     move-result-object v3
 
-    .line 76
+    .line 79
     new-instance v4, Ljava/lang/StringBuilder;
 
     invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
@@ -648,10 +655,10 @@
     :goto_0
     const-string v4, "McP2P-TV \u00b7 informe de cierre inesperado"
 
-    .line 78
+    .line 81
     invoke-virtual {v1, v4}, Ljava/io/PrintWriter;->println(Ljava/lang/String;)V
 
-    .line 79
+    .line 82
     new-instance v4, Ljava/lang/StringBuilder;
 
     const-string v5, "Fecha: "
@@ -682,7 +689,7 @@
 
     invoke-virtual {v1, v4}, Ljava/io/PrintWriter;->println(Ljava/lang/String;)V
 
-    .line 80
+    .line 83
     new-instance v4, Ljava/lang/StringBuilder;
 
     const-string v5, "Versi\u00f3n: "
@@ -697,7 +704,7 @@
 
     invoke-virtual {v1, v3}, Ljava/io/PrintWriter;->println(Ljava/lang/String;)V
 
-    .line 81
+    .line 84
     new-instance v3, Ljava/lang/StringBuilder;
 
     const-string v4, "Dispositivo: "
@@ -748,7 +755,7 @@
 
     invoke-virtual {v1, v2}, Ljava/io/PrintWriter;->println(Ljava/lang/String;)V
 
-    .line 83
+    .line 86
     new-instance v2, Ljava/lang/StringBuilder;
 
     const-string v3, "Proceso: "
@@ -777,16 +784,16 @@
 
     invoke-virtual {v1, p1}, Ljava/io/PrintWriter;->println(Ljava/lang/String;)V
 
-    .line 84
+    .line 87
     invoke-virtual {v1}, Ljava/io/PrintWriter;->println()V
 
-    .line 85
+    .line 88
     invoke-virtual {p2, v1}, Ljava/lang/Throwable;->printStackTrace(Ljava/io/PrintWriter;)V
 
-    .line 86
+    .line 89
     invoke-virtual {v1}, Ljava/io/PrintWriter;->flush()V
 
-    .line 87
+    .line 90
     new-instance p1, Ljava/io/FileOutputStream;
 
     invoke-static {p0}, Lcom/mcp2p/tv/CrashLog;->file(Landroid/content/Context;)Ljava/io/File;
@@ -795,7 +802,7 @@
 
     invoke-direct {p1, p0}, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
 
-    .line 89
+    .line 92
     :try_start_1
     invoke-virtual {v0}, Ljava/io/StringWriter;->toString()Ljava/lang/String;
 
@@ -811,7 +818,7 @@
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 91
+    .line 94
     invoke-virtual {p1}, Ljava/io/FileOutputStream;->close()V
 
     return-void
@@ -821,6 +828,6 @@
 
     invoke-virtual {p1}, Ljava/io/FileOutputStream;->close()V
 
-    .line 92
+    .line 95
     throw p0
 .end method

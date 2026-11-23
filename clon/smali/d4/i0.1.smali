@@ -63,21 +63,15 @@
     .line 16
     if-nez v1, :cond_0
 
-    .line 17
-    .line 18
     iget-object v1, v0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
-
-    .line 19
-    .line 20
     invoke-virtual {v1}, Landroid/view/View;->hasFocus()Z
-
-    .line 21
-    .line 22
-    .line 23
     move-result v1
+    if-eqz v1, :hide_controls
 
-    .line 24
-    if-nez v1, :cond_0
+    iget-object v1, v0, Lcom/mcp2p/app/ui/PlayerActivity;->X:Landroid/view/View;
+    invoke-virtual {v1}, Landroid/view/View;->requestFocus()Z
+
+    :hide_controls
 
     .line 25
     .line 26

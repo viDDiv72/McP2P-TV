@@ -12,7 +12,7 @@ javac -encoding UTF-8 -nowarn -d "$OUT" \
   $(find "$HERE/stubs" -name '*.java') \
   $(find "$HERE/../src" -name '*.java' ! -name 'DlnaUi.java' ! -name 'TvFocus.java' ! -name 'HomeScreen.java' \
       ! -name 'CrashLog.java' ! -name 'WindowCallbackWrapper.java' ! -name 'MediaScreen.java' ! -name 'Images.java' \
-      ! -name 'Catalog.java' ! -name 'StreamTuner.java') \
+      ! -name 'Catalog.java' ! -name 'StreamTuner.java' ! -name 'AppInfo.java' ! -name 'PlayerControls.java') \
   "$HERE/src/com/mcp2p/dlna/NetTests.java" "$HERE/src/com/mcp2p/media/MediaTests.java" 2>&1 | grep -v "^Note:" || true
 java -cp "$OUT" com.mcp2p.dlna.NetTests
 java -cp "$OUT" com.mcp2p.media.MediaTests "$HERE/fixtures/media"

@@ -21,7 +21,7 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 152
+    .line 155
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -30,7 +30,7 @@
 .method synthetic constructor <init>(Lcom/mcp2p/tv/CrashLog$1;)V
     .locals 0
 
-    .line 152
+    .line 155
     invoke-direct {p0}, Lcom/mcp2p/tv/CrashLog$Watcher;-><init>()V
 
     return-void
@@ -39,7 +39,7 @@
 .method static synthetic lambda$onActivityResumed$0(Landroid/app/Activity;)V
     .locals 1
 
-    .line 156
+    .line 159
     invoke-virtual {p0}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v0
@@ -75,7 +75,7 @@
 .method public onActivityResumed(Landroid/app/Activity;)V
     .locals 2
 
-    .line 154
+    .line 157
     invoke-static {}, Lcom/mcp2p/tv/CrashLog;->access$100()Z
 
     move-result v0
@@ -100,7 +100,7 @@
 
     goto :goto_0
 
-    .line 155
+    .line 158
     :cond_0
     invoke-virtual {p1}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 

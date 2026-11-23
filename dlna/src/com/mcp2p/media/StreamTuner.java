@@ -16,9 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * trozos sueltos de toda la película. Ahora:</p>
  * <ol>
  * <li><b>Descarga en orden</b> (modo secuencial de libtorrent): siempre lo siguiente que se va a ver.</li>
- * <li><b>Precarga</b>: el reproductor no arranca hasta tener guardado el comienzo de la película (≈1 % del archivo,
- * entre 32 y 128 MB) y el final (índice de MKV/MP4). Mientras tanto se muestra el progreso, la velocidad y las
- * fuentes conectadas.</li>
+ * <li><b>Precarga</b>: el reproductor no arranca hasta tener guardado el comienzo de la película (según la velocidad
+ * medida: ~30 s de película con conexión sobrada, hasta el 1 % del archivo si va justa) y el final (índice de
+ * MKV/MP4). Mientras tanto se muestra el progreso, la velocidad y las fuentes conectadas.</li>
  * </ol>
  * Enganche: T3/c.smali llama a {@link #ready} en lugar de entregar la URL directamente. Si algo falla aquí, se
  * entrega la URL como antes: nunca impide reproducir.
@@ -173,21 +173,53 @@ public final class StreamTuner {
         try {
             Class<?> c = sessionManager.getClass();
             Object pack = c.getMethod("settings").invoke(sessionManager);
-            Class<?> p = pack.getClass();
-            p.getMethod("connectionsLimit", int.class).invoke(pack, 500);
-            p.getMethod("maxPeerlistSize", int.class).invoke(pack, 4000);
-            p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) (2 * MB));
-            p.getMethod("downloadRateLimit", int.class).invoke(pack, 0);
-            // Arranque más rápido: más conexiones nuevas por segundo y por película, cola de peticiones mayor y
-            // las piezas que se atascan se vuelven a pedir antes.
-            setInt(pack, "connection_speed", 150);       // por defecto 30
-            setInt(pack, "torrent_connect_boost", 100);  // por defecto 30
-            setInt(pack, "max_out_request_queue", 1500); // por defecto 500
-            setInt(pack, "piece_timeout", 10);           // por defecto 20 s
-            c.getMethod("applySettings", p).invoke(sessionManager, pack);
+            configure(pack);
+            c.getMethod("applySettings", pack.getClass()).invoke(sessionManager, pack);
         } catch (Throwable e) {
             android.util.Log.w(TAG, "No se pudieron ajustar las conexiones de libtorrent", e);
         }
+    }
+
+    /**
+     * Sustituye a SessionManager.start() (T1/a.smali): la sesión arranca ya con estos ajustes, así se aplican
+     * también mientras se buscan los datos del torrent. Si algo falla, arranca como siempre.
+     */
+    public static void start(Object sessionManager) {
+        try {
+            Class<?> sp = Class.forName("org.libtorrent4j.SessionParams");
+            Object params = sp.getConstructor().newInstance();
+            Object pack = sp.getMethod("getSettings").invoke(params);
+            configure(pack);
+            sp.getMethod("setSettings", pack.getClass()).invoke(params, pack);
+            sessionManager.getClass().getMethod("start", sp).invoke(sessionManager, params);
+            android.util.Log.i(TAG, "Sesión P2P iniciada" + (com.mcp2p.tv.AppInfo.isLowMemory() ? " en modo ligero (poca memoria)" : ""));
+        } catch (Throwable e) {
+            android.util.Log.w(TAG, "Arranque con ajustes no disponible; arranque normal", e);
+            try {
+                sessionManager.getClass().getMethod("start").invoke(sessionManager);
+            } catch (ReflectiveOperationException e2) {
+                throw new RuntimeException(e2);
+            }
+        }
+    }
+
+    /**
+     * Ajustes de libtorrent. Aparatos con poca memoria (Mi Box S…): menos conexiones y colas más cortas, porque cada
+     * conexión gasta memoria y con 2 GB la reproducción llegaba a bloquearse.
+     */
+    static void configure(Object pack) throws ReflectiveOperationException {
+        boolean low = com.mcp2p.tv.AppInfo.isLowMemory();
+        Class<?> p = pack.getClass();
+        p.getMethod("connectionsLimit", int.class).invoke(pack, low ? 160 : 500);
+        p.getMethod("maxPeerlistSize", int.class).invoke(pack, low ? 1000 : 4000);
+        p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) ((low ? 1 : 2) * MB));
+        p.getMethod("downloadRateLimit", int.class).invoke(pack, 0);
+        // Arranque más rápido: más conexiones nuevas por segundo y por película, cola de peticiones mayor y
+        // las piezas que se atascan se vuelven a pedir antes.
+        setInt(pack, "connection_speed", low ? 60 : 150);         // por defecto 30
+        setInt(pack, "torrent_connect_boost", low ? 50 : 100);    // por defecto 30
+        setInt(pack, "max_out_request_queue", low ? 500 : 1500);  // por defecto 500
+        setInt(pack, "piece_timeout", 10);                        // por defecto 20 s
     }
 
     private static void setInt(Object pack, String name, int value) {

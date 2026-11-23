@@ -112,6 +112,7 @@ public final class MediaScreen {
             this.a = a;
             this.d = a.getResources().getDisplayMetrics().density;
             this.tv = DlnaRenderer.isTv(a);
+            Sources.lowMemory = com.mcp2p.tv.AppInfo.lowMemory(a);
             int wdp = (int) (a.getResources().getDisplayMetrics().widthPixels / d);
             this.cols = Math.max(3, Math.min(8, wdp / (tv ? 132 : 112)));
             int pad = dp(tv ? 40 : 14) * 2, gap = dp(tv ? 18 : 10);
@@ -288,6 +289,8 @@ public final class MediaScreen {
             exec(checks, () -> {
                 int n = -1;
                 try {
+                    // mientras se ve una película no se comprueban más (deja red, memoria y CPU al reproductor)
+                    while (PlayerTracker.playing && g == gen) Thread.sleep(2000);
                     if (g != gen) return;
                     Catalog.Found f = cat.sources(m);
                     found.put(m.id, f);
@@ -541,17 +544,19 @@ public final class MediaScreen {
             Images.load(heroPoster, poster(m), dp(150));
             Long at = foundAt.get(m.id);
             Catalog.Found f = found.get(m.id);
-            if (f != null && at != null && System.currentTimeMillis() - at < 15 * 60 * 1000 && m.detailed) {
+            if (f != null && f.checked && at != null && System.currentTimeMillis() - at < 15 * 60 * 1000 && m.detailed) {
                 showSources(f);
             } else {
-                sourceAdapter.set(null, "Buscando fuentes en castellano en Peerflix y Torrentio…");
+                final Catalog.Found cached = f != null && at != null && System.currentTimeMillis() - at < 15 * 60 * 1000 ? f : null;
+                sourceAdapter.set(null, cached == null ? "Buscando fuentes en castellano en Peerflix y Torrentio…"
+                        : "Comprobando que las fuentes tienen gente compartiéndolas ahora mismo…");
                 srcCount.setText("");
                 exec(io, () -> {
                     Catalog.Found r = null;
                     String err = null;
                     try {
                         cat.details(m);
-                        r = cat.sources(m);
+                        r = cat.verify(cached != null ? cached : cat.sources(m));
                         found.put(m.id, r);
                         foundAt.put(m.id, System.currentTimeMillis());
                         counts.put(m.id, r.streams.size());
@@ -631,7 +636,7 @@ public final class MediaScreen {
 
         List<Sources.Stream> shownStreams = new ArrayList<>();
         int watchGen;
-        static final long NO_METADATA_MS = 45_000, NO_PROGRESS_MS = 60_000;
+        static final long NO_METADATA_MS = 30_000, NO_PROGRESS_MS = 60_000;
 
         /**
          * Vigila el intento de reproducción: si en 45 s no llegan los datos del torrent (nadie lo comparte de verdad)
@@ -1040,6 +1045,7 @@ public final class MediaScreen {
             if (!size.isEmpty()) b.append("   ").append(size);
             if (s.tv) b.append("   ").append(st.addon);
             if (st.pack && s.tv) b.append("   (de un pack)");
+            if (st.reachable > 0) b.append("   ✔ Comprobada");
             if (st.size > Sources.HEAVY) b.append(s.tv ? "   ·  Muy pesada: necesita mucha velocidad" : "   · Muy pesada");
             rec.setVisibility(st.recommended ? View.VISIBLE : View.GONE);
             sub.setText(b.toString());
@@ -1111,6 +1117,17 @@ public final class MediaScreen {
             return r != null && lastAt >= t0 - 1000 ? r.get() : null;
         }
 
+        /** Hay una película en pantalla: la Mediateca deja en pausa su trabajo de fondo (poca memoria/CPU). */
+        static volatile boolean playing;
+
+        @Override public void onActivityResumed(Activity a) {
+            if (a.getClass().getName().endsWith("PlayerActivity")) playing = true;
+        }
+
+        @Override public void onActivityPaused(Activity a) {
+            if (a.getClass().getName().endsWith("PlayerActivity")) playing = false;
+        }
+
         @Override public void onActivityCreated(Activity a, android.os.Bundle b) {
             if (a.getClass().getName().endsWith("PlayerActivity")) {
                 last = new java.lang.ref.WeakReference<>(a);
@@ -1118,8 +1135,6 @@ public final class MediaScreen {
             }
         }
         @Override public void onActivityStarted(Activity a) {}
-        @Override public void onActivityResumed(Activity a) {}
-        @Override public void onActivityPaused(Activity a) {}
         @Override public void onActivityStopped(Activity a) {}
         @Override public void onActivitySaveInstanceState(Activity a, android.os.Bundle b) {}
         @Override public void onActivityDestroyed(Activity a) {}

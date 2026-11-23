@@ -32,12 +32,14 @@
 
 .field private static volatile lastAt:J
 
+.field static volatile playing:Z
+
 
 # direct methods
 .method constructor <init>()V
     .locals 0
 
-    .line 1097
+    .line 1103
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -50,7 +52,7 @@
 
     monitor-enter v0
 
-    .line 1103
+    .line 1109
     :try_start_0
     sget-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
@@ -63,10 +65,10 @@
     :cond_0
     const/4 v1, 0x1
 
-    .line 1104
+    .line 1110
     sput-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
-    .line 1105
+    .line 1111
     new-instance v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;
 
     invoke-direct {v1}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;-><init>()V
@@ -75,12 +77,12 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 1106
+    .line 1112
     monitor-exit v0
 
     return-void
 
-    .line 1103
+    .line 1109
     :cond_1
     :goto_0
     monitor-exit v0
@@ -98,12 +100,12 @@
 .method static player(J)Landroid/app/Activity;
     .locals 5
 
-    .line 1110
+    .line 1116
     sget-object v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
     if-eqz v0, :cond_0
 
-    .line 1111
+    .line 1117
     sget-wide v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->lastAt:J
 
     const-wide/16 v3, 0x3e8
@@ -134,7 +136,7 @@
 .method public onActivityCreated(Landroid/app/Activity;Landroid/os/Bundle;)V
     .locals 1
 
-    .line 1115
+    .line 1132
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p2
@@ -151,14 +153,14 @@
 
     if-eqz p2, :cond_0
 
-    .line 1116
+    .line 1133
     new-instance p2, Ljava/lang/ref/WeakReference;
 
     invoke-direct {p2, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     sput-object p2, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
-    .line 1117
+    .line 1134
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
     move-result-wide p1
@@ -176,14 +178,58 @@
 .end method
 
 .method public onActivityPaused(Landroid/app/Activity;)V
-    .locals 0
+    .locals 1
 
+    .line 1128
+    invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object p1
+
+    invoke-virtual {p1}, Ljava/lang/Class;->getName()Ljava/lang/String;
+
+    move-result-object p1
+
+    const-string v0, "PlayerActivity"
+
+    invoke-virtual {p1, v0}, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
+
+    move-result p1
+
+    if-eqz p1, :cond_0
+
+    const/4 p1, 0x0
+
+    sput-boolean p1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->playing:Z
+
+    :cond_0
     return-void
 .end method
 
 .method public onActivityResumed(Landroid/app/Activity;)V
-    .locals 0
+    .locals 1
 
+    .line 1124
+    invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object p1
+
+    invoke-virtual {p1}, Ljava/lang/Class;->getName()Ljava/lang/String;
+
+    move-result-object p1
+
+    const-string v0, "PlayerActivity"
+
+    invoke-virtual {p1, v0}, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
+
+    move-result p1
+
+    if-eqz p1, :cond_0
+
+    const/4 p1, 0x1
+
+    sput-boolean p1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->playing:Z
+
+    :cond_0
     return-void
 .end method
 

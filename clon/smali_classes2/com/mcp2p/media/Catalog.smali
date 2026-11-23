@@ -217,7 +217,7 @@
         }
     .end annotation
 
-    .line 163
+    .line 209
     :try_start_0
     sget-object v0, Ljava/util/concurrent/TimeUnit;->SECONDS:Ljava/util/concurrent/TimeUnit;
 
@@ -238,10 +238,10 @@
     :catch_0
     const/4 p2, 0x1
 
-    .line 165
+    .line 211
     invoke-interface {p0, p2}, Ljava/util/concurrent/Future;->cancel(Z)Z
 
-    .line 166
+    .line 212
     invoke-interface {p3, p1}, Ljava/util/List;->add(Ljava/lang/Object;)Z
 
     :goto_0
@@ -258,7 +258,7 @@
 
     const-string v0, "HTTP "
 
-    .line 173
+    .line 219
     new-instance v1, Ljava/net/URL;
 
     invoke-direct {v1, p0}, Ljava/net/URL;-><init>(Ljava/lang/String;)V
@@ -269,28 +269,28 @@
 
     check-cast p0, Ljava/net/HttpURLConnection;
 
-    .line 175
+    .line 221
     :try_start_0
     invoke-virtual {p0, p1}, Ljava/net/HttpURLConnection;->setConnectTimeout(I)V
 
-    .line 176
+    .line 222
     invoke-virtual {p0, p1}, Ljava/net/HttpURLConnection;->setReadTimeout(I)V
 
     const-string p1, "User-Agent"
 
     const-string v1, "McP2P-TV"
 
-    .line 177
+    .line 223
     invoke-virtual {p0, p1, v1}, Ljava/net/HttpURLConnection;->setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
 
     const-string p1, "Accept"
 
     const-string v1, "application/json"
 
-    .line 178
+    .line 224
     invoke-virtual {p0, p1, v1}, Ljava/net/HttpURLConnection;->setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
 
-    .line 179
+    .line 225
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getResponseCode()I
 
     move-result p1
@@ -299,14 +299,14 @@
 
     if-ne p1, v1, :cond_4
 
-    .line 181
+    .line 227
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getInputStream()Ljava/io/InputStream;
 
     move-result-object p1
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_2
 
-    .line 182
+    .line 228
     :try_start_1
     new-instance v0, Ljava/io/ByteArrayOutputStream;
 
@@ -316,7 +316,7 @@
 
     new-array v1, v1, [B
 
-    .line 185
+    .line 231
     :goto_0
     invoke-virtual {p1, v1}, Ljava/io/InputStream;->read([B)I
 
@@ -326,10 +326,10 @@
 
     const/4 v3, 0x0
 
-    .line 186
+    .line 232
     invoke-virtual {v0, v1, v3, v2}, Ljava/io/ByteArrayOutputStream;->write([BII)V
 
-    .line 187
+    .line 233
     invoke-virtual {v0}, Ljava/io/ByteArrayOutputStream;->size()I
 
     move-result v2
@@ -349,7 +349,7 @@
 
     throw v0
 
-    .line 189
+    .line 235
     :cond_1
     new-instance v1, Ljava/lang/String;
 
@@ -365,13 +365,13 @@
 
     if-eqz p1, :cond_2
 
-    .line 190
+    .line 236
     :try_start_2
     invoke-virtual {p1}, Ljava/io/InputStream;->close()V
     :try_end_2
     .catchall {:try_start_2 .. :try_end_2} :catchall_2
 
-    .line 192
+    .line 238
     :cond_2
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
@@ -382,7 +382,7 @@
 
     if-eqz p1, :cond_3
 
-    .line 181
+    .line 227
     :try_start_3
     invoke-virtual {p1}, Ljava/io/InputStream;->close()V
     :try_end_3
@@ -400,7 +400,7 @@
     :goto_1
     throw v0
 
-    .line 180
+    .line 226
     :cond_4
     new-instance v1, Ljava/io/IOException;
 
@@ -423,11 +423,35 @@
     :catchall_2
     move-exception p1
 
-    .line 192
+    .line 238
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
-    .line 193
+    .line 239
     throw p1
+.end method
+
+.method static synthetic lambda$verify$2(Ljava/lang/String;)Ljava/lang/Integer;
+    .locals 2
+    .annotation system Ldalvik/annotation/Throws;
+        value = {
+            Ljava/lang/Exception;
+        }
+    .end annotation
+
+    const/4 v0, 0x2
+
+    const/16 v1, 0x9c4
+
+    .line 159
+    invoke-static {p0, v0, v1}, Lcom/mcp2p/media/Trackers;->reachable(Ljava/lang/String;II)I
+
+    move-result p0
+
+    invoke-static {p0}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
 .end method
 
 .method static movies(Ljava/lang/String;)Ljava/util/List;
@@ -635,7 +659,7 @@
         }
     .end annotation
 
-    .line 149
+    .line 195
     invoke-interface {p0}, Ljava/util/List;->isEmpty()Z
 
     move-result v0
@@ -644,13 +668,13 @@
 
     return-void
 
-    .line 150
+    .line 196
     :cond_0
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
-    .line 151
+    .line 197
     invoke-interface {p0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object v1
@@ -674,7 +698,7 @@
 
     goto :goto_0
 
-    .line 152
+    .line 198
     :cond_1
     invoke-static {v0}, Lcom/mcp2p/media/Trackers;->seeders(Ljava/util/List;)Ljava/util/Map;
 
@@ -684,7 +708,7 @@
 
     return-void
 
-    .line 154
+    .line 200
     :cond_2
     invoke-interface {p0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
@@ -703,7 +727,7 @@
 
     check-cast v2, Lcom/mcp2p/media/Sources$Stream;
 
-    .line 155
+    .line 201
     iget-object v3, v2, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
 
     invoke-interface {v0, v3}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
@@ -718,7 +742,7 @@
 
     goto :goto_2
 
-    .line 156
+    .line 202
     :cond_3
     invoke-virtual {v3}, Ljava/lang/Integer;->intValue()I
 
@@ -729,7 +753,7 @@
 
     goto :goto_1
 
-    .line 158
+    .line 204
     :cond_4
     invoke-static {p0}, Lcom/mcp2p/media/Sources;->sort(Ljava/util/List;)V
 
@@ -741,7 +765,7 @@
 .method public close()V
     .locals 1
 
-    .line 197
+    .line 243
     iget-object v0, p0, Lcom/mcp2p/media/Catalog;->pool:Ljava/util/concurrent/ExecutorService;
 
     invoke-interface {v0}, Ljava/util/concurrent/ExecutorService;->shutdownNow()Ljava/util/List;
@@ -980,7 +1004,7 @@
         }
     .end annotation
 
-    .line 131
+    .line 133
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1018,7 +1042,7 @@
         }
     .end annotation
 
-    .line 132
+    .line 134
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1182,14 +1206,14 @@
         }
     .end annotation
 
-    .line 127
+    .line 129
     iget-object v0, p1, Lcom/mcp2p/media/Catalog$Movie;->imdb:Ljava/lang/String;
 
     if-nez v0, :cond_0
 
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/Catalog;->details(Lcom/mcp2p/media/Catalog$Movie;)V
 
-    .line 128
+    .line 130
     :cond_0
     iget-object v0, p1, Lcom/mcp2p/media/Catalog$Movie;->imdb:Ljava/lang/String;
 
@@ -1209,7 +1233,7 @@
 
     return-object p1
 
-    .line 129
+    .line 131
     :cond_1
     new-instance v0, Ljava/lang/StringBuilder;
 
@@ -1229,10 +1253,10 @@
 
     move-result-object v0
 
-    .line 130
+    .line 132
     iget p1, p1, Lcom/mcp2p/media/Catalog$Movie;->year:I
 
-    .line 131
+    .line 133
     iget-object v1, p0, Lcom/mcp2p/media/Catalog;->pool:Ljava/util/concurrent/ExecutorService;
 
     new-instance v2, Lcom/mcp2p/media/Catalog$$ExternalSyntheticLambda0;
@@ -1243,7 +1267,7 @@
 
     move-result-object v1
 
-    .line 132
+    .line 134
     iget-object v2, p0, Lcom/mcp2p/media/Catalog;->pool:Ljava/util/concurrent/ExecutorService;
 
     new-instance v3, Lcom/mcp2p/media/Catalog$$ExternalSyntheticLambda1;
@@ -1254,42 +1278,42 @@
 
     move-result-object p1
 
-    .line 133
+    .line 135
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
-    .line 134
+    .line 136
     new-instance v2, Ljava/util/ArrayList;
 
     invoke-direct {v2}, Ljava/util/ArrayList;-><init>()V
 
     const-string v3, "Peerflix"
 
-    .line 135
+    .line 137
     invoke-static {v1, v3, v0, v2}, Lcom/mcp2p/media/Catalog;->collect(Ljava/util/concurrent/Future;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
 
     const-string v1, "Torrentio"
 
-    .line 136
+    .line 138
     invoke-static {p1, v1, v0, v2}, Lcom/mcp2p/media/Catalog;->collect(Ljava/util/concurrent/Future;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
 
-    .line 138
+    .line 140
     invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
 
     move-result p1
 
     if-nez p1, :cond_2
 
-    .line 139
+    .line 141
     invoke-static {v0}, Lcom/mcp2p/media/Sources;->merge(Ljava/util/List;)Ljava/util/List;
 
     move-result-object p1
 
-    .line 140
+    .line 142
     invoke-static {p1}, Lcom/mcp2p/media/Catalog;->realSeeds(Ljava/util/List;)V
 
-    .line 141
+    .line 143
     new-instance v0, Lcom/mcp2p/media/Catalog$Found;
 
     invoke-static {p1}, Lcom/mcp2p/media/Sources;->best(Ljava/util/List;)Ljava/util/List;
@@ -1300,7 +1324,7 @@
 
     return-object v0
 
-    .line 138
+    .line 140
     :cond_2
     new-instance p1, Ljava/io/IOException;
 
@@ -1309,4 +1333,264 @@
     invoke-direct {p1, v0}, Ljava/io/IOException;-><init>(Ljava/lang/String;)V
 
     throw p1
+.end method
+
+.method public verify(Lcom/mcp2p/media/Catalog$Found;)Lcom/mcp2p/media/Catalog$Found;
+    .locals 10
+
+    .line 152
+    iget-object v0, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
+
+    invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
+
+    move-result v0
+
+    const/4 v1, 0x1
+
+    if-eqz v0, :cond_0
+
+    .line 153
+    iput-boolean v1, p1, Lcom/mcp2p/media/Catalog$Found;->checked:Z
+
+    return-object p1
+
+    .line 156
+    :cond_0
+    new-instance v0, Ljava/util/ArrayList;
+
+    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+
+    .line 157
+    iget-object v2, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
+
+    invoke-interface {v2}, Ljava/util/List;->iterator()Ljava/util/Iterator;
+
+    move-result-object v2
+
+    :goto_0
+    invoke-interface {v2}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v3
+
+    if-eqz v3, :cond_1
+
+    invoke-interface {v2}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v3
+
+    check-cast v3, Lcom/mcp2p/media/Sources$Stream;
+
+    .line 158
+    iget-object v3, v3, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
+
+    .line 159
+    iget-object v4, p0, Lcom/mcp2p/media/Catalog;->pool:Ljava/util/concurrent/ExecutorService;
+
+    new-instance v5, Lcom/mcp2p/media/Catalog$$ExternalSyntheticLambda2;
+
+    invoke-direct {v5, v3}, Lcom/mcp2p/media/Catalog$$ExternalSyntheticLambda2;-><init>(Ljava/lang/String;)V
+
+    invoke-interface {v4, v5}, Ljava/util/concurrent/ExecutorService;->submit(Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
+
+    move-result-object v3
+
+    invoke-interface {v0, v3}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    goto :goto_0
+
+    :cond_1
+    const/4 v2, 0x0
+
+    move v3, v2
+
+    move v4, v3
+
+    .line 162
+    :goto_1
+    iget-object v5, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
+
+    invoke-interface {v5}, Ljava/util/List;->size()I
+
+    move-result v5
+
+    const/4 v6, -0x1
+
+    if-ge v3, v5, :cond_3
+
+    .line 165
+    :try_start_0
+    invoke-interface {v0, v3}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v5
+
+    check-cast v5, Ljava/util/concurrent/Future;
+
+    sget-object v7, Ljava/util/concurrent/TimeUnit;->SECONDS:Ljava/util/concurrent/TimeUnit;
+
+    const-wide/16 v8, 0x14
+
+    invoke-interface {v5, v8, v9, v7}, Ljava/util/concurrent/Future;->get(JLjava/util/concurrent/TimeUnit;)Ljava/lang/Object;
+
+    move-result-object v5
+
+    check-cast v5, Ljava/lang/Integer;
+
+    invoke-virtual {v5}, Ljava/lang/Integer;->intValue()I
+
+    move-result v5
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+
+    goto :goto_2
+
+    :catch_0
+    move v5, v6
+
+    .line 169
+    :goto_2
+    iget-object v7, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
+
+    invoke-interface {v7, v3}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v7
+
+    check-cast v7, Lcom/mcp2p/media/Sources$Stream;
+
+    iput v5, v7, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    if-eq v5, v6, :cond_2
+
+    move v4, v1
+
+    :cond_2
+    add-int/lit8 v3, v3, 0x1
+
+    goto :goto_1
+
+    :cond_3
+    if-nez v4, :cond_4
+
+    .line 173
+    iput-boolean v1, p1, Lcom/mcp2p/media/Catalog$Found;->checked:Z
+
+    return-object p1
+
+    .line 176
+    :cond_4
+    new-instance v0, Ljava/util/ArrayList;
+
+    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+
+    new-instance v3, Ljava/util/ArrayList;
+
+    invoke-direct {v3}, Ljava/util/ArrayList;-><init>()V
+
+    .line 177
+    iget-object v4, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
+
+    invoke-interface {v4}, Ljava/util/List;->iterator()Ljava/util/Iterator;
+
+    move-result-object v4
+
+    :cond_5
+    :goto_3
+    invoke-interface {v4}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v5
+
+    if-eqz v5, :cond_8
+
+    invoke-interface {v4}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v5
+
+    check-cast v5, Lcom/mcp2p/media/Sources$Stream;
+
+    .line 178
+    iget v7, v5, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    if-lez v7, :cond_6
+
+    invoke-interface {v0, v5}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    goto :goto_3
+
+    .line 179
+    :cond_6
+    iget v7, v5, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    if-eqz v7, :cond_7
+
+    iget v7, v5, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    if-ne v7, v6, :cond_5
+
+    :cond_7
+    invoke-interface {v3, v5}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    goto :goto_3
+
+    .line 182
+    :cond_8
+    new-instance v4, Ljava/util/ArrayList;
+
+    invoke-direct {v4, v0}, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+
+    .line 183
+    invoke-interface {v4, v3}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
+
+    move v0, v2
+
+    .line 184
+    :goto_4
+    invoke-interface {v4}, Ljava/util/List;->size()I
+
+    move-result v3
+
+    if-ge v0, v3, :cond_a
+
+    invoke-interface {v4, v0}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v3
+
+    check-cast v3, Lcom/mcp2p/media/Sources$Stream;
+
+    if-nez v0, :cond_9
+
+    invoke-interface {v4, v0}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v5
+
+    check-cast v5, Lcom/mcp2p/media/Sources$Stream;
+
+    iget v5, v5, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    if-lez v5, :cond_9
+
+    move v5, v1
+
+    goto :goto_5
+
+    :cond_9
+    move v5, v2
+
+    :goto_5
+    iput-boolean v5, v3, Lcom/mcp2p/media/Sources$Stream;->recommended:Z
+
+    add-int/lit8 v0, v0, 0x1
+
+    goto :goto_4
+
+    .line 185
+    :cond_a
+    new-instance v0, Lcom/mcp2p/media/Catalog$Found;
+
+    iget-object p1, p1, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
+
+    invoke-direct {v0, v4, p1}, Lcom/mcp2p/media/Catalog$Found;-><init>(Ljava/util/List;Ljava/util/List;)V
+
+    .line 186
+    iput-boolean v1, v0, Lcom/mcp2p/media/Catalog$Found;->checked:Z
+
+    return-object v0
 .end method

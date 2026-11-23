@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
+| 1.9.2 | 36 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
 | [1.9.1](#191--2026-11-23) | 35 | Estable | Hilos de la Mediateca, arranque más rápido |
 | [1.9.0](#190--2026-11-23) | 34 | Anterior | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
@@ -25,6 +26,29 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 | [1.6.0](#160--2026-11-22) | 22 | Estable | Enviar canales a la TVBox por DLNA |
 | [1.5.6-tvfix](#156-tvfix--2026-11-22) | 21 | Estable | Arreglo de las carpetas en TV |
 | [1.5.6-original](#156-original) | 20 | Referencia | App original sin modificar (punto de partida del clon) |
+
+---
+
+## [1.9.2] · sin publicar (rama `estabilidad-1.9.2`)
+versionCode 36 · solo local (`build/McP2P-TV-v1.9.2.apk`)
+
+### Corregido
+- Reproductor (Xiaomi Mi Box y TV con mando): la barra −10 s / Pausar / +10 s / Audio / Subt. no se escondía nunca.
+  El temporizador se anulaba mientras el indicador de «arrastrando la barra de progreso» seguía activo, y con el
+  mando puede quedarse atascado. Ahora se esconde a los 2 s sin pulsar nada aunque un botón tenga el foco
+  (`com.mcp2p.tv.PlayerControls`); cada tecla reinicia la cuenta y ↓/OK la vuelven a mostrar.
+- «Acerca de McP2P» mostraba siempre «Versión 1.5.6»: ahora muestra la versión instalada, el aparato y si está
+  activo el modo ligero (`com.mcp2p.tv.AppInfo`).
+
+### Mejorado
+- Fuentes comprobadas de verdad antes de recomendarlas: al abrir una película se pide a los trackers la lista de
+  personas y se saluda por BitTorrent a varias. La ★ RECOMENDADA solo va a una fuente que ha contestado («✔
+  Comprobada»); las que nadie comparte se quitan. Si una fuente no arranca, se pasa a la siguiente a los 30 s
+  (antes 45).
+- Modo ligero automático en aparatos con poca memoria (≤2,8 GB o sistema de 32 bits, como la Mi Box S): 160
+  conexiones P2P en vez de 500, colas más cortas, y en la Mediateca nada de 4K ni archivos de más de 10 GB.
+- La sesión P2P arranca ya con los ajustes de conexión (antes se aplicaban al tener los datos del torrent).
+- Mientras se ve una película, la Mediateca deja de comprobar películas en segundo plano.
 
 ---
 

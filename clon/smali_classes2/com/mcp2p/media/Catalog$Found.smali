@@ -15,6 +15,8 @@
 
 
 # instance fields
+.field public checked:Z
+
 .field public final failed:Ljava/util/List;
     .annotation system Ldalvik/annotation/Signature;
         value = {
@@ -51,13 +53,13 @@
         }
     .end annotation
 
-    .line 119
+    .line 121
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 120
+    .line 122
     iput-object p1, p0, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
 
-    .line 121
+    .line 123
     iput-object p2, p0, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
 
     return-void

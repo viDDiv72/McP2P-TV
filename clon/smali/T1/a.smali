@@ -4033,7 +4033,8 @@
 
     .line 1870
     .line 1871
-    invoke-virtual {v2}, Lorg/libtorrent4j/SessionManager;->start()V
+    # McP2P-TV: la sesión arranca con los ajustes de StreamTuner (conexiones, modo ligero con poca memoria)
+    invoke-static {v2}, Lcom/mcp2p/media/StreamTuner;->start(Ljava/lang/Object;)V
 
     .line 1872
     .line 1873

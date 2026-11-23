@@ -97,6 +97,18 @@ public final class MediaTests {
         twoK.add(heavy4k); twoK.add(light4k);
         ok("4K de 11 GB antes que 4K de 17 GB (ambos 50+ semillas)", Sources.best(twoK).get(0) == light4k);
 
+        // ---- modo ligero (poca memoria): sin 4K ni archivos de más de 10 GB
+        java.util.List<Sources.Stream> lm = new java.util.ArrayList<>();
+        Sources.Stream k4 = new Sources.Stream(); k4.seeds = 300; k4.size = 8L * G; k4.quality = "4K"; k4.infoHash = "c"; k4.addon = "T";
+        Sources.Stream big = new Sources.Stream(); big.seeds = 300; big.size = 14L * G; big.quality = "1080p"; big.infoHash = "d"; big.addon = "T";
+        Sources.Stream fit = new Sources.Stream(); fit.seeds = 80; fit.size = 4L * G; fit.quality = "1080p"; fit.infoHash = "e"; fit.addon = "T";
+        lm.add(k4); lm.add(big); lm.add(fit);
+        Sources.lowMemory = true;
+        java.util.List<Sources.Stream> lmb = Sources.best(lm);
+        Sources.lowMemory = false;
+        ok("modo ligero: solo la 1080p de 4 GB", lmb.size() == 1 && lmb.get(0) == fit);
+        eq("modo normal: las tres", 3, Sources.best(lm).size());
+
         // ---- arranque según la velocidad
         long g11 = 11L * 1073741824L, MBy = 1048576L;
         long fast = TorrentFiles.startBytes(g11, 7200, 3.0 * MBy);
@@ -110,6 +122,12 @@ public final class MediaTests {
         byte[] hb = Trackers.hex("46826e610ae3b81757d3ce57cdce130f2628e29f");
         ok("infohash a 20 bytes", hb.length == 20 && (hb[0] & 0xff) == 0x46 && (hb[19] & 0xff) == 0x9f);
         eq("sin infohash no se pregunta a nadie", 0, Trackers.seeders(new java.util.ArrayList<String>()).size());
+
+        // ---- saludo BitTorrent (prueba real de las fuentes)
+        byte[] hm = Trackers.handshakeMessage(hb, new byte[20]);
+        ok("saludo de 68 bytes con «BitTorrent protocol» y el infohash", hm.length == 68 && hm[0] == 19
+                && new String(hm, 1, 19, java.nio.charset.StandardCharsets.US_ASCII).equals("BitTorrent protocol")
+                && java.util.Arrays.equals(java.util.Arrays.copyOfRange(hm, 28, 48), hb));
 
         // ---- precarga
         eq("precarga mínima 32 MB", 32L * 1048576L, TorrentFiles.bufferBytes(2L * 1073741824L));

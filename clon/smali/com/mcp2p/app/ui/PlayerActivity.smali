@@ -3003,77 +3003,29 @@
 .end method
 
 .method public final R()V
-    .locals 4
+    .locals 2
 
-    .line 1
     iget-object v0, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
+    if-eqz v0, :done
 
-    .line 2
-    .line 3
-    if-eqz v0, :cond_1
-
-    .line 4
-    .line 5
     iget-object v1, p0, Lcom/mcp2p/app/ui/PlayerActivity;->h0:LX3/a;
+    if-eqz v1, :done
 
-    .line 6
-    .line 7
-    if-nez v1, :cond_0
-
-    .line 8
-    .line 9
-    goto :goto_0
-
-    .line 10
-    :cond_0
     const/4 v1, 0x0
-
-    .line 11
     invoke-virtual {v0, v1}, Landroid/view/View;->setVisibility(I)V
+    invoke-direct {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->scheduleVlcControlsHide()V
 
-    .line 12
-    .line 13
-    .line 14
-    iget-object v0, p0, Lcom/mcp2p/app/ui/PlayerActivity;->O:Landroid/os/Handler;
+    :done
+    return-void
+.end method
 
-    .line 15
-    .line 16
-    iget-object v1, p0, Lcom/mcp2p/app/ui/PlayerActivity;->l0:Ld4/i0;
+.method private scheduleVlcControlsHide()V
+    .locals 0
 
-    .line 17
-    .line 18
-    invoke-virtual {v0, v1}, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
+    # McP2P-TV: temporizador de la barra VLC en com.mcp2p.tv.PlayerControls (2 s sin pulsar; se esconde aunque
+    # un botón tenga el foco y aunque el indicador de arrastre j0 se quede atascado con el mando)
+    invoke-static {p0}, Lcom/mcp2p/tv/PlayerControls;->touch(Landroid/app/Activity;)V
 
-    .line 19
-    .line 20
-    .line 21
-    iget-object v2, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
-
-    .line 22
-    .line 23
-    invoke-virtual {v2}, Landroid/view/View;->hasFocus()Z
-
-    .line 24
-    .line 25
-    .line 26
-    move-result v2
-
-    .line 27
-    if-nez v2, :cond_1
-
-    .line 28
-    .line 29
-    const-wide/16 v2, 0x1388
-
-    .line 30
-    .line 31
-    invoke-virtual {v0, v1, v2, v3}, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-
-    .line 32
-    .line 33
-    .line 34
-    :cond_1
-    :goto_0
     return-void
 .end method
 
@@ -8134,6 +8086,29 @@
     return-void
 .end method
 
+.method public final dispatchGenericMotionEvent(Landroid/view/MotionEvent;)Z
+    .locals 2
+
+    iget-object v0, p0, Lcom/mcp2p/app/ui/PlayerActivity;->h0:LX3/a;
+    if-eqz v0, :dispatch
+
+    invoke-virtual {p1}, Landroid/view/MotionEvent;->getActionMasked()I
+    move-result v0
+    const/4 v1, 0x7
+    if-ne v0, v1, :dispatch
+
+    iget-object v0, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
+    invoke-virtual {v0}, Landroid/view/View;->getVisibility()I
+    move-result v0
+    if-nez v0, :dispatch
+    invoke-direct {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->scheduleVlcControlsHide()V
+
+    :dispatch
+    invoke-super {p0, p1}, Lh/i;->dispatchGenericMotionEvent(Landroid/view/MotionEvent;)Z
+    move-result v0
+    return v0
+.end method
+
 .method public final dispatchKeyEvent(Landroid/view/KeyEvent;)Z
     .locals 4
 
@@ -8165,7 +8140,34 @@
     .line 14
     move-result v0
 
-    .line 15
+    # Hidden controls can be reopened with Down or OK, with focus on Play/Pause.
+    const/16 v1, 0x14
+    if-eq v0, v1, :check_vlc_panel
+    const/16 v1, 0x17
+    if-eq v0, v1, :check_vlc_panel
+    const/16 v1, 0x42
+    if-ne v0, v1, :reset_vlc_timer
+
+    :check_vlc_panel
+    iget-object v1, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
+    invoke-virtual {v1}, Landroid/view/View;->getVisibility()I
+    move-result v1
+    if-eqz v1, :reset_vlc_timer
+
+    invoke-virtual {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->R()V
+    iget-object v1, p0, Lcom/mcp2p/app/ui/PlayerActivity;->d0:Landroid/widget/Button;
+    invoke-virtual {v1}, Landroid/view/View;->requestFocus()Z
+    const/4 v1, 0x1
+    return v1
+
+    :reset_vlc_timer
+    iget-object v1, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
+    invoke-virtual {v1}, Landroid/view/View;->getVisibility()I
+    move-result v1
+    if-nez v1, :vlc_key
+    invoke-direct {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->scheduleVlcControlsHide()V
+
+    :vlc_key
     const/16 v1, 0x55
 
     .line 16
@@ -8402,47 +8404,6 @@
 
     .line 128
     :cond_a
-    const/16 v1, 0x17
-
-    .line 129
-    .line 130
-    if-eq v0, v1, :cond_b
-
-    .line 131
-    .line 132
-    const/16 v1, 0x42
-
-    .line 133
-    .line 134
-    if-ne v0, v1, :cond_c
-
-    .line 135
-    .line 136
-    :cond_b
-    iget-object v0, p0, Lcom/mcp2p/app/ui/PlayerActivity;->Y:Landroid/view/View;
-
-    .line 137
-    .line 138
-    invoke-virtual {v0}, Landroid/view/View;->getVisibility()I
-
-    .line 139
-    .line 140
-    .line 141
-    move-result v0
-
-    .line 142
-    if-eqz v0, :cond_c
-
-    .line 143
-    .line 144
-    invoke-virtual {p0}, Lcom/mcp2p/app/ui/PlayerActivity;->R()V
-
-    .line 145
-    .line 146
-    .line 147
-    return v2
-
-    .line 148
     :cond_c
     invoke-super {p0, p1}, Lh/i;->dispatchKeyEvent(Landroid/view/KeyEvent;)Z
 

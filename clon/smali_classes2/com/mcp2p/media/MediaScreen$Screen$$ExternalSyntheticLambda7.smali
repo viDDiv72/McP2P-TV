@@ -28,7 +28,7 @@
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$0$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$1$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
 
     return-void
 .end method

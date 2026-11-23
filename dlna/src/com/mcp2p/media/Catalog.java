@@ -115,6 +115,8 @@ public final class Catalog {
     public static final class Found {
         public final List<Sources.Stream> streams;
         public final List<String> failed;
+        /** true si ya se ha comprobado de verdad que hay gente (verify). */
+        public boolean checked;
 
         Found(List<Sources.Stream> s, List<String> f) {
             streams = s;
@@ -139,6 +141,50 @@ public final class Catalog {
         List<Sources.Stream> all = Sources.merge(got);
         realSeeds(all);
         return new Found(Sources.best(all), failed);
+    }
+
+    /**
+     * Antes de recomendar: prueba real con cada fuente (lista de personas de los trackers + saludo BitTorrent).
+     * Las que nadie comparte se quitan; las que han contestado van primero y la mejor lleva la estrella. Si la red
+     * no deja comprobarlo, se deja como estaba.
+     */
+    public Found verify(Found f) {
+        if (f.streams.isEmpty()) {
+            f.checked = true;
+            return f;
+        }
+        List<Future<Integer>> rs = new ArrayList<>();
+        for (Sources.Stream s : f.streams) {
+            final String h = s.infoHash;
+            rs.add(pool.submit(() -> Trackers.reachable(h, 2, 2500)));
+        }
+        boolean any = false;
+        for (int i = 0; i < f.streams.size(); i++) {
+            int r;
+            try {
+                r = rs.get(i).get(20, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                r = -1;
+            }
+            f.streams.get(i).reachable = r;
+            if (r != -1) any = true;
+        }
+        if (!any) {
+            f.checked = true; // sin poder comprobar: se queda como estaba
+            return f;
+        }
+        List<Sources.Stream> ok = new ArrayList<>(), maybe = new ArrayList<>();
+        for (Sources.Stream s : f.streams) {
+            if (s.reachable > 0) ok.add(s);
+            else if (s.reachable == 0 || s.reachable == -1) maybe.add(s);
+            // -2: los trackers dicen que nadie la comparte → fuera
+        }
+        List<Sources.Stream> out = new ArrayList<>(ok);
+        out.addAll(maybe);
+        for (int i = 0; i < out.size(); i++) out.get(i).recommended = i == 0 && out.get(i).reachable > 0;
+        Found r = new Found(out, f.failed);
+        r.checked = true;
+        return r;
     }
 
     /**

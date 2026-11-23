@@ -39,6 +39,9 @@ public final class CrashLog {
     /** Llamado desde Mcp2pApplication.onCreate, antes que cualquier otro módulo. */
     public static void install(final Application app) {
         try {
+            AppInfo.init(app);
+        } catch (Throwable ignored) {}
+        try {
             final Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
             Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
                 try {

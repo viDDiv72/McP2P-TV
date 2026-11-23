@@ -31,6 +31,8 @@
 
 .field public quality:Ljava/lang/String;
 
+.field public reachable:I
+
 .field public recommended:Z
 
 .field public seeds:I
@@ -59,10 +61,13 @@
 
     const/4 v0, -0x1
 
-    .line 38
+    .line 35
+    iput v0, p0, Lcom/mcp2p/media/Sources$Stream;->reachable:I
+
+    .line 40
     iput v0, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
-    .line 39
+    .line 41
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V

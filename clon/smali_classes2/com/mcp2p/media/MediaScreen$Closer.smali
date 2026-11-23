@@ -27,13 +27,13 @@
 .method constructor <init>(Landroid/app/Activity;Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
-    .line 1074
+    .line 1080
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 1075
+    .line 1081
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Closer;->owner:Landroid/app/Activity;
 
-    .line 1076
+    .line 1082
     iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Closer;->screen:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
@@ -50,14 +50,14 @@
 .method public onActivityDestroyed(Landroid/app/Activity;)V
     .locals 3
 
-    .line 1080
+    .line 1086
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Closer;->owner:Landroid/app/Activity;
 
     if-eq p1, v0, :cond_0
 
     return-void
 
-    .line 1082
+    .line 1088
     :cond_0
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Closer;->screen:Lcom/mcp2p/media/MediaScreen$Screen;
@@ -75,10 +75,10 @@
 
     const-string v2, "Cierre de la Mediateca (ignorado)"
 
-    .line 1084
+    .line 1090
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 1086
+    .line 1092
     :goto_0
     invoke-virtual {p1}, Landroid/app/Activity;->getApplication()Landroid/app/Application;
 

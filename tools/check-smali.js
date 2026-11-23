@@ -50,6 +50,12 @@ const checks = [
       && !read('smali/T3/c.smali').includes('invoke-virtual {v2, v3}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z')],
   ['Magnets: la pantalla de carga muestra el progreso de la precarga', () =>
     method(read('smali/com/mcp2p/app/ui/PlayerActivity.smali'), 'public final V(JLjava/lang/String;)V').includes('StreamTuner;->overlay(')],
+  // 1.9.2: estabilidad
+  ['Reproductor: la barra VLC se esconde a los 2 s (PlayerControls)', () =>
+    method(read('smali/com/mcp2p/app/ui/PlayerActivity.smali'), 'private scheduleVlcControlsHide()V').includes('PlayerControls;->touch(')],
+  ['Motor P2P: la sesión arranca con los ajustes (modo ligero)', () =>
+    read('smali/T1/a.smali').includes('StreamTuner;->start(Ljava/lang/Object;)V') && !read('smali/T1/a.smali').includes('SessionManager;->start()V')],
+  ['Acerca de: versión instalada', () => read('smali/d4/I0.smali').includes('AppInfo;->about(')],
   // Seguridad (v1.6.1)
   ['Copias de seguridad desactivadas', () => read('AndroidManifest.xml').includes('android:allowBackup="false"')],
   ['Arranque: CrashLog, TvFocus y DLNA enganchados', () => {
