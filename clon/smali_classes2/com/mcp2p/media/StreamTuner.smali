@@ -63,13 +63,13 @@
 
     const/4 v0, 0x0
 
-    .line 214
+    .line 211
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 215
+    .line 212
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
-    .line 216
+    .line 213
     sput-object v0, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
 
     return-void
@@ -83,7 +83,7 @@
         }
     .end annotation
 
-    .line 251
+    .line 248
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -92,7 +92,7 @@
 
     move-result-object p1
 
-    .line 252
+    .line 249
     invoke-virtual {p1, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p0
@@ -109,7 +109,7 @@
 
     return-object v0
 
-    .line 240
+    .line 237
     :cond_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -130,18 +130,18 @@
 
     const/4 v5, 0x1
 
-    .line 242
+    .line 239
     :try_start_0
     invoke-virtual {v4, v5}, Ljava/lang/reflect/Field;->setAccessible(Z)V
 
-    .line 243
+    .line 240
     invoke-virtual {v4, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v4
 
     if-eqz v4, :cond_1
 
-    .line 244
+    .line 241
     invoke-virtual {v4}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v5
@@ -184,7 +184,7 @@
 .method static synthetic lambda$show$1(Ljava/lang/Object;)V
     .locals 0
 
-    .line 207
+    .line 204
     invoke-static {p0}, Lcom/mcp2p/media/StreamTuner;->overlay(Ljava/lang/Object;)Z
 
     return-void
@@ -195,11 +195,11 @@
 
     const/4 v0, 0x0
 
-    .line 225
+    .line 222
     :try_start_0
     sget-object v1, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 226
+    .line 223
     sget-object v2, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
     sget-object v3, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
@@ -210,7 +210,7 @@
 
     if-eqz p0, :cond_3
 
-    .line 227
+    .line 224
     invoke-virtual {v1}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
 
     move-result-object v1
@@ -222,19 +222,19 @@
     :cond_0
     const-string v1, "o0"
 
-    .line 228
+    .line 225
     invoke-static {p0, v1}, Lcom/mcp2p/media/StreamTuner;->field(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object v1
 
     const-string v4, "p0"
 
-    .line 229
+    .line 226
     invoke-static {p0, v4}, Lcom/mcp2p/media/StreamTuner;->field(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object p0
 
-    .line 230
+    .line 227
     instance-of v4, v1, Landroid/widget/TextView;
 
     if-eqz v4, :cond_1
@@ -243,7 +243,7 @@
 
     invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 231
+    .line 228
     :cond_1
     instance-of v1, p0, Landroid/widget/TextView;
 
@@ -1359,51 +1359,51 @@
 .end method
 
 .method private static show(Landroid/os/Handler;Ljava/lang/Object;JJILjava/lang/Object;Z)V
-    .locals 7
+    .locals 3
 
     if-nez p1, :cond_0
 
     return-void
 
     :cond_0
-    const/4 v0, 0x0
+    const/4 p8, 0x0
 
     .line 193
     :try_start_0
     invoke-virtual {p7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
-    move-result-object v1
+    move-result-object v0
 
-    const-string v2, "status"
+    const-string v1, "status"
 
-    new-array v3, v0, [Ljava/lang/Class;
+    new-array v2, p8, [Ljava/lang/Class;
 
-    invoke-virtual {v1, v2, v3}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+    invoke-virtual {v0, v1, v2}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
 
-    move-result-object v1
+    move-result-object v0
 
-    new-array v2, v0, [Ljava/lang/Object;
+    new-array v1, p8, [Ljava/lang/Object;
 
-    invoke-virtual {v1, p7, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-virtual {v0, p7, v1}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p7
 
     .line 194
     invoke-virtual {p7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
-    move-result-object v1
+    move-result-object v0
 
-    const-string v2, "numPeers"
+    const-string v1, "numPeers"
 
-    new-array v3, v0, [Ljava/lang/Class;
+    new-array v2, p8, [Ljava/lang/Class;
 
-    invoke-virtual {v1, v2, v3}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+    invoke-virtual {v0, v1, v2}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
 
-    move-result-object v1
+    move-result-object v0
 
-    new-array v2, v0, [Ljava/lang/Object;
+    new-array v1, p8, [Ljava/lang/Object;
 
-    invoke-virtual {v1, p7, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-virtual {v0, p7, v1}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p7
 
@@ -1418,209 +1418,117 @@
     goto :goto_0
 
     :catchall_0
-    move p7, v0
+    move p7, p8
 
     :goto_0
-    const-wide/16 v1, 0x0
+    const-wide/16 v0, 0x0
 
-    cmp-long v3, p4, v1
+    cmp-long v0, p4, v0
 
-    if-gtz v3, :cond_1
+    if-gtz v0, :cond_1
 
     goto :goto_1
 
     :cond_1
-    const-wide/16 v3, 0x64
+    const-wide/16 v0, 0x64
 
-    mul-long/2addr v3, p2
+    mul-long/2addr p2, v0
 
     .line 196
-    div-long/2addr v3, p4
+    div-long/2addr p2, p4
 
-    const-wide/16 v5, 0x63
+    const-wide/16 p4, 0x63
 
-    invoke-static {v5, v6, v3, v4}, Ljava/lang/Math;->min(JJ)J
-
-    move-result-wide v3
-
-    long-to-int v0, v3
-
-    :goto_1
-    if-lez p6, :cond_2
-
-    sub-long/2addr p4, p2
-
-    int-to-long p2, p6
-
-    .line 197
-    div-long/2addr p4, p2
-
-    const-wide/16 p2, 0x1
-
-    invoke-static {p2, p3, p4, p5}, Ljava/lang/Math;->max(JJ)J
+    invoke-static {p4, p5, p2, p3}, Ljava/lang/Math;->min(JJ)J
 
     move-result-wide p2
+
+    long-to-int p8, p2
+
+    .line 197
+    :goto_1
+    new-instance p2, Ljava/lang/StringBuilder;
+
+    const-string p3, "Cargando la pel\u00edcula\u2026 "
+
+    invoke-direct {p2, p3}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+
+    invoke-virtual {p2, p8}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    const-string p3, " %"
+
+    invoke-virtual {p2, p3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {p2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object p2
+
+    .line 198
+    new-instance p3, Ljava/lang/StringBuilder;
+
+    invoke-direct {p3}, Ljava/lang/StringBuilder;-><init>()V
+
+    invoke-static {p6}, Lcom/mcp2p/media/StreamTuner;->speed(I)Ljava/lang/String;
+
+    move-result-object p4
+
+    invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    const-string p4, " \u00b7 "
+
+    invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {p3, p7}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    const/4 p4, 0x1
+
+    if-ne p7, p4, :cond_2
+
+    const-string p4, " fuente conectada"
 
     goto :goto_2
 
     :cond_2
-    const-wide/16 p2, -0x1
+    const-string p4, " fuentes conectadas"
 
-    .line 198
     :goto_2
-    new-instance p4, Ljava/lang/StringBuilder;
+    invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    const-string p5, "Cargando la pel\u00edcula\u2026 "
+    const-string p4, "\nSe guarda el comienzo antes de empezar para que no se corte."
 
-    invoke-direct {p4, p5}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+    invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {p4, v0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    if-nez p7, :cond_3
 
-    const-string p5, " %"
-
-    invoke-virtual {p4, p5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {p4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object p4
-
-    .line 199
-    new-instance p5, Ljava/lang/StringBuilder;
-
-    invoke-direct {p5}, Ljava/lang/StringBuilder;-><init>()V
-
-    invoke-static {p6}, Lcom/mcp2p/media/StreamTuner;->speed(I)Ljava/lang/String;
-
-    move-result-object p6
-
-    invoke-virtual {p5, p6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    const-string p6, " \u00b7 "
-
-    invoke-virtual {p5, p6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {p5, p7}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-
-    const/4 p6, 0x1
-
-    if-ne p7, p6, :cond_3
-
-    const-string p6, " fuente conectada"
+    const-string p4, "\nBuscando fuentes\u2026 si tarda mucho, prueba otra versi\u00f3n con m\u00e1s semillas."
 
     goto :goto_3
 
     :cond_3
-    const-string p6, " fuentes conectadas"
-
-    :goto_3
-    invoke-virtual {p5, p6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    cmp-long p6, p2, v1
-
-    const-string v0, ""
-
-    if-lez p6, :cond_5
+    const-string p4, ""
 
     .line 200
-    new-instance p6, Ljava/lang/StringBuilder;
+    :goto_3
+    invoke-virtual {p3, p4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    const-string v1, " \u00b7 empieza en ~"
+    invoke-virtual {p3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
-    invoke-direct {p6, v1}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+    move-result-object p3
 
-    const-wide/16 v1, 0x3c
-
-    cmp-long v3, p2, v1
-
-    if-ltz v3, :cond_4
-
-    new-instance v3, Ljava/lang/StringBuilder;
-
-    invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
-
-    div-long/2addr p2, v1
-
-    invoke-virtual {v3, p2, p3}, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
-
-    const-string p2, " min"
-
-    invoke-virtual {v3, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object p2
-
-    goto :goto_4
-
-    :cond_4
-    new-instance v1, Ljava/lang/StringBuilder;
-
-    invoke-direct {v1}, Ljava/lang/StringBuilder;-><init>()V
-
-    invoke-virtual {v1, p2, p3}, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
-
-    const-string p2, " s"
-
-    invoke-virtual {v1, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v1}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object p2
-
-    :goto_4
-    invoke-virtual {p6, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {p6}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object p2
-
-    goto :goto_5
-
-    :cond_5
-    move-object p2, v0
-
-    :goto_5
-    invoke-virtual {p5, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    if-eqz p8, :cond_6
-
-    const-string p2, "\nTu conexi\u00f3n va justa para esta versi\u00f3n: se guarda m\u00e1s antes de empezar para que no se corte."
-
-    goto :goto_6
-
-    :cond_6
-    const-string p2, "\nSe guarda un poco antes de empezar para que no se corte."
+    .line 201
+    sput-object p2, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
 
     .line 202
-    :goto_6
-    invoke-virtual {p5, p2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    if-nez p7, :cond_7
-
-    const-string v0, "\nBuscando fuentes\u2026"
+    sput-object p3, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
 
     .line 203
-    :cond_7
-    invoke-virtual {p5, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {p5}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object p2
-
-    .line 204
-    sput-object p4, Lcom/mcp2p/media/StreamTuner;->overlayTitle:Ljava/lang/String;
-
-    .line 205
-    sput-object p2, Lcom/mcp2p/media/StreamTuner;->overlayDetail:Ljava/lang/String;
-
-    .line 206
     new-instance p2, Ljava/lang/ref/WeakReference;
 
     invoke-direct {p2, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     sput-object p2, Lcom/mcp2p/media/StreamTuner;->activePlayer:Ljava/lang/ref/WeakReference;
 
-    .line 207
+    .line 204
     new-instance p2, Lcom/mcp2p/media/StreamTuner$$ExternalSyntheticLambda1;
 
     invoke-direct {p2, p1}, Lcom/mcp2p/media/StreamTuner$$ExternalSyntheticLambda1;-><init>(Ljava/lang/Object;)V

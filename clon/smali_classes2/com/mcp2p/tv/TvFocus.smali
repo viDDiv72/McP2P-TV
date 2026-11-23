@@ -8,7 +8,8 @@
     value = {
         Lcom/mcp2p/tv/TvFocus$State;,
         Lcom/mcp2p/tv/TvFocus$Lifecycle;,
-        Lcom/mcp2p/tv/TvFocus$KeyCallback;
+        Lcom/mcp2p/tv/TvFocus$KeyCallback;,
+        Lcom/mcp2p/tv/TvFocus$DeviceWatcher;
     }
 .end annotation
 
@@ -41,7 +42,7 @@
 
     new-array v0, v0, [I
 
-    .line 202
+    .line 206
     sput-object v0, Lcom/mcp2p/tv/TvFocus;->LOC:[I
 
     return-void
@@ -165,20 +166,49 @@
     .line 104
     invoke-virtual {p1}, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
 
-    move-result-object p0
+    move-result-object v0
 
-    new-instance v0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;
+    new-instance v1, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;
 
-    invoke-direct {v0, p1}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;-><init>(Landroid/view/View;)V
+    invoke-direct {v1, p1}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;-><init>(Landroid/view/View;)V
 
-    invoke-virtual {p0, v0}, Landroid/view/ViewTreeObserver;->addOnWindowFocusChangeListener(Landroid/view/ViewTreeObserver$OnWindowFocusChangeListener;)V
+    invoke-virtual {v0, v1}, Landroid/view/ViewTreeObserver;->addOnWindowFocusChangeListener(Landroid/view/ViewTreeObserver$OnWindowFocusChangeListener;)V
 
     .line 107
-    new-instance p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda4;
+    new-instance v0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda4;
 
-    invoke-direct {p0, p1}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda4;-><init>(Landroid/view/View;)V
+    invoke-direct {v0, p1}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda4;-><init>(Landroid/view/View;)V
 
-    invoke-virtual {p1, p0}, Landroid/view/View;->post(Ljava/lang/Runnable;)Z
+    invoke-virtual {p1, v0}, Landroid/view/View;->post(Ljava/lang/Runnable;)Z
+
+    .line 109
+    iget-object p0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
+
+    const-string v0, "input"
+
+    .line 110
+    invoke-virtual {p0, v0}, Landroid/app/Activity;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+
+    move-result-object p0
+
+    check-cast p0, Landroid/hardware/input/InputManager;
+
+    if-eqz p0, :cond_1
+
+    .line 111
+    new-instance v0, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;
+
+    invoke-direct {v0, p1}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;-><init>(Landroid/view/View;)V
+
+    new-instance p1, Landroid/os/Handler;
+
+    invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
+
+    move-result-object v1
+
+    invoke-direct {p1, v1}, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
+
+    invoke-virtual {p0, v0, p1}, Landroid/hardware/input/InputManager;->registerInputDeviceListener(Landroid/hardware/input/InputManager$InputDeviceListener;Landroid/os/Handler;)V
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
@@ -191,9 +221,10 @@
 
     const-string v0, "No se pudo capturar el puntero"
 
-    .line 109
+    .line 113
     invoke-static {p1, v0, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
+    :cond_1
     :goto_0
     return-void
 .end method
@@ -201,19 +232,19 @@
 .method private static clear(Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 4
 
-    .line 290
+    .line 294
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->highlighted:Landroid/view/View;
 
     const/4 v1, 0x0
 
-    .line 291
+    .line 295
     iput-object v1, p0, Lcom/mcp2p/tv/TvFocus$State;->highlighted:Landroid/view/View;
 
     if-nez v0, :cond_0
 
     return-void
 
-    .line 293
+    .line 297
     :cond_0
     invoke-virtual {v0}, Landroid/view/View;->animate()Landroid/view/ViewPropertyAnimator;
 
@@ -237,7 +268,7 @@
 
     invoke-virtual {v1}, Landroid/view/ViewPropertyAnimator;->start()V
 
-    .line 295
+    .line 299
     :try_start_0
     invoke-virtual {v0}, Landroid/view/View;->getOverlay()Landroid/view/ViewOverlay;
 
@@ -260,7 +291,7 @@
 
     if-eqz p0, :cond_0
 
-    .line 254
+    .line 258
     sget-object v1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
     const v2, 0x6d637033
@@ -280,7 +311,7 @@
     :cond_0
     if-eqz p0, :cond_4
 
-    .line 255
+    .line 259
     instance-of v1, p0, Landroid/widget/EditText;
 
     if-nez v1, :cond_4
@@ -299,7 +330,7 @@
 
     goto :goto_0
 
-    .line 257
+    .line 261
     :cond_1
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -311,7 +342,7 @@
 
     const-string v2, "RecyclerView"
 
-    .line 258
+    .line 262
     invoke-virtual {v1, v2}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
 
     move-result v2
@@ -336,7 +367,7 @@
 
     const-string v2, "WebView"
 
-    .line 259
+    .line 263
     invoke-virtual {v1, v2}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
 
     move-result v1
@@ -345,7 +376,7 @@
 
     goto :goto_0
 
-    .line 261
+    .line 265
     :cond_2
     invoke-virtual {p0}, Landroid/view/View;->getRootView()Landroid/view/View;
 
@@ -353,7 +384,7 @@
 
     if-eqz v1, :cond_3
 
-    .line 262
+    .line 266
     invoke-virtual {p0}, Landroid/view/View;->getHeight()I
 
     move-result p0
@@ -385,7 +416,7 @@
 .method private static findByKey(Landroid/view/View;Ljava/lang/String;)Landroid/view/View;
     .locals 2
 
-    .line 353
+    .line 357
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->usable(Landroid/view/View;)Z
 
     move-result v0
@@ -404,18 +435,18 @@
 
     return-object p0
 
-    .line 354
+    .line 358
     :cond_0
     instance-of v0, p0, Landroid/view/ViewGroup;
 
     if-eqz v0, :cond_2
 
-    .line 355
+    .line 359
     check-cast p0, Landroid/view/ViewGroup;
 
     const/4 v0, 0x0
 
-    .line 356
+    .line 360
     :goto_0
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
@@ -423,7 +454,7 @@
 
     if-ge v0, v1, :cond_2
 
-    .line 357
+    .line 361
     invoke-virtual {p0, v0}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v1
@@ -450,7 +481,7 @@
 .method private static firstFocusable(Landroid/view/View;)Landroid/view/View;
     .locals 4
 
-    .line 387
+    .line 391
     invoke-virtual {p0}, Landroid/view/View;->isShown()Z
 
     move-result v0
@@ -461,7 +492,7 @@
 
     return-object v1
 
-    .line 388
+    .line 392
     :cond_0
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->usable(Landroid/view/View;)Z
 
@@ -485,7 +516,7 @@
 
     if-ne v2, v3, :cond_1
 
-    .line 389
+    .line 393
     invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->hasFocusableChild(Landroid/view/ViewGroup;)Z
 
     move-result v0
@@ -495,16 +526,16 @@
     :cond_1
     return-object p0
 
-    .line 392
+    .line 396
     :cond_2
     instance-of v0, p0, Landroid/view/ViewGroup;
 
     if-eqz v0, :cond_5
 
-    .line 393
+    .line 397
     check-cast p0, Landroid/view/ViewGroup;
 
-    .line 394
+    .line 398
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getDescendantFocusability()I
 
     move-result v0
@@ -518,7 +549,7 @@
     :cond_3
     const/4 v0, 0x0
 
-    .line 395
+    .line 399
     :goto_0
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
@@ -526,7 +557,7 @@
 
     if-ge v0, v2, :cond_5
 
-    .line 396
+    .line 400
     invoke-virtual {p0, v0}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v2
@@ -551,7 +582,7 @@
 .method private static firstInList(Landroid/view/View;)Landroid/view/View;
     .locals 5
 
-    .line 366
+    .line 370
     invoke-virtual {p0}, Landroid/view/View;->isShown()Z
 
     move-result v0
@@ -562,7 +593,7 @@
 
     return-object v1
 
-    .line 367
+    .line 371
     :cond_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -572,7 +603,7 @@
 
     move-result-object v0
 
-    .line 368
+    .line 372
     instance-of v2, p0, Landroid/view/ViewGroup;
 
     const/4 v3, 0x0
@@ -591,11 +622,11 @@
 
     if-eqz v0, :cond_4
 
-    .line 369
+    .line 373
     :cond_1
     check-cast p0, Landroid/view/ViewGroup;
 
-    .line 370
+    .line 374
     :goto_0
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
@@ -603,7 +634,7 @@
 
     if-ge v3, v0, :cond_3
 
-    .line 371
+    .line 375
     invoke-virtual {p0, v3}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v0
@@ -627,10 +658,10 @@
     :cond_4
     if-eqz v2, :cond_6
 
-    .line 377
+    .line 381
     check-cast p0, Landroid/view/ViewGroup;
 
-    .line 378
+    .line 382
     :goto_1
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
@@ -638,7 +669,7 @@
 
     if-ge v3, v0, :cond_6
 
-    .line 379
+    .line 383
     invoke-virtual {p0, v3}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v0
@@ -663,7 +694,7 @@
 .method private static focusableAt(Landroid/view/View;II)Landroid/view/View;
     .locals 5
 
-    .line 220
+    .line 224
     invoke-virtual {p0}, Landroid/view/View;->isShown()Z
 
     move-result v0
@@ -674,7 +705,7 @@
 
     return-object v1
 
-    .line 221
+    .line 225
     :cond_0
     sget-object v0, Lcom/mcp2p/tv/TvFocus;->LOC:[I
 
@@ -682,7 +713,7 @@
 
     const/4 v2, 0x0
 
-    .line 222
+    .line 226
     aget v2, v0, v2
 
     if-lt p1, v2, :cond_5
@@ -713,18 +744,18 @@
 
     goto :goto_2
 
-    .line 223
+    .line 227
     :cond_1
     instance-of v0, p0, Landroid/view/ViewGroup;
 
     if-eqz v0, :cond_3
 
-    .line 224
+    .line 228
     move-object v0, p0
 
     check-cast v0, Landroid/view/ViewGroup;
 
-    .line 225
+    .line 229
     invoke-virtual {v0}, Landroid/view/ViewGroup;->getDescendantFocusability()I
 
     move-result v2
@@ -733,7 +764,7 @@
 
     if-eq v2, v4, :cond_3
 
-    .line 226
+    .line 230
     invoke-virtual {v0}, Landroid/view/ViewGroup;->getChildCount()I
 
     move-result v2
@@ -743,7 +774,7 @@
     :goto_0
     if-ltz v2, :cond_3
 
-    .line 227
+    .line 231
     invoke-virtual {v0, v2}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v3
@@ -761,7 +792,7 @@
 
     goto :goto_0
 
-    .line 232
+    .line 236
     :cond_3
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->usable(Landroid/view/View;)Z
 
@@ -789,7 +820,7 @@
 
     move v1, v0
 
-    .line 404
+    .line 408
     :goto_0
     invoke-virtual {p0}, Landroid/view/ViewGroup;->getChildCount()I
 
@@ -797,12 +828,12 @@
 
     if-ge v1, v2, :cond_2
 
-    .line 405
+    .line 409
     invoke-virtual {p0, v1}, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
 
     move-result-object v2
 
-    .line 406
+    .line 410
     invoke-static {v2}, Lcom/mcp2p/tv/TvFocus;->usable(Landroid/view/View;)Z
 
     move-result v3
@@ -813,7 +844,7 @@
 
     return v4
 
-    .line 407
+    .line 411
     :cond_0
     instance-of v3, v2, Landroid/view/ViewGroup;
 
@@ -843,7 +874,7 @@
 
     const/4 v0, 0x0
 
-    .line 175
+    .line 179
     :try_start_0
     invoke-static {p0, v0}, Landroid/view/PointerIcon;->getSystemIcon(Landroid/content/Context;I)Landroid/view/PointerIcon;
 
@@ -862,7 +893,7 @@
 
     const-string v0, "No se pudo ocultar el puntero"
 
-    .line 177
+    .line 181
     invoke-static {p1, v0, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -916,14 +947,14 @@
 .method private static key(Landroid/view/View;)Ljava/lang/String;
     .locals 2
 
-    .line 302
+    .line 306
     invoke-virtual {p0}, Landroid/view/View;->getContentDescription()Ljava/lang/CharSequence;
 
     move-result-object v0
 
     if-eqz v0, :cond_0
 
-    .line 303
+    .line 307
     invoke-interface {v0}, Ljava/lang/CharSequence;->length()I
 
     move-result v1
@@ -944,13 +975,13 @@
 
     return-object p0
 
-    .line 304
+    .line 308
     :cond_0
     instance-of v0, p0, Landroid/widget/TextView;
 
     if-eqz v0, :cond_1
 
-    .line 305
+    .line 309
     move-object v0, p0
 
     check-cast v0, Landroid/widget/TextView;
@@ -961,7 +992,7 @@
 
     if-eqz v0, :cond_1
 
-    .line 306
+    .line 310
     invoke-interface {v0}, Ljava/lang/CharSequence;->length()I
 
     move-result v1
@@ -982,7 +1013,7 @@
 
     return-object p0
 
-    .line 308
+    .line 312
     :cond_1
     invoke-virtual {p0}, Landroid/view/View;->getId()I
 
@@ -1125,7 +1156,7 @@
 .method static synthetic lambda$scheduleRecovery$8(Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 0
 
-    .line 326
+    .line 330
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->recover(Lcom/mcp2p/tv/TvFocus$State;)V
 
     return-void
@@ -1136,10 +1167,10 @@
 
     const/4 v0, 0x0
 
-    .line 325
+    .line 329
     iput-boolean v0, p0, Lcom/mcp2p/tv/TvFocus$State;->recoveryPosted:Z
 
-    .line 326
+    .line 330
     new-instance v0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda7;
 
     invoke-direct {v0, p0}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda7;-><init>(Lcom/mcp2p/tv/TvFocus$State;)V
@@ -1154,7 +1185,7 @@
 
     const v0, 0x6d637033
 
-    .line 250
+    .line 254
     sget-object v1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
     invoke-virtual {p0, v0, v1}, Landroid/view/View;->setTag(ILjava/lang/Object;)V
@@ -1165,12 +1196,12 @@
 .method static onCaptured(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/MotionEvent;)Z
     .locals 13
 
-    .line 124
+    .line 128
     invoke-static {}, Landroid/os/SystemClock;->uptimeMillis()J
 
     move-result-wide v0
 
-    .line 125
+    .line 129
     invoke-virtual {p1}, Landroid/view/MotionEvent;->getActionMasked()I
 
     move-result v2
@@ -1185,7 +1216,7 @@
 
     if-ne v2, v3, :cond_2
 
-    .line 127
+    .line 131
     invoke-virtual {p1}, Landroid/view/MotionEvent;->getActionButton()I
 
     move-result p1
@@ -1205,7 +1236,7 @@
     :goto_0
     const/4 p1, 0x4
 
-    .line 128
+    .line 132
     :goto_1
     invoke-static {p0, p1}, Lcom/mcp2p/tv/TvFocus;->sendKey(Lcom/mcp2p/tv/TvFocus$State;I)V
 
@@ -1226,19 +1257,19 @@
 
     const/16 v0, 0x9
 
-    .line 133
+    .line 137
     invoke-virtual {p1, v0}, Landroid/view/MotionEvent;->getAxisValue(I)F
 
     move-result v0
 
     const/16 v1, 0xa
 
-    .line 134
+    .line 138
     invoke-virtual {p1, v1}, Landroid/view/MotionEvent;->getAxisValue(I)F
 
     move-result p1
 
-    .line 135
+    .line 139
     invoke-static {v0}, Ljava/lang/Math;->abs(F)F
 
     move-result v1
@@ -1279,7 +1310,7 @@
     :cond_5
     move v8, v9
 
-    .line 136
+    .line 140
     :goto_3
     invoke-static {p0, v8}, Lcom/mcp2p/tv/TvFocus;->sendKey(Lcom/mcp2p/tv/TvFocus$State;I)V
 
@@ -1294,7 +1325,7 @@
 
     return p0
 
-    .line 140
+    .line 144
     :cond_8
     iget-wide v4, p0, Lcom/mcp2p/tv/TvFocus$State;->lastMotion:J
 
@@ -1306,17 +1337,17 @@
 
     if-lez v2, :cond_9
 
-    .line 141
+    .line 145
     iput v10, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
-    .line 142
+    .line 146
     iput v10, p0, Lcom/mcp2p/tv/TvFocus$State;->accY:F
 
-    .line 144
+    .line 148
     :cond_9
     iput-wide v0, p0, Lcom/mcp2p/tv/TvFocus$State;->lastMotion:J
 
-    .line 145
+    .line 149
     iget-wide v4, p0, Lcom/mcp2p/tv/TvFocus$State;->quietUntil:J
 
     cmp-long v2, v0, v4
@@ -1325,7 +1356,7 @@
 
     return v6
 
-    .line 146
+    .line 150
     :cond_a
     iget v2, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
@@ -1337,7 +1368,7 @@
 
     iput v2, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
-    .line 147
+    .line 151
     iget v2, p0, Lcom/mcp2p/tv/TvFocus$State;->accY:F
 
     invoke-virtual {p1}, Landroid/view/MotionEvent;->getY()F
@@ -1348,7 +1379,7 @@
 
     iput v2, p0, Lcom/mcp2p/tv/TvFocus$State;->accY:F
 
-    .line 148
+    .line 152
     iget p1, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
     invoke-static {p1}, Ljava/lang/Math;->abs(F)F
@@ -1361,7 +1392,7 @@
 
     move-result v2
 
-    .line 149
+    .line 153
     invoke-static {p1, v2}, Ljava/lang/Math;->max(FF)F
 
     move-result v4
@@ -1379,7 +1410,7 @@
 
     if-lez p1, :cond_d
 
-    .line 150
+    .line 154
     iget p1, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
     cmpl-float p1, p1, v10
@@ -1395,7 +1426,7 @@
 
     goto :goto_5
 
-    .line 151
+    .line 155
     :cond_d
     iget p1, p0, Lcom/mcp2p/tv/TvFocus$State;->accY:F
 
@@ -1405,22 +1436,22 @@
 
     move v3, v7
 
-    .line 152
+    .line 156
     :cond_e
     :goto_5
     iput v10, p0, Lcom/mcp2p/tv/TvFocus$State;->accX:F
 
-    .line 153
+    .line 157
     iput v10, p0, Lcom/mcp2p/tv/TvFocus$State;->accY:F
 
     const-wide/16 v4, 0xa0
 
     add-long/2addr v0, v4
 
-    .line 154
+    .line 158
     iput-wide v0, p0, Lcom/mcp2p/tv/TvFocus$State;->quietUntil:J
 
-    .line 155
+    .line 159
     invoke-static {p0, v3}, Lcom/mcp2p/tv/TvFocus;->sendKey(Lcom/mcp2p/tv/TvFocus$State;I)V
 
     return v6
@@ -1429,21 +1460,21 @@
 .method private static onFocusChanged(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/View;Landroid/view/View;)V
     .locals 3
 
-    .line 271
+    .line 275
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->clear(Lcom/mcp2p/tv/TvFocus$State;)V
 
     if-nez p2, :cond_0
 
-    .line 273
+    .line 277
     invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->scheduleRecovery(Lcom/mcp2p/tv/TvFocus$State;)V
 
     return-void
 
-    .line 276
+    .line 280
     :cond_0
     invoke-static {p0, p2}, Lcom/mcp2p/tv/TvFocus;->remember(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/View;)V
 
-    .line 277
+    .line 281
     invoke-static {p2}, Lcom/mcp2p/tv/TvFocus;->decorates(Landroid/view/View;)Z
 
     move-result p1
@@ -1452,7 +1483,7 @@
 
     return-void
 
-    .line 278
+    .line 282
     :cond_1
     invoke-virtual {p2}, Landroid/view/View;->getRootView()Landroid/view/View;
 
@@ -1462,7 +1493,7 @@
 
     if-eqz p1, :cond_2
 
-    .line 279
+    .line 283
     invoke-virtual {p2}, Landroid/view/View;->getWidth()I
 
     move-result v1
@@ -1500,7 +1531,7 @@
     :cond_3
     const p1, 0x3f87ae14    # 1.06f
 
-    .line 281
+    .line 285
     :goto_1
     invoke-virtual {p2}, Landroid/view/View;->animate()Landroid/view/ViewPropertyAnimator;
 
@@ -1522,7 +1553,7 @@
 
     invoke-virtual {p1}, Landroid/view/ViewPropertyAnimator;->start()V
 
-    .line 282
+    .line 286
     invoke-static {p2}, Lcom/mcp2p/tv/TvFocus;->ownsFocusStyle(Landroid/view/View;)Z
 
     move-result p1
@@ -1541,7 +1572,7 @@
 
     if-lez p1, :cond_4
 
-    .line 283
+    .line 287
     iget-object p1, p0, Lcom/mcp2p/tv/TvFocus$State;->ring:Landroid/graphics/drawable/GradientDrawable;
 
     invoke-virtual {p2}, Landroid/view/View;->getWidth()I
@@ -1554,7 +1585,7 @@
 
     invoke-virtual {p1, v0, v0, v1, v2}, Landroid/graphics/drawable/GradientDrawable;->setBounds(IIII)V
 
-    .line 284
+    .line 288
     invoke-virtual {p2}, Landroid/view/View;->getOverlay()Landroid/view/ViewOverlay;
 
     move-result-object p1
@@ -1563,7 +1594,7 @@
 
     invoke-virtual {p1, v0}, Landroid/view/ViewOverlay;->add(Landroid/graphics/drawable/Drawable;)V
 
-    .line 286
+    .line 290
     :cond_4
     iput-object p2, p0, Lcom/mcp2p/tv/TvFocus$State;->highlighted:Landroid/view/View;
 
@@ -1573,7 +1604,7 @@
 .method static onKey(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/KeyEvent;)Z
     .locals 3
 
-    .line 415
+    .line 419
     invoke-virtual {p1}, Landroid/view/KeyEvent;->getKeyCode()I
 
     move-result v0
@@ -1586,7 +1617,7 @@
 
     return v2
 
-    .line 416
+    .line 420
     :cond_0
     iget-object p0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
@@ -1610,14 +1641,14 @@
     :goto_0
     if-eqz p0, :cond_3
 
-    .line 419
+    .line 423
     invoke-virtual {p0}, Landroid/view/View;->isLongClickable()Z
 
     move-result v0
 
     if-nez v0, :cond_3
 
-    .line 420
+    .line 424
     invoke-virtual {p0}, Landroid/view/View;->getParent()Landroid/view/ViewParent;
 
     move-result-object v0
@@ -1644,7 +1675,7 @@
 
     return v2
 
-    .line 423
+    .line 427
     :cond_4
     invoke-virtual {p1}, Landroid/view/KeyEvent;->getAction()I
 
@@ -1663,7 +1694,7 @@
 .method static onPointer(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/MotionEvent;)Z
     .locals 4
 
-    .line 183
+    .line 187
     invoke-virtual {p1}, Landroid/view/MotionEvent;->getActionMasked()I
 
     move-result v0
@@ -1680,7 +1711,7 @@
 
     return v2
 
-    .line 185
+    .line 189
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
@@ -1702,7 +1733,7 @@
 
     return v2
 
-    .line 186
+    .line 190
     :cond_1
     iget-object p0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
@@ -1714,7 +1745,7 @@
 
     move-result-object p0
 
-    .line 187
+    .line 191
     invoke-virtual {p1}, Landroid/view/MotionEvent;->getX()F
 
     move-result v0
@@ -1727,25 +1758,25 @@
 
     float-to-int p1, p1
 
-    .line 188
+    .line 192
     invoke-static {p0, v0, p1}, Lcom/mcp2p/tv/TvFocus;->focusableAt(Landroid/view/View;II)Landroid/view/View;
 
     move-result-object p0
 
-    .line 189
+    .line 193
     instance-of v1, p0, Landroid/widget/AbsListView;
 
     if-eqz v1, :cond_3
 
-    .line 191
+    .line 195
     check-cast p0, Landroid/widget/AbsListView;
 
-    .line 192
+    .line 196
     sget-object v1, Lcom/mcp2p/tv/TvFocus;->LOC:[I
 
     invoke-virtual {p0, v1}, Landroid/widget/AbsListView;->getLocationInWindow([I)V
 
-    .line 193
+    .line 197
     aget v3, v1, v2
 
     sub-int/2addr v0, v3
@@ -1760,7 +1791,7 @@
 
     move-result p1
 
-    .line 194
+    .line 198
     invoke-virtual {p0}, Landroid/widget/AbsListView;->isFocused()Z
 
     move-result v0
@@ -1774,7 +1805,7 @@
 
     if-eq p1, v0, :cond_4
 
-    .line 195
+    .line 199
     invoke-static {p0, p1}, Lcom/mcp2p/tv/TvFocus;->stepTo(Landroid/widget/AbsListView;I)V
 
     goto :goto_0
@@ -1782,14 +1813,14 @@
     :cond_3
     if-eqz p0, :cond_4
 
-    .line 196
+    .line 200
     invoke-virtual {p0}, Landroid/view/View;->isFocused()Z
 
     move-result p1
 
     if-nez p1, :cond_4
 
-    .line 197
+    .line 201
     invoke-virtual {p0}, Landroid/view/View;->requestFocus()Z
 
     :cond_4
@@ -1800,7 +1831,7 @@
 .method private static ownsFocusStyle(Landroid/view/View;)Z
     .locals 1
 
-    .line 267
+    .line 271
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p0
@@ -1821,10 +1852,10 @@
 .method private static recover(Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 3
 
-    .line 331
+    .line 335
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
-    .line 332
+    .line 336
     invoke-virtual {v0}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v1
@@ -1839,7 +1870,7 @@
 
     goto :goto_0
 
-    .line 334
+    .line 338
     :cond_0
     invoke-virtual {v0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -1859,7 +1890,7 @@
 
     return-void
 
-    .line 335
+    .line 339
     :cond_1
     invoke-virtual {v0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
@@ -1869,14 +1900,14 @@
 
     move-result-object v0
 
-    .line 336
+    .line 340
     invoke-virtual {v0}, Landroid/view/View;->findFocus()Landroid/view/View;
 
     move-result-object v1
 
     if-eqz v1, :cond_2
 
-    .line 337
+    .line 341
     invoke-virtual {v1}, Landroid/view/View;->isShown()Z
 
     move-result v1
@@ -1885,7 +1916,7 @@
 
     return-void
 
-    .line 339
+    .line 343
     :cond_2
     iget-object p0, p0, Lcom/mcp2p/tv/TvFocus$State;->history:Ljava/util/Deque;
 
@@ -1908,7 +1939,7 @@
 
     check-cast v1, Ljava/lang/String;
 
-    .line 340
+    .line 344
     invoke-static {v0, v1}, Lcom/mcp2p/tv/TvFocus;->findByKey(Landroid/view/View;Ljava/lang/String;)Landroid/view/View;
 
     move-result-object v1
@@ -1918,7 +1949,7 @@
     :cond_4
     if-nez v1, :cond_5
 
-    .line 343
+    .line 347
     invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->firstInList(Landroid/view/View;)Landroid/view/View;
 
     move-result-object v1
@@ -1926,7 +1957,7 @@
     :cond_5
     if-nez v1, :cond_6
 
-    .line 344
+    .line 348
     invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->firstFocusable(Landroid/view/View;)Landroid/view/View;
 
     move-result-object v1
@@ -1934,7 +1965,7 @@
     :cond_6
     if-eqz v1, :cond_7
 
-    .line 345
+    .line 349
     invoke-virtual {v1}, Landroid/view/View;->requestFocus()Z
 
     :cond_7
@@ -1945,7 +1976,7 @@
 .method private static remember(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/View;)V
     .locals 1
 
-    .line 313
+    .line 317
     invoke-static {p1}, Lcom/mcp2p/tv/TvFocus;->key(Landroid/view/View;)Ljava/lang/String;
 
     move-result-object p1
@@ -1954,18 +1985,18 @@
 
     return-void
 
-    .line 315
+    .line 319
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->history:Ljava/util/Deque;
 
     invoke-interface {v0, p1}, Ljava/util/Deque;->remove(Ljava/lang/Object;)Z
 
-    .line 316
+    .line 320
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->history:Ljava/util/Deque;
 
     invoke-interface {v0, p1}, Ljava/util/Deque;->addFirst(Ljava/lang/Object;)V
 
-    .line 317
+    .line 321
     :goto_0
     iget-object p1, p0, Lcom/mcp2p/tv/TvFocus$State;->history:Ljava/util/Deque;
 
@@ -1990,7 +2021,7 @@
 .method static requestCapture(Landroid/view/View;)V
     .locals 2
 
-    .line 115
+    .line 119
     :try_start_0
     sget v0, Landroid/os/Build$VERSION;->SDK_INT:I
 
@@ -2016,7 +2047,7 @@
 .method private static safe(Ljava/lang/Runnable;)V
     .locals 2
 
-    .line 238
+    .line 242
     :try_start_0
     invoke-interface {p0}, Ljava/lang/Runnable;->run()V
     :try_end_0
@@ -2031,7 +2062,7 @@
 
     const-string v1, "Fallo en la ayuda de foco (ignorado)"
 
-    .line 240
+    .line 244
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -2041,7 +2072,7 @@
 .method private static scheduleRecovery(Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 4
 
-    .line 321
+    .line 325
     iget-boolean v0, p0, Lcom/mcp2p/tv/TvFocus$State;->recoveryPosted:Z
 
     if-eqz v0, :cond_0
@@ -2051,10 +2082,10 @@
     :cond_0
     const/4 v0, 0x1
 
-    .line 322
+    .line 326
     iput-boolean v0, p0, Lcom/mcp2p/tv/TvFocus$State;->recoveryPosted:Z
 
-    .line 323
+    .line 327
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
     invoke-virtual {v0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
@@ -2065,7 +2096,7 @@
 
     move-result-object v0
 
-    .line 324
+    .line 328
     new-instance v1, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda5;
 
     invoke-direct {v1, p0}, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda5;-><init>(Lcom/mcp2p/tv/TvFocus$State;)V
@@ -2080,12 +2111,12 @@
 .method static sendKey(Lcom/mcp2p/tv/TvFocus$State;I)V
     .locals 11
 
-    .line 160
+    .line 164
     invoke-static {}, Landroid/os/SystemClock;->uptimeMillis()J
 
     move-result-wide v8
 
-    .line 162
+    .line 166
     iget-object p0, p0, Lcom/mcp2p/tv/TvFocus$State;->activity:Landroid/app/Activity;
 
     invoke-virtual {p0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
@@ -2096,7 +2127,7 @@
 
     move-result-object p0
 
-    .line 163
+    .line 167
     new-instance v10, Landroid/view/KeyEvent;
 
     const/4 v5, 0x0
@@ -2115,7 +2146,7 @@
 
     invoke-interface {p0, v10}, Landroid/view/Window$Callback;->dispatchKeyEvent(Landroid/view/KeyEvent;)Z
 
-    .line 164
+    .line 168
     new-instance v10, Landroid/view/KeyEvent;
 
     const/4 v5, 0x1
@@ -2132,7 +2163,7 @@
 .method private static stepTo(Landroid/widget/AbsListView;I)V
     .locals 8
 
-    .line 206
+    .line 210
     instance-of v0, p0, Landroid/widget/GridView;
 
     const/4 v1, 0x1
@@ -2166,7 +2197,7 @@
 
     if-ge v3, v4, :cond_6
 
-    .line 208
+    .line 212
     invoke-virtual {p0}, Landroid/widget/AbsListView;->getSelectedItemPosition()I
 
     move-result v4
@@ -2179,7 +2210,7 @@
 
     goto :goto_3
 
-    .line 210
+    .line 214
     :cond_1
     div-int v5, p1, v0
 
@@ -2216,7 +2247,7 @@
     :cond_4
     const/16 v5, 0x15
 
-    .line 213
+    .line 217
     :goto_2
     new-instance v6, Landroid/view/KeyEvent;
 
@@ -2224,14 +2255,14 @@
 
     invoke-virtual {p0, v5, v6}, Landroid/widget/AbsListView;->onKeyDown(ILandroid/view/KeyEvent;)Z
 
-    .line 214
+    .line 218
     new-instance v6, Landroid/view/KeyEvent;
 
     invoke-direct {v6, v1, v5}, Landroid/view/KeyEvent;-><init>(II)V
 
     invoke-virtual {p0, v5, v6}, Landroid/widget/AbsListView;->onKeyUp(ILandroid/view/KeyEvent;)Z
 
-    .line 215
+    .line 219
     invoke-virtual {p0}, Landroid/widget/AbsListView;->getSelectedItemPosition()I
 
     move-result v5
@@ -2253,7 +2284,7 @@
 .method private static usable(Landroid/view/View;)Z
     .locals 1
 
-    .line 349
+    .line 353
     invoke-virtual {p0}, Landroid/view/View;->isShown()Z
 
     move-result v0

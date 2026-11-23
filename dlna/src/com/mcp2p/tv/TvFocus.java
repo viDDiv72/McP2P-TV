@@ -105,6 +105,10 @@ public final class TvFocus {
                 if (has) decor.post(() -> requestCapture(decor));
             });
             decor.post(() -> requestCapture(decor));
+            // Mando que cambia a modo ratón / touchpad que se conecta: Android suelta la captura; se recupera.
+            android.hardware.input.InputManager im =
+                    (android.hardware.input.InputManager) s.activity.getSystemService(android.content.Context.INPUT_SERVICE);
+            if (im != null) im.registerInputDeviceListener(new DeviceWatcher(decor), new android.os.Handler(android.os.Looper.getMainLooper()));
         } catch (Throwable t) {
             Log.w(TAG, "No se pudo capturar el puntero", t);
         }
@@ -445,6 +449,32 @@ public final class TvFocus {
         @Override public void onActivityDestroyed(Activity a) {}
     }
 
+    /** Estática a propósito (d8 de build-tools 34). Vuelve a pedir la captura cuando cambian los dispositivos. */
+    static final class DeviceWatcher implements android.hardware.input.InputManager.InputDeviceListener {
+        private final java.lang.ref.WeakReference<View> decor;
+
+        DeviceWatcher(View d) {
+            decor = new java.lang.ref.WeakReference<>(d);
+        }
+
+        private void again() {
+            View d = decor.get();
+            if (d != null) d.postDelayed(() -> requestCapture(d), 200);
+        }
+
+        @Override public void onInputDeviceAdded(int id) {
+            again();
+        }
+
+        @Override public void onInputDeviceRemoved(int id) {
+            again();
+        }
+
+        @Override public void onInputDeviceChanged(int id) {
+            again();
+        }
+    }
+
     static final class KeyCallback extends WindowCallbackWrapper {
         private final State s;
 
@@ -464,6 +494,11 @@ public final class TvFocus {
 
         @Override public boolean dispatchGenericMotionEvent(android.view.MotionEvent e) {
             try {
+                // Llega un movimiento de ratón sin capturar: la captura se ha perdido (p. ej., el mando ha cambiado
+                // a modo ratón y Android lo ha dado de alta como dispositivo nuevo). Se vuelve a pedir.
+                if (e.isFromSource(android.view.InputDevice.SOURCE_MOUSE)) {
+                    requestCapture(s.activity.getWindow().getDecorView());
+                }
                 onPointer(s, e);
             } catch (Throwable t) {
                 Log.w(TAG, "Puntero (ignorado)", t);

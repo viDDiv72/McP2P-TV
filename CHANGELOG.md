@@ -26,8 +26,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.0-beta.6] · rama `ui-limpia` (sin publicar)
-versionCode 32 · solo local (`build/McP2P-TV-v1.9.0-beta.6.apk`), pendiente de probar en la Vontar X4.
+## [1.9.0-beta.7] · rama `ui-limpia` (sin publicar)
+versionCode 33 · solo local (`build/McP2P-TV-v1.9.0-beta.7.apk`), pendiente de probar en la Vontar X4.
 
 ### Añadido
 - Mediateca nueva: catálogo de TMDB con carátulas y fuentes **solo en castellano** de Peerflix y Torrentio;
@@ -47,10 +47,11 @@ versionCode 32 · solo local (`build/McP2P-TV-v1.9.0-beta.6.apk`), pendiente de 
 - La Mediateca solo ofrece fuentes fiables: 10 semillas o más y 20 GB como máximo, las 5 mejores (más semillas
   por grupos y, dentro de cada grupo, mejor calidad). En la Vontar X4 una fuente con «4 semillas» no tenía a nadie.
 - Arranque adaptado a la velocidad: con conexión sobrada basta ~30 s de película (antes, siempre el 1 % del
-  archivo); con conexión justa se guarda más y se avisa. Muestra «empieza en ~N s». Más conexiones (500) y subida
+  archivo); con conexión justa se guarda más y se avisa. Más conexiones (500) y subida
   limitada a 2 MB/s para no frenar la bajada; durante la reproducción sigue descargando en orden por delante.
 - La Mediateca solo muestra películas con fuentes fiables (se comprueban en segundo plano y se recuerdan 6 h).
 - Modo ratón (touchpad o mando): se captura el puntero y cada movimiento salta a la caja de al lado; clic = OK.
+  Si el mando cambia de modo y Android suelta la captura, la app la vuelve a pedir.
   El puntero de la Vontar X4 es de la app del fabricante «Mouse Assist»: hay que quitar McP2P de esa app.
 - Las semillas se comprueban en el momento con los trackers públicos (scrape UDP, `Trackers.java`): las de los
   addons están desactualizadas (la «recomendada» de Iron Man decía 4 y tenía 0). Si ningún tracker responde, se

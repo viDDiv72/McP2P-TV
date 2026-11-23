@@ -194,13 +194,10 @@ public final class StreamTuner {
             peers = (Integer) st.getClass().getMethod("numPeers").invoke(st);
         } catch (Throwable ignored) {}
         final int pct = target <= 0 ? 0 : (int) Math.min(99, have * 100 / target);
-        long eta = rate > 0 ? Math.max(1, (target - have) / rate) : -1;
         final String title = "Cargando la película… " + pct + " %";
         final String detail = speed(rate) + " · " + peers + (peers == 1 ? " fuente conectada" : " fuentes conectadas")
-                + (eta > 0 ? " · empieza en ~" + (eta >= 60 ? (eta / 60) + " min" : eta + " s") : "")
-                + (slow ? "\nTu conexión va justa para esta versión: se guarda más antes de empezar para que no se corte."
-                        : "\nSe guarda un poco antes de empezar para que no se corte.")
-                + (peers == 0 ? "\nBuscando fuentes…" : "");
+                + "\nSe guarda el comienzo antes de empezar para que no se corte."
+                + (peers == 0 ? "\nBuscando fuentes… si tarda mucho, prueba otra versión con más semillas." : "");
         overlayTitle = title;
         overlayDetail = detail;
         activePlayer = new java.lang.ref.WeakReference<>(player);
