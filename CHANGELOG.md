@@ -16,7 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
-| 1.9.2 | 36 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
+| 1.9.2-beta | 36 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
 | [1.9.1](#191--2026-11-23) | 35 | Estable | Hilos de la Mediateca, arranque más rápido |
 | [1.9.0](#190--2026-11-23) | 34 | Anterior | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
@@ -29,8 +29,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.2] · sin publicar (rama `estabilidad-1.9.2`)
-versionCode 36 · solo local (`build/McP2P-TV-v1.9.2.apk`)
+## [1.9.2-beta] · sin publicar (rama `estabilidad-1.9.2`)
+versionCode 36 · solo local (`build/McP2P-TV-v1.9.2-beta.apk`). Todas las pruebas se llaman 1.9.2-beta hasta publicar.
 
 ### Corregido
 - Reproductor (Xiaomi Mi Box y TV con mando): la barra −10 s / Pausar / +10 s / Audio / Subt. no se escondía nunca.
@@ -46,7 +46,7 @@ versionCode 36 · solo local (`build/McP2P-TV-v1.9.2.apk`)
   Comprobada»); las que nadie comparte se quitan. Si una fuente no arranca, se pasa a la siguiente a los 30 s
   (antes 45).
 - Modo ligero automático en aparatos con poca memoria (≤2,8 GB o sistema de 32 bits, como la Mi Box S): 160
-  conexiones P2P en vez de 500, colas más cortas, y en la Mediateca nada de 4K ni archivos de más de 10 GB.
+  conexiones P2P en vez de 500 y colas más cortas. Se puede ver 4K igual que en los demás aparatos.
 - La sesión P2P arranca ya con los ajustes de conexión (antes se aplicaban al tener los datos del torrent).
 - Mientras se ve una película, la Mediateca deja de comprobar películas en segundo plano.
 

@@ -97,17 +97,15 @@ public final class MediaTests {
         twoK.add(heavy4k); twoK.add(light4k);
         ok("4K de 11 GB antes que 4K de 17 GB (ambos 50+ semillas)", Sources.best(twoK).get(0) == light4k);
 
-        // ---- modo ligero (poca memoria): sin 4K ni archivos de más de 10 GB
+        // ---- modo ligero (poca memoria): también ofrece 4K
         java.util.List<Sources.Stream> lm = new java.util.ArrayList<>();
         Sources.Stream k4 = new Sources.Stream(); k4.seeds = 300; k4.size = 8L * G; k4.quality = "4K"; k4.infoHash = "c"; k4.addon = "T";
-        Sources.Stream big = new Sources.Stream(); big.seeds = 300; big.size = 14L * G; big.quality = "1080p"; big.infoHash = "d"; big.addon = "T";
         Sources.Stream fit = new Sources.Stream(); fit.seeds = 80; fit.size = 4L * G; fit.quality = "1080p"; fit.infoHash = "e"; fit.addon = "T";
-        lm.add(k4); lm.add(big); lm.add(fit);
+        lm.add(k4); lm.add(fit);
         Sources.lowMemory = true;
         java.util.List<Sources.Stream> lmb = Sources.best(lm);
         Sources.lowMemory = false;
-        ok("modo ligero: solo la 1080p de 4 GB", lmb.size() == 1 && lmb.get(0) == fit);
-        eq("modo normal: las tres", 3, Sources.best(lm).size());
+        ok("modo ligero: el 4K sigue disponible y va primero", lmb.size() == 2 && lmb.get(0) == k4);
 
         // ---- arranque según la velocidad
         long g11 = 11L * 1073741824L, MBy = 1048576L;

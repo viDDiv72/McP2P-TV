@@ -34,7 +34,7 @@ public final class AppInfo {
 
     /**
      * Aparato con poca memoria (p. ej. Xiaomi Mi Box S, 2 GB y sistema de 32 bits): se usan menos conexiones P2P y
-     * películas de 1080p como máximo para que la reproducción no se bloquee.
+     * colas más cortas para que la reproducción no se bloquee (también se puede ver 4K).
      */
     public static boolean lowMemory(Context c) {
         Boolean l = lowMemory;
