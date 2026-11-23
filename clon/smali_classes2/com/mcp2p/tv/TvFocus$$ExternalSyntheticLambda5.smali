@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/ViewTreeObserver$OnGlobalLayoutListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
@@ -23,12 +23,12 @@
 
 
 # virtual methods
-.method public final onGlobalLayout()V
+.method public final run()V
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda5;->f$0:Lcom/mcp2p/tv/TvFocus$State;
 
-    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$attach$3(Lcom/mcp2p/tv/TvFocus$State;)V
+    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$scheduleRecovery$9(Lcom/mcp2p/tv/TvFocus$State;)V
 
     return-void
 .end method

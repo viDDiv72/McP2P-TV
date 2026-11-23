@@ -3,38 +3,56 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/content/DialogInterface$OnClickListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-.field public final synthetic f$1:Landroid/content/SharedPreferences;
+.field public final synthetic f$1:I
+
+.field public final synthetic f$2:Lcom/mcp2p/media/Catalog$Movie;
+
+.field public final synthetic f$3:Lcom/mcp2p/media/Catalog$Found;
+
+.field public final synthetic f$4:Ljava/lang/String;
 
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/content/SharedPreferences;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;ILcom/mcp2p/media/Catalog$Movie;Lcom/mcp2p/media/Catalog$Found;Ljava/lang/String;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$1:Landroid/content/SharedPreferences;
+    iput p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$1:I
+
+    iput-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$2:Lcom/mcp2p/media/Catalog$Movie;
+
+    iput-object p4, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$3:Lcom/mcp2p/media/Catalog$Found;
+
+    iput-object p5, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$4:Ljava/lang/String;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onClick(Landroid/content/DialogInterface;I)V
-    .locals 2
+.method public final run()V
+    .locals 5
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$1:Landroid/content/SharedPreferences;
+    iget v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$1:I
 
-    invoke-virtual {v0, v1, p1, p2}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSources$14$com-mcp2p-media-MediaScreen$Screen(Landroid/content/SharedPreferences;Landroid/content/DialogInterface;I)V
+    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$2:Lcom/mcp2p/media/Catalog$Movie;
+
+    iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$3:Lcom/mcp2p/media/Catalog$Found;
+
+    iget-object v4, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;->f$4:Ljava/lang/String;
+
+    invoke-virtual {v0, v1, v2, v3, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$openMovie$18$com-mcp2p-media-MediaScreen$Screen(ILcom/mcp2p/media/Catalog$Movie;Lcom/mcp2p/media/Catalog$Found;Ljava/lang/String;)V
 
     return-void
 .end method

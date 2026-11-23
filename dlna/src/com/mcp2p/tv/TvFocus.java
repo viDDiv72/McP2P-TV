@@ -56,6 +56,8 @@ public final class TvFocus {
         final GradientDrawable ring;
         View highlighted;
         boolean recoveryPosted;
+        float accX, accY;
+        long lastMotion, quietUntil;
 
         State(Activity a) {
             activity = a;
@@ -78,6 +80,88 @@ public final class TvFocus {
         Window w = a.getWindow();
         w.setCallback(new KeyCallback(w.getCallback(), s));
         hidePointer(a, decor);
+        capturePointer(s, decor);
+    }
+
+    // ------------------------------------------------------------ modo ratón del mando → cajas
+
+    /**
+     * El mando de la Vontar X4 (y el touchpad de teclados como el Logitech K400) en «modo ratón» envía movimientos
+     * de ratón en vez de flechas. La app captura el puntero (Android 8+): no se ve y cada movimiento se convierte
+     * en un salto de caja en la misma dirección; clic = OK; botón derecho = ATRÁS; rueda = arriba/abajo.
+     */
+    static void capturePointer(State s, View decor) {
+        if (android.os.Build.VERSION.SDK_INT < 26) return;
+        try {
+            decor.setOnCapturedPointerListener((v, e) -> {
+                try {
+                    return onCaptured(s, e);
+                } catch (Throwable t) {
+                    Log.w(TAG, "Puntero capturado (ignorado)", t);
+                    return false;
+                }
+            });
+            decor.getViewTreeObserver().addOnWindowFocusChangeListener(has -> {
+                if (has) decor.post(() -> requestCapture(decor));
+            });
+            decor.post(() -> requestCapture(decor));
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudo capturar el puntero", t);
+        }
+    }
+
+    static void requestCapture(View decor) {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= 26 && decor.hasWindowFocus()) decor.requestPointerCapture();
+        } catch (Throwable ignored) {}
+    }
+
+    static final float STEP = 22f;          // desplazamiento acumulado que equivale a una flecha
+    static final long QUIET_MS = 160;       // tras un salto, se ignora el resto del mismo gesto
+    static final long RESET_MS = 300;       // sin movimiento: se empieza a acumular de cero
+
+    static boolean onCaptured(State s, android.view.MotionEvent e) {
+        long now = android.os.SystemClock.uptimeMillis();
+        int act = e.getActionMasked();
+        if (act == android.view.MotionEvent.ACTION_BUTTON_PRESS) {
+            int b = e.getActionButton();
+            sendKey(s, b == android.view.MotionEvent.BUTTON_SECONDARY || b == android.view.MotionEvent.BUTTON_BACK
+                    ? KeyEvent.KEYCODE_BACK : KeyEvent.KEYCODE_DPAD_CENTER);
+            return true;
+        }
+        if (act == android.view.MotionEvent.ACTION_SCROLL) {
+            float vs = e.getAxisValue(android.view.MotionEvent.AXIS_VSCROLL);
+            float hs = e.getAxisValue(android.view.MotionEvent.AXIS_HSCROLL);
+            if (Math.abs(vs) >= Math.abs(hs) && vs != 0) sendKey(s, vs > 0 ? KeyEvent.KEYCODE_DPAD_UP : KeyEvent.KEYCODE_DPAD_DOWN);
+            else if (hs != 0) sendKey(s, hs > 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT);
+            return true;
+        }
+        if (act != android.view.MotionEvent.ACTION_MOVE) return false;
+        if (now - s.lastMotion > RESET_MS) {
+            s.accX = 0;
+            s.accY = 0;
+        }
+        s.lastMotion = now;
+        if (now < s.quietUntil) return true;
+        s.accX += e.getX();
+        s.accY += e.getY();
+        float ax = Math.abs(s.accX), ay = Math.abs(s.accY);
+        if (Math.max(ax, ay) < STEP) return true;
+        int key = ax > ay ? (s.accX > 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT)
+                : (s.accY > 0 ? KeyEvent.KEYCODE_DPAD_DOWN : KeyEvent.KEYCODE_DPAD_UP);
+        s.accX = 0;
+        s.accY = 0;
+        s.quietUntil = now + QUIET_MS;
+        sendKey(s, key);
+        return true;
+    }
+
+    static void sendKey(State s, int key) {
+        long t = android.os.SystemClock.uptimeMillis();
+        // Por el Window.Callback: pasa por todos los envoltorios (MENÚ, ATRÁS de la Mediateca…) como una tecla real
+        Window.Callback cb = s.activity.getWindow().getCallback();
+        cb.dispatchKeyEvent(new KeyEvent(t, t, KeyEvent.ACTION_DOWN, key, 0));
+        cb.dispatchKeyEvent(new KeyEvent(t, t, KeyEvent.ACTION_UP, key, 0));
     }
 
     // ------------------------------------------------------------ puntero del ratón

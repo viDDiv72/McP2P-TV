@@ -12,6 +12,17 @@
 
 
 # static fields
+.field static final DURATION:Ljava/util/Map;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Ljava/util/Map<",
+            "Ljava/lang/String;",
+            "Ljava/lang/Integer;",
+            ">;"
+        }
+    .end annotation
+.end field
+
 .field static final FILES:Ljava/util/Map;
     .annotation system Ldalvik/annotation/Signature;
         value = {
@@ -55,13 +66,20 @@
 
     sput-object v0, Lcom/mcp2p/media/TorrentFiles;->FILES:Ljava/util/Map;
 
+    .line 37
+    new-instance v0, Ljava/util/concurrent/ConcurrentHashMap;
+
+    invoke-direct {v0}, Ljava/util/concurrent/ConcurrentHashMap;-><init>()V
+
+    sput-object v0, Lcom/mcp2p/media/TorrentFiles;->DURATION:Ljava/util/Map;
+
     return-void
 .end method
 
 .method private constructor <init>()V
     .locals 0
 
-    .line 48
+    .line 71
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -104,12 +122,12 @@
 .method public static choose(Ljava/lang/String;ILjava/lang/Object;)I
     .locals 0
 
-    .line 61
+    .line 84
     invoke-static {p0, p1, p2}, Lcom/mcp2p/media/TorrentFiles;->pick(Ljava/lang/String;ILjava/lang/Object;)I
 
     move-result p1
 
-    .line 62
+    .line 85
     invoke-static {p0, p1, p2}, Lcom/mcp2p/media/TorrentFiles;->remember(Ljava/lang/String;ILjava/lang/Object;)V
 
     return p1
@@ -125,7 +143,7 @@
     :cond_0
     if-ltz p1, :cond_1
 
-    .line 52
+    .line 75
     sget-object v0, Lcom/mcp2p/media/TorrentFiles;->HINTS:Ljava/util/Map;
 
     sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
@@ -142,7 +160,7 @@
 
     goto :goto_0
 
-    .line 53
+    .line 76
     :cond_1
     sget-object p1, Lcom/mcp2p/media/TorrentFiles;->HINTS:Ljava/util/Map;
 
@@ -158,6 +176,32 @@
     return-void
 .end method
 
+.method public static hintDuration(Ljava/lang/String;I)V
+    .locals 2
+
+    if-eqz p0, :cond_0
+
+    if-lez p1, :cond_0
+
+    .line 40
+    sget-object v0, Lcom/mcp2p/media/TorrentFiles;->DURATION:Ljava/util/Map;
+
+    sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
+
+    invoke-virtual {p0, v1}, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
+
+    move-result-object p0
+
+    invoke-static {p1}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object p1
+
+    invoke-interface {v0, p0, p1}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+
+    :cond_0
+    return-void
+.end method
+
 .method private static pick(Ljava/lang/String;ILjava/lang/Object;)I
     .locals 6
 
@@ -165,7 +209,7 @@
 
     return p1
 
-    .line 69
+    .line 92
     :cond_0
     :try_start_0
     sget-object v0, Lcom/mcp2p/media/TorrentFiles;->HINTS:Ljava/util/Map;
@@ -184,7 +228,7 @@
 
     if-eqz p0, :cond_4
 
-    .line 70
+    .line 93
     invoke-virtual {p0}, Ljava/lang/Integer;->intValue()I
 
     move-result v0
@@ -198,7 +242,7 @@
 
     return p1
 
-    .line 72
+    .line 95
     :cond_2
     invoke-virtual {p2}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -214,7 +258,7 @@
 
     move-result-object v0
 
-    .line 73
+    .line 96
     invoke-virtual {p2}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v1
@@ -235,7 +279,7 @@
 
     new-array v2, v2, [Ljava/lang/Object;
 
-    .line 74
+    .line 97
     invoke-virtual {v0, p2, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v0
@@ -246,7 +290,7 @@
 
     move-result v0
 
-    .line 75
+    .line 98
     invoke-virtual {p0}, Ljava/lang/Integer;->intValue()I
 
     move-result v2
@@ -261,7 +305,7 @@
 
     goto :goto_0
 
-    .line 76
+    .line 99
     :cond_3
     filled-new-array {p0}, [Ljava/lang/Object;
 
@@ -283,7 +327,7 @@
 
     if-lez p2, :cond_4
 
-    .line 77
+    .line 100
     invoke-virtual {p0}, Ljava/lang/Integer;->intValue()I
 
     move-result p1
@@ -307,7 +351,7 @@
         }
     .end annotation
 
-    .line 38
+    .line 61
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
@@ -327,7 +371,7 @@
     :cond_0
     int-to-long v1, p4
 
-    .line 40
+    .line 63
     div-long v3, p0, v1
 
     long-to-int p4, v3
@@ -342,7 +386,7 @@
 
     sub-long/2addr v5, v7
 
-    .line 41
+    .line 64
     div-long/2addr v5, v1
 
     invoke-static {v3, v4, v5, v6}, Ljava/lang/Math;->min(JJ)J
@@ -353,7 +397,7 @@
 
     int-to-long v3, p5
 
-    .line 42
+    .line 65
     invoke-static {p2, p3}, Lcom/mcp2p/media/TorrentFiles;->bufferBytes(J)J
 
     move-result-wide p2
@@ -373,7 +417,7 @@
     :goto_0
     if-gt p4, p0, :cond_1
 
-    .line 43
+    .line 66
     invoke-static {p4}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
 
     move-result-object p1
@@ -389,7 +433,7 @@
 
     add-int/lit8 p1, p5, -0x1
 
-    .line 44
+    .line 67
     invoke-static {p0, p1}, Ljava/lang/Math;->max(II)I
 
     move-result p0
@@ -434,14 +478,14 @@
 
     goto/16 :goto_0
 
-    .line 87
+    .line 110
     :cond_0
     :try_start_0
     invoke-virtual {p2}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
 
-    .line 88
+    .line 111
     new-instance v1, Lcom/mcp2p/media/TorrentFiles$Geometry;
 
     invoke-direct {v1}, Lcom/mcp2p/media/TorrentFiles$Geometry;-><init>()V
@@ -452,7 +496,7 @@
 
     new-array v4, v3, [Ljava/lang/Class;
 
-    .line 89
+    .line 112
     sget-object v5, Ljava/lang/Integer;->TYPE:Ljava/lang/Class;
 
     const/4 v6, 0x0
@@ -487,7 +531,7 @@
 
     new-array v4, v3, [Ljava/lang/Class;
 
-    .line 90
+    .line 113
     sget-object v5, Ljava/lang/Integer;->TYPE:Ljava/lang/Class;
 
     aput-object v5, v4, v6
@@ -520,7 +564,7 @@
 
     new-array v2, v6, [Ljava/lang/Class;
 
-    .line 91
+    .line 114
     invoke-virtual {v0, p1, v2}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
 
     move-result-object p1
@@ -543,7 +587,7 @@
 
     new-array v2, v6, [Ljava/lang/Class;
 
-    .line 92
+    .line 115
     invoke-virtual {v0, p1, v2}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
 
     move-result-object p1
@@ -562,7 +606,7 @@
 
     iput p1, v1, Lcom/mcp2p/media/TorrentFiles$Geometry;->numPieces:I
 
-    .line 93
+    .line 116
     sget-object p1, Lcom/mcp2p/media/TorrentFiles;->FILES:Ljava/util/Map;
 
     sget-object p2, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
@@ -579,4 +623,87 @@
     :cond_1
     :goto_0
     return-void
+.end method
+
+.method static startBytes(JID)J
+    .locals 6
+
+    const-wide/16 v0, 0x0
+
+    cmp-long v2, p0, v0
+
+    if-gtz v2, :cond_0
+
+    return-wide v0
+
+    :cond_0
+    long-to-double v0, p0
+
+    if-lez p2, :cond_1
+
+    goto :goto_0
+
+    :cond_1
+    const/16 p2, 0x1c20
+
+    :goto_0
+    int-to-double v2, p2
+
+    div-double/2addr v0, v2
+
+    .line 51
+    invoke-static {p0, p1}, Lcom/mcp2p/media/TorrentFiles;->bufferBytes(J)J
+
+    move-result-wide v2
+
+    const-wide v4, 0x3ff4cccccccccccdL    # 1.3
+
+    mul-double/2addr v4, v0
+
+    cmpl-double p2, p3, v4
+
+    if-ltz p2, :cond_2
+
+    const-wide/high16 p2, 0x403e000000000000L    # 30.0
+
+    :goto_1
+    mul-double/2addr v0, p2
+
+    double-to-long p2, v0
+
+    goto :goto_2
+
+    :cond_2
+    cmpl-double p2, p3, v0
+
+    if-ltz p2, :cond_3
+
+    const-wide p2, 0x4056800000000000L    # 90.0
+
+    goto :goto_1
+
+    :cond_3
+    move-wide p2, v2
+
+    :goto_2
+    const-wide/32 v0, 0x1000000
+
+    .line 56
+    invoke-static {v0, v1, p0, p1}, Ljava/lang/Math;->min(JJ)J
+
+    move-result-wide v0
+
+    invoke-static {v2, v3, p2, p3}, Ljava/lang/Math;->min(JJ)J
+
+    move-result-wide p2
+
+    invoke-static {v0, v1, p2, p3}, Ljava/lang/Math;->max(JJ)J
+
+    move-result-wide p2
+
+    invoke-static {p0, p1, p2, p3}, Ljava/lang/Math;->min(JJ)J
+
+    move-result-wide p0
+
+    return-wide p0
 .end method

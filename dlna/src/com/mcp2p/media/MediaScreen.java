@@ -77,6 +77,7 @@ public final class MediaScreen {
         final int cols, colW;
         final Handler main = new Handler(Looper.getMainLooper());
         final ExecutorService io = Executors.newFixedThreadPool(3);
+        final ExecutorService checks = Executors.newFixedThreadPool(5);
         Catalog cat;
 
         // catálogo
@@ -213,64 +214,124 @@ public final class MediaScreen {
             page = 0;
             end = false;
             loading = false;
+            pending = 0;
             movieAdapter.notifyDataSetChanged();
             loadMore();
         }
 
+        /**
+         * Carga la siguiente página del catálogo y comprueba cada película: solo se muestran las que tienen fuentes
+         * fiables en castellano. Si quedan pocas, sigue con la página siguiente hasta llenar la pantalla.
+         */
         void loadMore() {
-            if (loading || end || page >= 10) return;
+            if (loading || end || page >= 15) return;
             loading = true;
             final int g = gen, next = page + 1;
             final String k = kind, q = query;
-            status.setText(page == 0 ? "Cargando películas…" : "");
+            if (movies.isEmpty()) status.setText("Buscando películas con fuentes en castellano…");
             io.execute(() -> {
                 List<Catalog.Movie> got = null;
-                String err = null;
                 try {
                     got = q != null ? cat.search(q, next) : cat.list(k, next);
                 } catch (Throwable t) {
                     Log.w(TAG, "No se pudo cargar el catálogo", t);
-                    err = "No se pudo cargar el catálogo. Comprueba la conexión.";
                 }
                 final List<Catalog.Movie> r = got;
-                final String e = err;
                 main.post(() -> {
                     if (g != gen) return;
-                    loading = false;
                     if (r == null) {
-                        status.setText(e);
+                        loading = false;
+                        status.setText("No se pudo cargar el catálogo. Comprueba la conexión.");
                         return;
                     }
                     page = next;
                     if (r.isEmpty()) end = true;
-                    movies.addAll(r);
-                    status.setText(q != null ? "Resultados de «" + q + "»" + (movies.isEmpty() ? ": ninguno" : "")
-                            : movies.isEmpty() ? "No hay películas." : "");
-                    movieAdapter.notifyDataSetChanged();
-                    if (page == 1 && !movies.isEmpty()) grid.post(() -> {
-                        grid.setSelection(0);
-                        if (tv) grid.requestFocus();
-                    });
+                    pending = r.size();
+                    if (pending == 0) pageDone(g);
+                    for (Catalog.Movie m : r) {
+                        Integer c = cachedCount(m.id);
+                        if (c != null) {
+                            counts.put(m.id, c);
+                            if (c > 0) addMovie(m);
+                            pageDone(g);
+                        } else {
+                            verify(m, g);
+                        }
+                    }
                 });
             });
         }
 
-        /** Cuenta las fuentes en castellano de una carátula (para la etiqueta «N en castellano»). */
-        void check(final Catalog.Movie m) {
-            if (counts.containsKey(m.id) || !checking.add(m.id)) return;
-            io.execute(() -> {
+        int pending;
+
+        /** Comprueba en segundo plano si una película tiene fuentes fiables. */
+        void verify(final Catalog.Movie m, final int g) {
+            checks.execute(() -> {
+                int n = -1;
                 try {
+                    if (g != gen) return;
                     Catalog.Found f = cat.sources(m);
                     found.put(m.id, f);
                     foundAt.put(m.id, System.currentTimeMillis());
-                    counts.put(m.id, f.streams.size());
+                    n = f.streams.size();
+                    saveCount(m.id, n);
                 } catch (Throwable t) {
-                    // sin conexión con los addons: se volverá a intentar al abrir la ficha
+                    // sin conexión con los addons: no se muestra ahora
                 } finally {
-                    checking.remove(m.id);
-                    refreshSoon();
+                    final int count = n;
+                    main.post(() -> {
+                        if (g != gen) return;
+                        if (count >= 0) counts.put(m.id, count);
+                        if (count > 0) addMovie(m);
+                        pageDone(g);
+                    });
                 }
             });
+        }
+
+        void pageDone(int g) {
+            if (g != gen) return;
+            pending--;
+            if (pending > 0) return;
+            loading = false;
+            if (movies.size() < cols * 3 && !end) {
+                loadMore();
+                return;
+            }
+            status.setText(movies.isEmpty()
+                    ? (query != null ? "«" + query + "»: ninguna película con fuentes fiables en castellano."
+                    : "Ahora mismo no hay películas con fuentes fiables en castellano.")
+                    : query != null ? "Resultados de «" + query + "» con fuentes en castellano" : "");
+        }
+
+        void addMovie(Catalog.Movie m) {
+            for (Catalog.Movie x : movies) if (x.id == m.id) return;
+            boolean first = movies.isEmpty();
+            movies.add(m);
+            status.setText("");
+            movieAdapter.notifyDataSetChanged();
+            if (first) grid.post(() -> {
+                grid.setSelection(0);
+                if (tv) grid.requestFocus();
+            });
+        }
+
+        /** Resultado guardado (6 h) de si una película tiene fuentes: así la Mediateca abre al momento. */
+        Integer cachedCount(long id) {
+            String v = a.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("n_" + id, null);
+            if (v == null) return null;
+            try {
+                String[] p = v.split(":");
+                if (System.currentTimeMillis() - Long.parseLong(p[1]) > 6 * 3600 * 1000L) return null;
+                return Integer.parseInt(p[0]);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        void saveCount(long id, int n) {
+            a.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+                    .putString("n_" + id, n + ":" + System.currentTimeMillis()).apply();
         }
 
         void refreshSoon() {
@@ -339,9 +400,17 @@ public final class MediaScreen {
             makeCatalog();
             counts.clear();
             found.clear();
+            clearCountCache();
             foundAt.clear();
-            movieAdapter.notifyDataSetChanged();
+            reload();
             Toast.makeText(a, "Fuentes guardadas", Toast.LENGTH_SHORT).show();
+        }
+
+        void clearCountCache() {
+            SharedPreferences p = a.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+            SharedPreferences.Editor e = p.edit();
+            for (String k : p.getAll().keySet()) if (k.startsWith("n_")) e.remove(k);
+            e.apply();
         }
 
         EditText urlField(String hint, String value) {
@@ -467,6 +536,7 @@ public final class MediaScreen {
                         found.put(m.id, r);
                         foundAt.put(m.id, System.currentTimeMillis());
                         counts.put(m.id, r.streams.size());
+                        saveCount(m.id, r.streams.size());
                     } catch (Throwable t) {
                         Log.w(TAG, "No se pudieron obtener las fuentes", t);
                         err = "No se ha podido conectar con Peerflix ni con Torrentio. Comprueba la conexión y vuelve a entrar.";
@@ -523,6 +593,7 @@ public final class MediaScreen {
         void play(Sources.Stream s) {
             try {
                 TorrentFiles.hint(s.infoHash, s.fileIdx);
+                if (cur.runtime > 0) TorrentFiles.hintDuration(s.infoHash, cur.runtime * 60);
                 TorrentFiles.FILES.remove(s.infoHash);
                 StreamTuner.PROGRESS.remove(s.infoHash);
                 watch(s);
@@ -767,7 +838,6 @@ public final class MediaScreen {
                 c.badge.setText("…");
                 c.badge.setTextColor(DIM);
                 c.img.setAlpha(1f);
-                s.check(m);
             } else if (n > 0) {
                 c.badge.setText(s.tv || s.cols <= 4 ? "● " + n + (s.tv ? " en castellano" : "") : "● " + n);
                 c.badge.setTextColor(OK);

@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/view/View$OnCapturedPointerListener;
 
 
 # instance fields
@@ -23,12 +23,14 @@
 
 
 # virtual methods
-.method public final run()V
+.method public final onCapturedPointer(Landroid/view/View;Landroid/view/MotionEvent;)Z
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda2;->f$0:Lcom/mcp2p/tv/TvFocus$State;
 
-    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$attach$2(Lcom/mcp2p/tv/TvFocus$State;)V
+    invoke-static {v0, p1, p2}, Lcom/mcp2p/tv/TvFocus;->lambda$capturePointer$4(Lcom/mcp2p/tv/TvFocus$State;Landroid/view/View;Landroid/view/MotionEvent;)Z
 
-    return-void
+    move-result p1
+
+    return p1
 .end method

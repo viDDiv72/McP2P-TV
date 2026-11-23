@@ -90,6 +90,15 @@ public final class MediaTests {
         eq("después, en el mismo grupo, 1080p/720p por calidad", 70, bf.get(1).seeds == 50 ? 70 : bf.get(1).seeds == 70 ? 70 : -1);
         ok("solo la primera recomendada", bf.get(0).recommended && !bf.get(1).recommended);
 
+        // ---- arranque según la velocidad
+        long g11 = 11L * 1073741824L, MBy = 1048576L;
+        long fast = TorrentFiles.startBytes(g11, 7200, 3.0 * MBy);
+        ok("conexión sobrada: ~30 s de película (≈47 MB)", fast > 40 * MBy && fast < 55 * MBy);
+        eq("conexión justa: 90 s, con el tope del 1 % (≈113 MB)", TorrentFiles.bufferBytes(g11), TorrentFiles.startBytes(g11, 7200, 1.7 * MBy));
+        eq("conexión lenta: el máximo", TorrentFiles.bufferBytes(g11), TorrentFiles.startBytes(g11, 7200, 1.0 * MBy));
+        eq("nunca menos de 16 MB", 16 * MBy, TorrentFiles.startBytes(1073741824L, 7200, 10.0 * MBy));
+        eq("sin duración se supone 2 h", TorrentFiles.startBytes(g11, 7200, 3.0 * MBy), TorrentFiles.startBytes(g11, 0, 3.0 * MBy));
+
         // ---- trackers (semillas reales)
         byte[] hb = Trackers.hex("46826e610ae3b81757d3ce57cdce130f2628e29f");
         ok("infohash a 20 bytes", hb.length == 20 && (hb[0] & 0xff) == 0x46 && (hb[19] & 0xff) == 0x9f);

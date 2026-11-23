@@ -33,6 +33,29 @@ public final class TorrentFiles {
         return Math.min(b, Math.max(0, fileSize));
     }
 
+    /** Duración de la película (s) por infohash; la apunta la Mediateca (TMDB) para calcular la precarga. */
+    static final Map<String, Integer> DURATION = new ConcurrentHashMap<>();
+
+    public static void hintDuration(String infoHash, int seconds) {
+        if (infoHash != null && seconds > 0) DURATION.put(infoHash.toLowerCase(Locale.ROOT), seconds);
+    }
+
+    /**
+     * Bytes del comienzo que hay que tener para arrancar sin que se pare después, según la velocidad medida:
+     * si la conexión va sobrada (≥1,3× lo que gasta la película), basta con unos 30 s de película; si va justa
+     * (≥1×), 90 s; si va por debajo, lo máximo (1 % del archivo, 32–128 MB). Nunca menos de 16 MB.
+     */
+    static long startBytes(long size, int durationSec, double rateBytesPerSec) {
+        if (size <= 0) return 0;
+        double bitrate = size / (double) (durationSec > 0 ? durationSec : 7200);
+        long max = bufferBytes(size);
+        long want;
+        if (rateBytesPerSec >= bitrate * 1.3) want = (long) (bitrate * 30);
+        else if (rateBytesPerSec >= bitrate) want = (long) (bitrate * 90);
+        else want = max;
+        return Math.min(size, Math.max(Math.min(16 * MB, size), Math.min(max, want)));
+    }
+
     /** Piezas del comienzo (precarga) y del final del archivo, en el orden en que se piden. */
     static List<Integer> plan(long offset, long size, int pieceLength, int numPieces) {
         List<Integer> out = new ArrayList<>();

@@ -73,6 +73,7 @@ public final class StreamTuner {
                 return;
             }
             sequential(handle);
+            tune(field(session, "u"));
             List<Integer> need = TorrentFiles.plan(g.offset, g.size, g.pieceLength, g.numPieces);
             Method have = handle.getClass().getMethod("havePiece", int.class);
             Method deadline = handle.getClass().getMethod("setPieceDeadline", int.class, int.class);
@@ -81,11 +82,16 @@ public final class StreamTuner {
                     deadline.invoke(handle, need.get(i), 1000 + i * 300);
                 } catch (Throwable ignored) {}
             }
-            android.util.Log.i(TAG, "Precarga: " + need.size() + " piezas de " + (g.pieceLength / 1024) + " KB ("
-                    + (TorrentFiles.bufferBytes(g.size) / MB) + " MB del comienzo + final del archivo)");
+            int first = (int) (g.offset / g.pieceLength);
+            int last = (int) Math.min(g.numPieces - 1, (g.offset + g.size - 1) / g.pieceLength);
+            Integer dur = TorrentFiles.DURATION.get(hash);
+            int durationSec = dur == null ? 0 : dur;
+            android.util.Log.i(TAG, "Precarga: hasta " + (TorrentFiles.bufferBytes(g.size) / MB) + " MB, piezas de "
+                    + (g.pieceLength / 1024) + " KB, duración " + (durationSec / 60) + " min");
             long start = System.currentTimeMillis();
             long lastChange = start;
             int lastDone = -1;
+            double rateAvg = 0;
             while (true) {
                 if (closed != null && closed.get()) {
                     endOverlay();
@@ -98,12 +104,25 @@ public final class StreamTuner {
                     lastChange = System.currentTimeMillis();
                 }
                 PROGRESS.put(hash, new long[]{done, need.size(), lastChange, 0});
-                if (done >= need.size()) break;
-                if (System.currentTimeMillis() - start > MAX_WAIT_MS) {
-                    android.util.Log.w(TAG, "Precarga incompleta tras 4 min (" + done + "/" + need.size() + "): se arranca igualmente");
+                // comienzo descargado sin huecos y final del archivo (índice)
+                int k = first;
+                while (k <= last && Boolean.TRUE.equals(have.invoke(handle, k))) k++;
+                long contiguous = Math.max(0, Math.min(g.size, (long) k * g.pieceLength - g.offset));
+                boolean tail = k > last || (Boolean.TRUE.equals(have.invoke(handle, last))
+                        && (last - 1 < first || Boolean.TRUE.equals(have.invoke(handle, last - 1))));
+                int rate = rate(handle);
+                rateAvg = rateAvg == 0 ? rate : rateAvg * 0.7 + rate * 0.3;
+                long elapsed = System.currentTimeMillis() - start;
+                // los primeros 5 s se mide la velocidad; mientras, se exige lo máximo
+                long target = elapsed < 5000 ? TorrentFiles.bufferBytes(g.size)
+                        : TorrentFiles.startBytes(g.size, durationSec, rateAvg);
+                if (tail && contiguous >= target) break;
+                if (elapsed > MAX_WAIT_MS) {
+                    android.util.Log.w(TAG, "Precarga incompleta tras 4 min: se arranca igualmente");
                     break;
                 }
-                show(main, player, done, need.size(), handle);
+                double bitrate = g.size / (double) (durationSec > 0 ? durationSec : 7200);
+                show(main, player, contiguous, target, (int) rateAvg, handle, rateAvg > 0 && rateAvg < bitrate);
                 Thread.sleep(700);
             }
             endOverlay();
@@ -135,20 +154,53 @@ public final class StreamTuner {
         }
     }
 
-    /** Texto de la pantalla de carga del reproductor (n0 visible, o0 título, p0 detalle). */
-    private static void show(android.os.Handler main, Object player, int done, int total, Object handle) {
-        if (player == null) return;
-        int rate = 0, peers = 0;
+    /** Velocidad de descarga actual (B/s). */
+    private static int rate(Object handle) {
         try {
             Object st = handle.getClass().getMethod("status").invoke(handle);
-            rate = (Integer) st.getClass().getMethod("downloadRate").invoke(st);
+            return (Integer) st.getClass().getMethod("downloadRate").invoke(st);
+        } catch (Throwable e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Más conexiones y un tope de subida razonable (subir sin límite puede frenar la bajada en conexiones
+     * asimétricas). Se aplica a la sesión libtorrent de este magnet.
+     */
+    static void tune(Object sessionManager) {
+        if (sessionManager == null) return;
+        try {
+            Class<?> c = sessionManager.getClass();
+            Object pack = c.getMethod("settings").invoke(sessionManager);
+            Class<?> p = pack.getClass();
+            p.getMethod("connectionsLimit", int.class).invoke(pack, 500);
+            p.getMethod("maxPeerlistSize", int.class).invoke(pack, 4000);
+            p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) (2 * MB));
+            p.getMethod("downloadRateLimit", int.class).invoke(pack, 0);
+            c.getMethod("applySettings", p).invoke(sessionManager, pack);
+        } catch (Throwable e) {
+            android.util.Log.w(TAG, "No se pudieron ajustar las conexiones de libtorrent", e);
+        }
+    }
+
+    /** Texto de la pantalla de carga del reproductor (n0 visible, o0 título, p0 detalle). */
+    private static void show(android.os.Handler main, Object player, long have, long target, int rate, Object handle,
+                             boolean slow) {
+        if (player == null) return;
+        int peers = 0;
+        try {
+            Object st = handle.getClass().getMethod("status").invoke(handle);
             peers = (Integer) st.getClass().getMethod("numPeers").invoke(st);
         } catch (Throwable ignored) {}
-        final int pct = total == 0 ? 0 : done * 100 / total;
+        final int pct = target <= 0 ? 0 : (int) Math.min(99, have * 100 / target);
+        long eta = rate > 0 ? Math.max(1, (target - have) / rate) : -1;
         final String title = "Cargando la película… " + pct + " %";
         final String detail = speed(rate) + " · " + peers + (peers == 1 ? " fuente conectada" : " fuentes conectadas")
-                + "\nSe guarda el comienzo antes de empezar para que no se corte."
-                + (peers == 0 ? "\nBuscando fuentes… si tarda mucho, prueba otra versión con más semillas." : "");
+                + (eta > 0 ? " · empieza en ~" + (eta >= 60 ? (eta / 60) + " min" : eta + " s") : "")
+                + (slow ? "\nTu conexión va justa para esta versión: se guarda más antes de empezar para que no se corte."
+                        : "\nSe guarda un poco antes de empezar para que no se corte.")
+                + (peers == 0 ? "\nBuscando fuentes…" : "");
         overlayTitle = title;
         overlayDetail = detail;
         activePlayer = new java.lang.ref.WeakReference<>(player);

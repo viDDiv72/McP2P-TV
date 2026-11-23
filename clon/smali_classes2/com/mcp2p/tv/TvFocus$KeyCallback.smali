@@ -22,10 +22,10 @@
 .method constructor <init>(Landroid/view/Window$Callback;Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 0
 
-    .line 368
+    .line 452
     invoke-direct {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;-><init>(Landroid/view/Window$Callback;)V
 
-    .line 369
+    .line 453
     iput-object p2, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
     return-void
@@ -36,7 +36,7 @@
 .method public dispatchGenericMotionEvent(Landroid/view/MotionEvent;)Z
     .locals 3
 
-    .line 383
+    .line 467
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
@@ -53,10 +53,10 @@
 
     const-string v2, "Puntero (ignorado)"
 
-    .line 385
+    .line 469
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 387
+    .line 471
     :goto_0
     invoke-super {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;->dispatchGenericMotionEvent(Landroid/view/MotionEvent;)Z
 
@@ -68,7 +68,7 @@
 .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
     .locals 3
 
-    .line 374
+    .line 458
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$KeyCallback;->s:Lcom/mcp2p/tv/TvFocus$State;
 
@@ -91,10 +91,10 @@
 
     const-string v2, "Tecla MEN\u00da (ignorado)"
 
-    .line 376
+    .line 460
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 378
+    .line 462
     :cond_0
     invoke-super {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;->dispatchKeyEvent(Landroid/view/KeyEvent;)Z
 
