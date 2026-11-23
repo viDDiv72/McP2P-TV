@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "prototipo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/serve-prototipo.js"],
+      "port": 8765
+    }
+  ]
+}
