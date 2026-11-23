@@ -133,7 +133,7 @@ maqueta: `ui/prototipo/mediateca.html` (`node tools/serve-prototipo.js`).
   indica cuántas fuentes en castellano tiene; sin ninguna, sale apagada.
 - **Fuentes** de Peerflix y Torrentio a la vez (`/stream/movie/tt….json`), **solo castellano**: Peerflix por su
   campo `languages: es-ES`; Torrentio si el nombre del torrent dice Castellano/Español/[ESP]/Spanish. Fuera latino,
-  inglés, VOSE y torrents de otro año (remakes). Sin duplicados, ordenadas por semillas y calidad, con filtro de calidad.
+  inglés, VOSE y torrents de otro año (remakes). Solo 4K, 1080p y 720p. Sin duplicados, ordenadas por semillas y calidad.
 - **Reproducción**: magnet con trackers; el archivo exacto del torrent (`fileIdx`) llega al motor por
   `TorrentFiles.hint` y `T3/c.smali` lo respeta (antes siempre elegía el vídeo más grande).
 - **Ajustes de fuentes** (botón ⚙): URL de configuración propia de cada addon; vacía = predeterminada.

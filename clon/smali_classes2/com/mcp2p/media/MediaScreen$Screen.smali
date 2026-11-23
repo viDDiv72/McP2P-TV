@@ -33,8 +33,6 @@
     .end annotation
 .end field
 
-.field chips:Landroid/widget/LinearLayout;
-
 .field final colW:I
 
 .field final cols:I
@@ -120,8 +118,6 @@
 
 .field page:I
 
-.field qFilter:Ljava/lang/String;
-
 .field query:Ljava/lang/String;
 
 .field refreshPosted:Z
@@ -143,10 +139,10 @@
 .method constructor <init>(Landroid/app/Activity;)V
     .locals 4
 
-    .line 110
+    .line 107
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 78
+    .line 77
     new-instance v0, Landroid/os/Handler;
 
     invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -159,14 +155,14 @@
 
     const/4 v0, 0x3
 
-    .line 79
+    .line 78
     invoke-static {v0}, Ljava/util/concurrent/Executors;->newFixedThreadPool(I)Ljava/util/concurrent/ExecutorService;
 
     move-result-object v1
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->io:Ljava/util/concurrent/ExecutorService;
 
-    .line 87
+    .line 86
     new-instance v1, Ljava/util/ArrayList;
 
     invoke-direct {v1}, Ljava/util/ArrayList;-><init>()V
@@ -175,31 +171,31 @@
 
     const-string v1, "popular"
 
-    .line 89
+    .line 88
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->kind:Ljava/lang/String;
 
-    .line 92
+    .line 91
     new-instance v1, Ljava/util/concurrent/ConcurrentHashMap;
 
     invoke-direct {v1}, Ljava/util/concurrent/ConcurrentHashMap;-><init>()V
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
 
-    .line 93
+    .line 92
     new-instance v1, Ljava/util/concurrent/ConcurrentHashMap;
 
     invoke-direct {v1}, Ljava/util/concurrent/ConcurrentHashMap;-><init>()V
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->found:Ljava/util/Map;
 
-    .line 94
+    .line 93
     new-instance v1, Ljava/util/concurrent/ConcurrentHashMap;
 
     invoke-direct {v1}, Ljava/util/concurrent/ConcurrentHashMap;-><init>()V
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->foundAt:Ljava/util/Map;
 
-    .line 95
+    .line 94
     new-instance v1, Ljava/util/concurrent/ConcurrentHashMap;
 
     invoke-direct {v1}, Ljava/util/concurrent/ConcurrentHashMap;-><init>()V
@@ -210,15 +206,10 @@
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->checking:Ljava/util/Set;
 
-    const-string v1, "Todas"
-
-    .line 103
-    iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->qFilter:Ljava/lang/String;
-
-    .line 111
+    .line 108
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
-    .line 112
+    .line 109
     invoke-virtual {p1}, Landroid/app/Activity;->getResources()Landroid/content/res/Resources;
 
     move-result-object v1
@@ -231,14 +222,14 @@
 
     iput v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->d:F
 
-    .line 113
+    .line 110
     invoke-static {p1}, Lcom/mcp2p/dlna/DlnaRenderer;->isTv(Landroid/content/Context;)Z
 
     move-result v2
 
     iput-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
-    .line 114
+    .line 111
     invoke-virtual {p1}, Landroid/app/Activity;->getResources()Landroid/content/res/Resources;
 
     move-result-object v3
@@ -264,7 +255,7 @@
     :cond_0
     const/16 v3, 0x70
 
-    .line 115
+    .line 112
     :goto_0
     div-int/2addr v1, v3
 
@@ -289,7 +280,7 @@
     :cond_1
     const/high16 v1, 0x41600000    # 14.0f
 
-    .line 116
+    .line 113
     :goto_1
     invoke-virtual {p0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
@@ -311,7 +302,7 @@
 
     move-result v2
 
-    .line 117
+    .line 114
     invoke-virtual {p1}, Landroid/app/Activity;->getResources()Landroid/content/res/Resources;
 
     move-result-object p1
@@ -334,21 +325,21 @@
 
     iput p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->colW:I
 
-    .line 118
+    .line 115
     new-instance p1, Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-direct {p1, p0}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
-    .line 119
+    .line 116
     new-instance p1, Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
     invoke-direct {p1, p0}, Lcom/mcp2p/media/MediaScreen$SourceAdapter;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->sourceAdapter:Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
-    .line 120
+    .line 117
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->makeCatalog()V
 
     return-void
@@ -372,7 +363,7 @@
 
     return p0
 
-    .line 308
+    .line 305
     :cond_1
     :goto_0
     invoke-interface {p0}, Ljava/lang/Runnable;->run()V
@@ -385,7 +376,7 @@
 .method static synthetic lambda$askSearch$12(Ljava/lang/Runnable;Landroid/view/View;)V
     .locals 0
 
-    .line 313
+    .line 310
     invoke-interface {p0}, Ljava/lang/Runnable;->run()V
 
     return-void
@@ -396,98 +387,24 @@
 
     const/4 p2, -0x1
 
-    .line 313
+    .line 310
     invoke-virtual {p0, p2}, Landroid/app/AlertDialog;->getButton(I)Landroid/widget/Button;
 
     move-result-object p0
 
-    new-instance p2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda11;
+    new-instance p2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;
 
-    invoke-direct {p2, p1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda11;-><init>(Ljava/lang/Runnable;)V
+    invoke-direct {p2, p1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;-><init>(Ljava/lang/Runnable;)V
 
     invoke-virtual {p0, p2}, Landroid/widget/Button;->setOnClickListener(Landroid/view/View$OnClickListener;)V
 
     return-void
 .end method
 
-.method static matches(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Z
-    .locals 3
-
-    const-string v0, "Todas"
-
-    .line 539
-    invoke-virtual {v0, p1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result v0
-
-    const/4 v1, 0x1
-
-    if-eqz v0, :cond_0
-
-    return v1
-
-    :cond_0
-    const-string v0, "SD"
-
-    .line 540
-    invoke-virtual {v0, p1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result v2
-
-    if-eqz v2, :cond_3
-
-    iget-object p1, p0, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
-
-    invoke-virtual {v0, p1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result p1
-
-    if-nez p1, :cond_2
-
-    const-string p1, "CINE"
-
-    iget-object v0, p0, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
-
-    invoke-virtual {p1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result p1
-
-    if-nez p1, :cond_2
-
-    const-string p1, "3D"
-
-    iget-object p0, p0, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
-
-    invoke-virtual {p1, p0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result p0
-
-    if-eqz p0, :cond_1
-
-    goto :goto_0
-
-    :cond_1
-    const/4 v1, 0x0
-
-    :cond_2
-    :goto_0
-    return v1
-
-    .line 541
-    :cond_3
-    iget-object p0, p0, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
-
-    invoke-virtual {p1, p0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result p0
-
-    return p0
-.end method
-
 .method static poster(Lcom/mcp2p/media/Catalog$Movie;)Ljava/lang/String;
     .locals 2
 
-    .line 597
+    .line 562
     iget-object v0, p0, Lcom/mcp2p/media/Catalog$Movie;->poster:Ljava/lang/String;
 
     if-nez v0, :cond_0
@@ -520,7 +437,7 @@
 .method askSearch()V
     .locals 4
 
-    .line 290
+    .line 287
     new-instance v0, Landroid/widget/EditText;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -529,27 +446,27 @@
 
     const/4 v1, 0x1
 
-    .line 291
+    .line 288
     invoke-virtual {v0, v1}, Landroid/widget/EditText;->setSingleLine(Z)V
 
     const-string v1, "T\u00edtulo de la pel\u00edcula"
 
-    .line 292
+    .line 289
     invoke-virtual {v0, v1}, Landroid/widget/EditText;->setHint(Ljava/lang/CharSequence;)V
 
     const/4 v1, 0x3
 
-    .line 293
+    .line 290
     invoke-virtual {v0, v1}, Landroid/widget/EditText;->setImeOptions(I)V
 
-    .line 294
+    .line 291
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->query:Ljava/lang/String;
 
     if-eqz v1, :cond_0
 
     invoke-virtual {v0, v1}, Landroid/widget/EditText;->setText(Ljava/lang/CharSequence;)V
 
-    .line 295
+    .line 292
     :cond_0
     new-instance v1, Landroid/app/AlertDialog$Builder;
 
@@ -561,7 +478,7 @@
 
     const-string v2, "Buscar pel\u00edcula"
 
-    .line 296
+    .line 293
     invoke-virtual {v1, v2}, Landroid/app/AlertDialog$Builder;->setTitle(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v1
@@ -578,7 +495,7 @@
 
     const/4 v3, 0x0
 
-    .line 297
+    .line 294
     invoke-virtual {v1, v2, v3}, Landroid/app/AlertDialog$Builder;->setNegativeButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v1
@@ -593,26 +510,26 @@
 
     move-result-object v1
 
-    .line 298
-    new-instance v2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;
+    .line 295
+    new-instance v2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda17;
 
-    invoke-direct {v2, p0, v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/widget/EditText;Landroid/app/AlertDialog;)V
+    invoke-direct {v2, p0, v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda17;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/widget/EditText;Landroid/app/AlertDialog;)V
 
-    .line 306
-    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;
+    .line 303
+    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;
 
-    invoke-direct {v3, v2}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;-><init>(Ljava/lang/Runnable;)V
+    invoke-direct {v3, v2}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda18;-><init>(Ljava/lang/Runnable;)V
 
     invoke-virtual {v0, v3}, Landroid/widget/EditText;->setOnEditorActionListener(Landroid/widget/TextView$OnEditorActionListener;)V
 
-    .line 313
-    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda20;
+    .line 310
+    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;
 
-    invoke-direct {v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda20;-><init>(Landroid/app/AlertDialog;Ljava/lang/Runnable;)V
+    invoke-direct {v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;-><init>(Landroid/app/AlertDialog;Ljava/lang/Runnable;)V
 
     invoke-virtual {v1, v0}, Landroid/app/AlertDialog;->setOnShowListener(Landroid/content/DialogInterface$OnShowListener;)V
 
-    .line 314
+    .line 311
     invoke-virtual {v1}, Landroid/app/AlertDialog;->show()V
 
     return-void
@@ -621,7 +538,7 @@
 .method askSources()V
     .locals 7
 
-    .line 319
+    .line 316
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     const-string v1, "mcp2p_media"
@@ -632,7 +549,7 @@
 
     move-result-object v0
 
-    .line 320
+    .line 317
     new-instance v1, Landroid/widget/LinearLayout;
 
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -641,12 +558,12 @@
 
     const/4 v3, 0x1
 
-    .line 321
+    .line 318
     invoke-virtual {v1, v3}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
     const/high16 v3, 0x41b00000    # 22.0f
 
-    .line 322
+    .line 319
     invoke-virtual {p0, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v4
@@ -669,19 +586,19 @@
 
     const-string v5, "Pega la URL que genera la p\u00e1gina de configuraci\u00f3n de cada addon (config.peerflix.mov y torrentio.strem.fun). D\u00e9jala vac\u00eda para usar la predeterminada. Solo se muestran fuentes en castellano."
 
-    .line 323
+    .line 320
     invoke-virtual {p0, v5, v3, v4, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object v2
 
-    .line 326
+    .line 323
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
     const-string v2, "peerflix_url"
 
     const-string v3, ""
 
-    .line 327
+    .line 324
     invoke-interface {v0, v2, v3}, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -694,7 +611,7 @@
 
     const-string v4, "torrentio_url"
 
-    .line 328
+    .line 325
     invoke-interface {v0, v4, v3}, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v3
@@ -705,13 +622,13 @@
 
     move-result-object v3
 
-    .line 329
+    .line 326
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 330
+    .line 327
     invoke-virtual {v1, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 331
+    .line 328
     new-instance v4, Landroid/app/AlertDialog$Builder;
 
     iget-object v5, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -722,7 +639,7 @@
 
     const-string v5, "Fuentes de la Mediateca"
 
-    .line 332
+    .line 329
     invoke-virtual {v4, v5}, Landroid/app/AlertDialog$Builder;->setTitle(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v4
@@ -735,34 +652,34 @@
 
     const/4 v5, 0x0
 
-    .line 333
+    .line 330
     invoke-virtual {v1, v4, v5}, Landroid/app/AlertDialog$Builder;->setNegativeButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
+
+    move-result-object v1
+
+    new-instance v4, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda1;
+
+    invoke-direct {v4, p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda1;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/content/SharedPreferences;)V
+
+    const-string v5, "Restablecer"
+
+    .line 331
+    invoke-virtual {v1, v5, v4}, Landroid/app/AlertDialog$Builder;->setNeutralButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v1
 
     new-instance v4, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;
 
-    invoke-direct {v4, p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/content/SharedPreferences;)V
-
-    const-string v5, "Restablecer"
-
-    .line 334
-    invoke-virtual {v1, v5, v4}, Landroid/app/AlertDialog$Builder;->setNeutralButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
-
-    move-result-object v1
-
-    new-instance v4, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda3;
-
-    invoke-direct {v4, p0, v0, v2, v3}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda3;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/content/SharedPreferences;Landroid/widget/EditText;Landroid/widget/EditText;)V
+    invoke-direct {v4, p0, v0, v2, v3}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda2;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/content/SharedPreferences;Landroid/widget/EditText;Landroid/widget/EditText;)V
 
     const-string v0, "Guardar"
 
-    .line 335
+    .line 332
     invoke-virtual {v1, v0, v4}, Landroid/app/AlertDialog$Builder;->setPositiveButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
 
     move-result-object v0
 
-    .line 336
+    .line 333
     invoke-virtual {v0}, Landroid/app/AlertDialog$Builder;->show()Landroid/app/AlertDialog;
 
     return-void
@@ -771,7 +688,7 @@
 .method buildCatalog()V
     .locals 15
 
-    .line 152
+    .line 149
     new-instance v0, Landroid/widget/LinearLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -782,10 +699,10 @@
 
     const/4 v1, 0x1
 
-    .line 153
+    .line 150
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
-    .line 154
+    .line 151
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -846,7 +763,7 @@
 
     invoke-virtual {v0, v2, v5, v3, v8}, Landroid/widget/LinearLayout;->setPadding(IIII)V
 
-    .line 156
+    .line 153
     new-instance v0, Landroid/widget/LinearLayout;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -855,10 +772,10 @@
 
     const/16 v2, 0x10
 
-    .line 157
+    .line 154
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->setGravity(I)V
 
-    .line 158
+    .line 155
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v2, :cond_3
@@ -879,7 +796,7 @@
 
     move-result-object v2
 
-    .line 159
+    .line 156
     new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
 
     const/4 v5, -0x2
@@ -890,7 +807,7 @@
 
     invoke-virtual {v0, v2, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 160
+    .line 157
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v2, :cond_4
@@ -903,9 +820,9 @@
     const-string v2, "\u2315"
 
     :goto_4
-    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda4;
+    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda3;
 
-    invoke-direct {v3, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda4;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v3, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda3;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {p0, v2, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->pill(Ljava/lang/String;Landroid/view/View$OnClickListener;)Landroid/widget/TextView;
 
@@ -913,14 +830,14 @@
 
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 161
+    .line 158
     new-instance v2, Landroid/view/View;
 
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v2, v3}, Landroid/view/View;-><init>(Landroid/content/Context;)V
 
-    .line 162
+    .line 159
     new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
 
     const/high16 v10, 0x41000000    # 8.0f
@@ -933,7 +850,7 @@
 
     invoke-virtual {v0, v2, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 163
+    .line 160
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v2, :cond_5
@@ -946,9 +863,9 @@
     const-string v2, "\u2699"
 
     :goto_5
-    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda5;
+    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda4;
 
-    invoke-direct {v3, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda5;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v3, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda4;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {p0, v2, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->pill(Ljava/lang/String;Landroid/view/View$OnClickListener;)Landroid/widget/TextView;
 
@@ -956,22 +873,22 @@
 
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 164
+    .line 161
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     invoke-virtual {v2, v0}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 166
+    .line 163
     new-instance v0, Landroid/widget/HorizontalScrollView;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v0, v2}, Landroid/widget/HorizontalScrollView;-><init>(Landroid/content/Context;)V
 
-    .line 167
+    .line 164
     invoke-virtual {v0, v8}, Landroid/widget/HorizontalScrollView;->setHorizontalScrollBarEnabled(Z)V
 
-    .line 168
+    .line 165
     new-instance v2, Landroid/widget/LinearLayout;
 
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -980,7 +897,7 @@
 
     iput-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
-    .line 169
+    .line 166
     sget-object v2, Lcom/mcp2p/media/MediaScreen;->TABS:[[Ljava/lang/String;
 
     array-length v3, v2
@@ -992,23 +909,23 @@
 
     aget-object v12, v2, v11
 
-    .line 170
+    .line 167
     aget-object v13, v12, v1
 
-    new-instance v14, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;
+    new-instance v14, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda5;
 
-    invoke-direct {v14, p0, v12}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;[Ljava/lang/String;)V
+    invoke-direct {v14, p0, v12}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda5;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;[Ljava/lang/String;)V
 
     invoke-virtual {p0, v13, v14}, Lcom/mcp2p/media/MediaScreen$Screen;->chip(Ljava/lang/String;Landroid/view/View$OnClickListener;)Landroid/widget/TextView;
 
     move-result-object v13
 
-    .line 171
+    .line 168
     aget-object v12, v12, v8
 
     invoke-virtual {v13, v12}, Landroid/widget/TextView;->setTag(Ljava/lang/Object;)V
 
-    .line 172
+    .line 169
     iget-object v12, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
     invoke-virtual {v12, v13}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
@@ -1017,20 +934,20 @@
 
     goto :goto_6
 
-    .line 174
+    .line 171
     :cond_6
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
     invoke-virtual {v0, v2}, Landroid/widget/HorizontalScrollView;->addView(Landroid/view/View;)V
 
-    .line 175
+    .line 172
     new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
 
     const/4 v3, -0x1
 
     invoke-direct {v2, v3, v5}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
 
-    .line 176
+    .line 173
     iget-boolean v5, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v5, :cond_7
@@ -1047,7 +964,7 @@
 
     iput v5, v2, Landroid/widget/LinearLayout$LayoutParams;->topMargin:I
 
-    .line 177
+    .line 174
     iget-object v5, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     invoke-virtual {v5, v0, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
@@ -1058,7 +975,7 @@
 
     const-string v5, ""
 
-    .line 179
+    .line 176
     invoke-virtual {p0, v5, v0, v2, v8}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object v0
@@ -1067,7 +984,7 @@
 
     const/high16 v2, 0x40000000    # 2.0f
 
-    .line 180
+    .line 177
     invoke-virtual {p0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v2
@@ -1084,14 +1001,14 @@
 
     invoke-virtual {v0, v2, v5, v8, v7}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 181
+    .line 178
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->status:Landroid/widget/TextView;
 
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 183
+    .line 180
     new-instance v0, Landroid/widget/GridView;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1100,12 +1017,12 @@
 
     iput-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
-    .line 184
+    .line 181
     iget v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cols:I
 
     invoke-virtual {v0, v2}, Landroid/widget/GridView;->setNumColumns(I)V
 
-    .line 185
+    .line 182
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -1126,7 +1043,7 @@
 
     invoke-virtual {v0, v2}, Landroid/widget/GridView;->setHorizontalSpacing(I)V
 
-    .line 186
+    .line 183
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     iget-boolean v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -1142,14 +1059,14 @@
 
     invoke-virtual {v0, v2}, Landroid/widget/GridView;->setVerticalSpacing(I)V
 
-    .line 187
+    .line 184
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     const/4 v2, 0x2
 
     invoke-virtual {v0, v2}, Landroid/widget/GridView;->setStretchMode(I)V
 
-    .line 188
+    .line 185
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     const/16 v2, 0xc
@@ -1160,17 +1077,17 @@
 
     invoke-virtual {v0, v2}, Landroid/widget/GridView;->setSelector(Landroid/graphics/drawable/Drawable;)V
 
-    .line 189
+    .line 186
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     invoke-virtual {v0, v1}, Landroid/widget/GridView;->setDrawSelectorOnTop(Z)V
 
-    .line 190
+    .line 187
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     invoke-virtual {v0, v8}, Landroid/widget/GridView;->setClipToPadding(Z)V
 
-    .line 191
+    .line 188
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     const/high16 v1, 0x40c00000    # 6.0f
@@ -1185,28 +1102,28 @@
 
     invoke-virtual {v0, v8, v1, v8, v2}, Landroid/widget/GridView;->setPadding(IIII)V
 
-    .line 192
+    .line 189
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     invoke-virtual {v0, v8}, Landroid/widget/GridView;->setVerticalScrollBarEnabled(Z)V
 
-    .line 193
+    .line 190
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {v0, v1}, Landroid/widget/GridView;->setAdapter(Landroid/widget/ListAdapter;)V
 
-    .line 194
+    .line 191
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;
 
-    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {v0, v1}, Landroid/widget/GridView;->setOnItemClickListener(Landroid/widget/AdapterView$OnItemClickListener;)V
 
-    .line 197
+    .line 194
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     new-instance v1, Lcom/mcp2p/media/MediaScreen$MoreOnScroll;
@@ -1215,7 +1132,7 @@
 
     invoke-virtual {v0, v1}, Landroid/widget/GridView;->setOnScrollListener(Landroid/widget/AbsListView$OnScrollListener;)V
 
-    .line 198
+    .line 195
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
@@ -1226,7 +1143,7 @@
 
     invoke-virtual {v0, v1, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 199
+    .line 196
     iget-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v0, :cond_a
@@ -1254,7 +1171,7 @@
 .method buildDetail()V
     .locals 7
 
-    .line 362
+    .line 359
     new-instance v0, Landroid/widget/LinearLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1265,10 +1182,10 @@
 
     const/4 v1, 0x1
 
-    .line 363
+    .line 360
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
-    .line 364
+    .line 361
     new-instance v0, Landroid/widget/ListView;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1279,10 +1196,10 @@
 
     const/4 v2, 0x0
 
-    .line 365
+    .line 362
     invoke-virtual {v0, v2}, Landroid/widget/ListView;->setDivider(Landroid/graphics/drawable/Drawable;)V
 
-    .line 366
+    .line 363
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     iget-boolean v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -1303,12 +1220,12 @@
 
     invoke-virtual {v0, v3}, Landroid/widget/ListView;->setDividerHeight(I)V
 
-    .line 367
+    .line 364
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     invoke-virtual {v0, v1}, Landroid/widget/ListView;->setItemsCanFocus(Z)V
 
-    .line 368
+    .line 365
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     new-instance v1, Landroid/graphics/drawable/GradientDrawable;
@@ -1317,14 +1234,14 @@
 
     invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelector(Landroid/graphics/drawable/Drawable;)V
 
-    .line 369
+    .line 366
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     const/4 v1, 0x0
 
     invoke-virtual {v0, v1}, Landroid/widget/ListView;->setClipToPadding(Z)V
 
-    .line 370
+    .line 367
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     iget-boolean v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -1369,12 +1286,12 @@
 
     invoke-virtual {v0, v3, v1, v4, v5}, Landroid/widget/ListView;->setPadding(IIII)V
 
-    .line 371
+    .line 368
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     invoke-virtual {v0, v1}, Landroid/widget/ListView;->setVerticalScrollBarEnabled(Z)V
 
-    .line 372
+    .line 369
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->buildHero()Landroid/view/View;
@@ -1383,14 +1300,14 @@
 
     invoke-virtual {v0, v3, v2, v1}, Landroid/widget/ListView;->addHeaderView(Landroid/view/View;Ljava/lang/Object;Z)V
 
-    .line 373
+    .line 370
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->sourceAdapter:Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
     invoke-virtual {v0, v2}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
 
-    .line 374
+    .line 371
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
@@ -1405,7 +1322,7 @@
 
     invoke-virtual {v0, v2, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 375
+    .line 372
     iget-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v0, :cond_3
@@ -1435,7 +1352,7 @@
 
     move-object/from16 v0, p0
 
-    .line 379
+    .line 376
     new-instance v1, Landroid/widget/LinearLayout;
 
     iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1444,10 +1361,10 @@
 
     const/4 v2, 0x1
 
-    .line 380
+    .line 377
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
-    .line 381
+    .line 378
     iget-boolean v3, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     const/high16 v4, 0x41600000    # 14.0f
@@ -1466,14 +1383,14 @@
 
     move-result v3
 
-    .line 383
+    .line 380
     new-instance v5, Landroid/widget/FrameLayout;
 
     iget-object v6, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v5, v6}, Landroid/widget/FrameLayout;-><init>(Landroid/content/Context;)V
 
-    .line 384
+    .line 381
     new-instance v6, Landroid/widget/ImageView;
 
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1482,12 +1399,12 @@
 
     iput-object v6, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroBg:Landroid/widget/ImageView;
 
-    .line 385
+    .line 382
     sget-object v7, Landroid/widget/ImageView$ScaleType;->CENTER_CROP:Landroid/widget/ImageView$ScaleType;
 
     invoke-virtual {v6, v7}, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
 
-    .line 386
+    .line 383
     iget-object v6, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroBg:Landroid/widget/ImageView;
 
     new-instance v7, Landroid/widget/FrameLayout$LayoutParams;
@@ -1498,14 +1415,14 @@
 
     invoke-virtual {v5, v6, v7}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 387
+    .line 384
     new-instance v6, Landroid/view/View;
 
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v6, v7}, Landroid/view/View;-><init>(Landroid/content/Context;)V
 
-    .line 388
+    .line 385
     new-instance v7, Landroid/graphics/drawable/GradientDrawable;
 
     sget-object v9, Landroid/graphics/drawable/GradientDrawable$Orientation;->LEFT_RIGHT:Landroid/graphics/drawable/GradientDrawable$Orientation;
@@ -1520,7 +1437,7 @@
 
     aput v13, v11, v12
 
-    .line 389
+    .line 386
     iget-boolean v14, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v14, :cond_1
@@ -1543,24 +1460,24 @@
 
     invoke-direct {v7, v9, v11}, Landroid/graphics/drawable/GradientDrawable;-><init>(Landroid/graphics/drawable/GradientDrawable$Orientation;[I)V
 
-    .line 388
+    .line 385
     invoke-virtual {v6, v7}, Landroid/view/View;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 390
+    .line 387
     new-instance v7, Landroid/widget/FrameLayout$LayoutParams;
 
     invoke-direct {v7, v8, v8}, Landroid/widget/FrameLayout$LayoutParams;-><init>(II)V
 
     invoke-virtual {v5, v6, v7}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 391
+    .line 388
     new-instance v6, Landroid/view/View;
 
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v6, v7}, Landroid/view/View;-><init>(Landroid/content/Context;)V
 
-    .line 392
+    .line 389
     new-instance v7, Landroid/graphics/drawable/GradientDrawable;
 
     sget-object v9, Landroid/graphics/drawable/GradientDrawable$Orientation;->BOTTOM_TOP:Landroid/graphics/drawable/GradientDrawable$Orientation;
@@ -1575,21 +1492,21 @@
 
     invoke-virtual {v6, v7}, Landroid/view/View;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 394
+    .line 391
     new-instance v7, Landroid/widget/FrameLayout$LayoutParams;
 
     invoke-direct {v7, v8, v8}, Landroid/widget/FrameLayout$LayoutParams;-><init>(II)V
 
     invoke-virtual {v5, v6, v7}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 396
+    .line 393
     new-instance v6, Landroid/widget/LinearLayout;
 
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v6, v7}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    .line 397
+    .line 394
     invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v7
@@ -1620,7 +1537,7 @@
 
     invoke-virtual {v6, v7, v9, v3, v13}, Landroid/widget/LinearLayout;->setPadding(IIII)V
 
-    .line 398
+    .line 395
     new-instance v3, Landroid/widget/ImageView;
 
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -1629,17 +1546,17 @@
 
     iput-object v3, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroPoster:Landroid/widget/ImageView;
 
-    .line 399
+    .line 396
     sget-object v7, Landroid/widget/ImageView$ScaleType;->CENTER_CROP:Landroid/widget/ImageView$ScaleType;
 
     invoke-virtual {v3, v7}, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
 
-    .line 400
+    .line 397
     iget-boolean v3, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v3, :cond_3
 
-    .line 401
+    .line 398
     new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
 
     const/high16 v7, 0x43160000    # 150.0f
@@ -1656,26 +1573,26 @@
 
     invoke-direct {v3, v7, v9}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
 
-    .line 402
+    .line 399
     invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v7
 
     iput v7, v3, Landroid/widget/LinearLayout$LayoutParams;->leftMargin:I
 
-    .line 403
+    .line 400
     invoke-virtual {v0, v11}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v7
 
     iput v7, v3, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
 
-    .line 404
+    .line 401
     iget-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroPoster:Landroid/widget/ImageView;
 
     invoke-virtual {v6, v7, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 406
+    .line 403
     :cond_3
     new-instance v3, Landroid/widget/LinearLayout;
 
@@ -1683,19 +1600,19 @@
 
     invoke-direct {v3, v7}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    .line 407
+    .line 404
     invoke-virtual {v3, v2}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
     const-string v7, "\u2039  Mediateca"
 
     const v9, -0x726d56
 
-    .line 408
+    .line 405
     invoke-virtual {v0, v7, v4, v9, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object v7
 
-    .line 409
+    .line 406
     invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v13
@@ -1716,37 +1633,37 @@
 
     invoke-virtual {v7, v13, v15, v11, v14}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 410
+    .line 407
     invoke-virtual {v7, v2}, Landroid/widget/TextView;->setFocusable(Z)V
 
-    .line 411
+    .line 408
     invoke-virtual {v7, v2}, Landroid/widget/TextView;->setClickable(Z)V
 
     const v11, -0xe4e1cf
 
     const/16 v13, 0xa
 
-    .line 412
+    .line 409
     invoke-virtual {v0, v12, v11, v13}, Lcom/mcp2p/media/MediaScreen$Screen;->states(III)Landroid/graphics/drawable/StateListDrawable;
 
     move-result-object v11
 
     invoke-virtual {v7, v11}, Landroid/widget/TextView;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 413
-    new-instance v11, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda16;
+    .line 410
+    new-instance v11, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;
 
-    invoke-direct {v11, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda16;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v11, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {v7, v11}, Landroid/widget/TextView;->setOnClickListener(Landroid/view/View$OnClickListener;)V
 
-    .line 414
+    .line 411
     invoke-static {v7}, Lcom/mcp2p/tv/TvFocus;->markOwnStyle(Landroid/view/View;)V
 
-    .line 415
+    .line 412
     iput-object v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->backBtn:Landroid/widget/TextView;
 
-    .line 416
+    .line 413
     new-instance v11, Landroid/widget/LinearLayout$LayoutParams;
 
     const/4 v13, -0x2
@@ -1755,7 +1672,7 @@
 
     invoke-virtual {v3, v7, v11}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 417
+    .line 414
     iget-boolean v7, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v7, :cond_4
@@ -1778,338 +1695,253 @@
 
     iput-object v11, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroTitle:Landroid/widget/TextView;
 
-    .line 418
+    .line 415
     invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v15
 
-    iget-boolean v14, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
+    iget-boolean v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
-    if-eqz v14, :cond_5
+    if-eqz v2, :cond_5
 
-    const/high16 v14, 0x41000000    # 8.0f
+    const/high16 v2, 0x41000000    # 8.0f
 
     goto :goto_4
 
     :cond_5
-    const/high16 v14, 0x42700000    # 60.0f
+    const/high16 v2, 0x42700000    # 60.0f
 
     :goto_4
-    invoke-virtual {v0, v14}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v14
-
-    const/high16 v2, 0x40800000    # 4.0f
-
     invoke-virtual {v0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+
+    move-result v2
+
+    const/high16 v14, 0x40800000    # 4.0f
+
+    invoke-virtual {v0, v14}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v8
 
-    invoke-virtual {v11, v15, v14, v12, v8}, Landroid/widget/TextView;->setPadding(IIII)V
+    invoke-virtual {v11, v15, v2, v12, v8}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 419
-    iget-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroTitle:Landroid/widget/TextView;
+    .line 416
+    iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroTitle:Landroid/widget/TextView;
 
-    invoke-virtual {v3, v8}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+    invoke-virtual {v3, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    const/high16 v8, 0x41580000    # 13.5f
+    const/high16 v2, 0x41580000    # 13.5f
 
-    .line 420
-    invoke-virtual {v0, v7, v8, v9, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
-
-    move-result-object v11
-
-    iput-object v11, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
-
-    .line 421
-    invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v14
-
-    invoke-virtual {v11, v14, v12, v12, v12}, Landroid/widget/TextView;->setPadding(IIII)V
-
-    .line 422
-    iget-object v11, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
-
-    invoke-virtual {v3, v11}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
-
-    .line 423
-    invoke-virtual {v0, v7, v8, v9, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
+    .line 417
+    invoke-virtual {v0, v7, v2, v9, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object v8
 
-    iput-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+    iput-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
 
-    .line 424
-    invoke-virtual {v8, v10}, Landroid/widget/TextView;->setMaxLines(I)V
+    .line 418
+    invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    .line 425
-    iget-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+    move-result v11
 
-    sget-object v9, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+    invoke-virtual {v8, v11, v12, v12, v12}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    invoke-virtual {v8, v9}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+    .line 419
+    iget-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
 
-    .line 426
-    iget-object v8, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+    invoke-virtual {v3, v8}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+
+    .line 420
+    invoke-virtual {v0, v7, v2, v9, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
+
+    move-result-object v2
+
+    iput-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+
+    .line 421
+    invoke-virtual {v2, v10}, Landroid/widget/TextView;->setMaxLines(I)V
+
+    .line 422
+    iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+
+    sget-object v8, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+
+    invoke-virtual {v2, v8}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+
+    .line 423
+    iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
 
     invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v4
 
-    const/high16 v9, 0x41200000    # 10.0f
+    const/high16 v8, 0x41200000    # 10.0f
 
-    invoke-virtual {v0, v9}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+    invoke-virtual {v0, v8}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    move-result v10
+    move-result v9
 
-    iget-boolean v11, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
+    iget-boolean v10, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
-    const/4 v14, 0x0
+    if-eqz v10, :cond_6
 
-    if-eqz v11, :cond_6
-
-    const/high16 v11, 0x42f00000    # 120.0f
+    const/high16 v10, 0x42f00000    # 120.0f
 
     goto :goto_5
 
     :cond_6
-    move v11, v14
+    const/4 v10, 0x0
 
     :goto_5
-    invoke-virtual {v0, v11}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+    invoke-virtual {v0, v10}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    move-result v11
+    move-result v10
 
-    invoke-virtual {v8, v4, v10, v11, v12}, Landroid/widget/TextView;->setPadding(IIII)V
+    invoke-virtual {v2, v4, v9, v10, v12}, Landroid/widget/TextView;->setPadding(IIII)V
+
+    .line 424
+    iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+
+    const/high16 v4, 0x40000000    # 2.0f
+
+    invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+
+    move-result v4
+
+    int-to-float v4, v4
+
+    const/high16 v9, 0x3f800000    # 1.0f
+
+    invoke-virtual {v2, v4, v9}, Landroid/widget/TextView;->setLineSpacing(FF)V
+
+    .line 425
+    iget-object v2, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+
+    invoke-virtual {v3, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+
+    .line 426
+    new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
+
+    invoke-direct {v2, v12, v13, v9}, Landroid/widget/LinearLayout$LayoutParams;-><init>(IIF)V
+
+    invoke-virtual {v6, v3, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
     .line 427
-    iget-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+    new-instance v2, Landroid/widget/FrameLayout$LayoutParams;
 
-    const/high16 v8, 0x40000000    # 2.0f
+    const/4 v3, -0x1
 
-    invoke-virtual {v0, v8}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+    invoke-direct {v2, v3, v13}, Landroid/widget/FrameLayout$LayoutParams;-><init>(II)V
 
-    move-result v8
-
-    int-to-float v8, v8
-
-    const/high16 v10, 0x3f800000    # 1.0f
-
-    invoke-virtual {v4, v8, v10}, Landroid/widget/TextView;->setLineSpacing(FF)V
+    invoke-virtual {v5, v6, v2}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
     .line 428
-    iget-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
+    new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
 
-    invoke-virtual {v3, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+    iget-boolean v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
-    .line 429
-    new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
+    if-eqz v4, :cond_7
 
-    invoke-direct {v4, v12, v13, v10}, Landroid/widget/LinearLayout$LayoutParams;-><init>(IIF)V
-
-    invoke-virtual {v6, v3, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-
-    .line 430
-    new-instance v3, Landroid/widget/FrameLayout$LayoutParams;
-
-    const/4 v4, -0x1
-
-    invoke-direct {v3, v4, v13}, Landroid/widget/FrameLayout$LayoutParams;-><init>(II)V
-
-    invoke-virtual {v5, v6, v3}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-
-    .line 431
-    new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
-
-    iget-boolean v6, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
-
-    if-eqz v6, :cond_7
-
-    const/high16 v6, 0x43960000    # 300.0f
+    const/high16 v4, 0x43960000    # 300.0f
 
     goto :goto_6
 
     :cond_7
-    const/high16 v6, 0x438c0000    # 280.0f
+    const/high16 v4, 0x438c0000    # 280.0f
 
     :goto_6
-    invoke-virtual {v0, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
+    invoke-virtual {v0, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    move-result v6
+    move-result v4
 
-    invoke-direct {v3, v4, v6}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-direct {v2, v3, v4}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
 
-    invoke-virtual {v1, v5, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    invoke-virtual {v1, v5, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 433
-    new-instance v3, Landroid/widget/LinearLayout;
-
-    iget-object v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
-
-    invoke-direct {v3, v5}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
-
-    .line 434
-    iget-boolean v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
-
-    const/4 v6, 0x1
-
-    xor-int/2addr v5, v6
-
-    invoke-virtual {v3, v5}, Landroid/widget/LinearLayout;->setOrientation(I)V
-
-    .line 435
-    iget-boolean v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
-
-    if-eqz v5, :cond_8
-
-    const/16 v5, 0x10
-
-    goto :goto_7
-
-    :cond_8
-    const v5, 0x800003
-
-    :goto_7
-    invoke-virtual {v3, v5}, Landroid/widget/LinearLayout;->setGravity(I)V
-
-    .line 436
-    invoke-virtual {v0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v2
-
-    invoke-virtual {v0, v9}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v5
-
-    invoke-virtual {v3, v12, v2, v12, v5}, Landroid/widget/LinearLayout;->setPadding(IIII)V
-
-    .line 437
+    .line 430
     new-instance v2, Landroid/widget/LinearLayout;
 
-    iget-object v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
+    iget-object v3, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
-    invoke-direct {v2, v5}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
+    invoke-direct {v2, v3}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    const/16 v5, 0x50
+    .line 431
+    invoke-virtual {v0, v14}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    .line 438
-    invoke-virtual {v2, v5}, Landroid/widget/LinearLayout;->setGravity(I)V
+    move-result v3
 
-    const-string v5, "Fuentes en castellano"
+    invoke-virtual {v0, v8}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    const/high16 v6, 0x41800000    # 16.0f
+    move-result v4
 
-    const v8, -0x110f08
+    invoke-virtual {v2, v12, v3, v12, v4}, Landroid/widget/LinearLayout;->setPadding(IIII)V
 
-    const/4 v9, 0x1
-
-    .line 439
-    invoke-virtual {v0, v5, v6, v8, v9}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
-
-    move-result-object v5
-
-    invoke-virtual {v2, v5}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
-
-    const/high16 v5, 0x41500000    # 13.0f
-
-    const v6, -0xa29d86
-
-    .line 440
-    invoke-virtual {v0, v7, v5, v6, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
-
-    move-result-object v5
-
-    iput-object v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
-
-    const/high16 v6, 0x41000000    # 8.0f
-
-    .line 441
-    invoke-virtual {v0, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v7
-
-    invoke-virtual {v0, v10}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
-
-    move-result v6
-
-    invoke-virtual {v5, v7, v12, v12, v6}, Landroid/widget/TextView;->setPadding(IIII)V
-
-    .line 442
-    iget-object v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
-
-    invoke-virtual {v2, v5}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
-
-    .line 443
-    new-instance v5, Landroid/widget/LinearLayout$LayoutParams;
-
-    iget-boolean v6, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
-
-    if-eqz v6, :cond_9
-
-    move v8, v12
-
-    goto :goto_8
-
-    :cond_9
-    move v8, v4
-
-    :goto_8
-    if-eqz v6, :cond_a
-
-    move v14, v10
-
-    :cond_a
-    invoke-direct {v5, v8, v13, v14}, Landroid/widget/LinearLayout$LayoutParams;-><init>(IIF)V
-
-    invoke-virtual {v3, v2, v5}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-
-    .line 444
-    new-instance v2, Landroid/widget/HorizontalScrollView;
+    .line 432
+    new-instance v3, Landroid/widget/LinearLayout;
 
     iget-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
-    invoke-direct {v2, v4}, Landroid/widget/HorizontalScrollView;-><init>(Landroid/content/Context;)V
+    invoke-direct {v3, v4}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    .line 445
-    invoke-virtual {v2, v12}, Landroid/widget/HorizontalScrollView;->setHorizontalScrollBarEnabled(Z)V
+    const/16 v4, 0x50
 
-    .line 446
-    new-instance v4, Landroid/widget/LinearLayout;
+    .line 433
+    invoke-virtual {v3, v4}, Landroid/widget/LinearLayout;->setGravity(I)V
 
-    iget-object v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
+    const-string v4, "Fuentes en castellano"
 
-    invoke-direct {v4, v5}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
+    const/high16 v5, 0x41800000    # 16.0f
 
-    iput-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->chips:Landroid/widget/LinearLayout;
+    const v6, -0x110f08
 
-    .line 447
-    invoke-virtual {v2, v4}, Landroid/widget/HorizontalScrollView;->addView(Landroid/view/View;)V
+    const/4 v8, 0x1
 
-    .line 448
-    new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
+    .line 434
+    invoke-virtual {v0, v4, v5, v6, v8}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
-    invoke-direct {v4, v13, v13}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    move-result-object v4
 
-    .line 449
-    iget-boolean v5, v0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
+    invoke-virtual {v3, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    if-nez v5, :cond_b
+    const/high16 v4, 0x41500000    # 13.0f
+
+    const v5, -0xa29d86
+
+    .line 435
+    invoke-virtual {v0, v7, v4, v5, v12}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
+
+    move-result-object v4
+
+    iput-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
 
     const/high16 v5, 0x41000000    # 8.0f
 
+    .line 436
     invoke-virtual {v0, v5}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v5
 
-    iput v5, v4, Landroid/widget/LinearLayout$LayoutParams;->topMargin:I
+    invoke-virtual {v0, v9}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
-    .line 450
-    :cond_b
-    invoke-virtual {v3, v2, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    move-result v6
 
-    .line 451
-    invoke-virtual {v1, v3}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+    invoke-virtual {v4, v5, v12, v12, v6}, Landroid/widget/TextView;->setPadding(IIII)V
+
+    .line 437
+    iget-object v4, v0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
+
+    invoke-virtual {v3, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
+
+    .line 438
+    new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
+
+    const/4 v5, -0x1
+
+    invoke-direct {v4, v5, v13}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+
+    invoke-virtual {v2, v3, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+
+    .line 439
+    invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
     return-object v1
 .end method
@@ -2117,7 +1949,7 @@
 .method check(Lcom/mcp2p/media/Catalog$Movie;)V
     .locals 3
 
-    .line 262
+    .line 259
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
 
     iget-wide v1, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -2148,13 +1980,13 @@
 
     goto :goto_0
 
-    .line 263
+    .line 260
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->io:Ljava/util/concurrent/ExecutorService;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda13;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda12;
 
-    invoke-direct {v1, p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda13;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Lcom/mcp2p/media/Catalog$Movie;)V
+    invoke-direct {v1, p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda12;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Lcom/mcp2p/media/Catalog$Movie;)V
 
     invoke-interface {v0, v1}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
@@ -2172,14 +2004,14 @@
 
     const/4 v2, 0x0
 
-    .line 623
+    .line 588
     invoke-virtual {p0, p1, v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object p1
 
     const/high16 v0, 0x41700000    # 15.0f
 
-    .line 624
+    .line 589
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v1
@@ -2202,36 +2034,36 @@
 
     const/4 v0, 0x1
 
-    .line 625
+    .line 590
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setFocusable(Z)V
 
-    .line 626
+    .line 591
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setClickable(Z)V
 
-    .line 627
+    .line 592
     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setOnClickListener(Landroid/view/View$OnClickListener;)V
 
-    .line 628
+    .line 593
     invoke-static {p1}, Lcom/mcp2p/tv/TvFocus;->markOwnStyle(Landroid/view/View;)V
 
-    .line 629
+    .line 594
     new-instance p2, Landroid/widget/LinearLayout$LayoutParams;
 
     const/4 v0, -0x2
 
     invoke-direct {p2, v0, v0}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
 
-    .line 630
+    .line 595
     invoke-virtual {p0, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v0
 
     iput v0, p2, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
 
-    .line 631
+    .line 596
     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 632
+    .line 597
     invoke-virtual {p0, p1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->styleChip(Landroid/widget/TextView;Z)V
 
     return-object p1
@@ -2240,38 +2072,38 @@
 .method closeMovie()V
     .locals 2
 
-    .line 545
+    .line 510
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailGen:I
 
     add-int/lit8 v0, v0, 0x1
 
     iput v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailGen:I
 
-    .line 546
+    .line 511
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
 
     const/16 v1, 0x8
 
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setVisibility(I)V
 
-    .line 547
+    .line 512
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     const/4 v1, 0x0
 
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setVisibility(I)V
 
-    .line 548
+    .line 513
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->notifyDataSetChanged()V
 
-    .line 549
+    .line 514
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cur:Lcom/mcp2p/media/Catalog$Movie;
 
     if-eqz v0, :cond_0
 
-    .line 550
+    .line 515
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
 
     invoke-interface {v1, v0}, Ljava/util/List;->indexOf(Ljava/lang/Object;)I
@@ -2280,12 +2112,12 @@
 
     if-ltz v0, :cond_0
 
-    .line 551
+    .line 516
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     invoke-virtual {v1, v0}, Landroid/widget/GridView;->setSelection(I)V
 
-    .line 553
+    .line 518
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
@@ -2297,7 +2129,7 @@
 .method dp(F)I
     .locals 1
 
-    .line 124
+    .line 121
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->d:F
 
     mul-float/2addr p1, v0
@@ -2316,7 +2148,7 @@
 
     const/4 v0, 0x0
 
-    .line 529
+    .line 500
     :goto_0
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
@@ -2326,14 +2158,14 @@
 
     if-ge v0, v1, :cond_1
 
-    .line 530
+    .line 501
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     invoke-virtual {v1, v0}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
 
     move-result-object v1
 
-    .line 531
+    .line 502
     sget-object v2, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
     const v3, 0x6d637035
@@ -2348,7 +2180,7 @@
 
     if-eqz v2, :cond_0
 
-    .line 532
+    .line 503
     invoke-virtual {v1}, Landroid/view/View;->requestFocus()Z
 
     return-void
@@ -2365,19 +2197,19 @@
 .method focusRing(I)Landroid/graphics/drawable/StateListDrawable;
     .locals 3
 
-    .line 693
+    .line 658
     new-instance v0, Landroid/graphics/drawable/GradientDrawable;
 
     invoke-direct {v0}, Landroid/graphics/drawable/GradientDrawable;-><init>()V
 
     const/4 v1, 0x0
 
-    .line 694
+    .line 659
     invoke-virtual {v0, v1}, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
 
     int-to-float p1, p1
 
-    .line 695
+    .line 660
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result p1
@@ -2388,7 +2220,7 @@
 
     const/high16 p1, 0x40400000    # 3.0f
 
-    .line 696
+    .line 661
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result p1
@@ -2397,14 +2229,14 @@
 
     invoke-virtual {v0, p1, v2}, Landroid/graphics/drawable/GradientDrawable;->setStroke(II)V
 
-    .line 697
+    .line 662
     new-instance p1, Landroid/graphics/drawable/StateListDrawable;
 
     invoke-direct {p1}, Landroid/graphics/drawable/StateListDrawable;-><init>()V
 
     const v2, 0x101009c
 
-    .line 698
+    .line 663
     filled-new-array {v2}, [I
 
     move-result-object v2
@@ -2413,7 +2245,7 @@
 
     const v2, 0x10100a7
 
-    .line 699
+    .line 664
     filled-new-array {v2}, [I
 
     move-result-object v2
@@ -2422,7 +2254,7 @@
 
     const v2, 0x10100a1
 
-    .line 700
+    .line 665
     filled-new-array {v2}, [I
 
     move-result-object v2
@@ -2431,7 +2263,7 @@
 
     new-array v0, v1, [I
 
-    .line 701
+    .line 666
     new-instance v1, Landroid/graphics/drawable/GradientDrawable;
 
     invoke-direct {v1}, Landroid/graphics/drawable/GradientDrawable;-><init>()V
@@ -2444,7 +2276,7 @@
 .method hint(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/view/View;
     .locals 6
 
-    .line 643
+    .line 608
     new-instance v0, Landroid/widget/LinearLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -2453,10 +2285,10 @@
 
     const/16 v1, 0x10
 
-    .line 644
+    .line 609
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setGravity(I)V
 
-    .line 645
+    .line 610
     iget-boolean v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v1, :cond_0
@@ -2489,7 +2321,7 @@
 
     invoke-virtual {v0, v1, v2, v4, v3}, Landroid/widget/LinearLayout;->setPadding(IIII)V
 
-    .line 646
+    .line 611
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->key(Ljava/lang/String;)Landroid/widget/TextView;
 
     move-result-object p1
@@ -2500,21 +2332,21 @@
 
     const v1, -0xa29d86
 
-    .line 647
+    .line 612
     invoke-virtual {p0, p2, p1, v1, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object p2
 
     invoke-virtual {v0, p2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 648
+    .line 613
     new-instance p2, Landroid/view/View;
 
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {p2, v2}, Landroid/view/View;-><init>(Landroid/content/Context;)V
 
-    .line 649
+    .line 614
     new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
 
     const/high16 v3, 0x41a00000    # 20.0f
@@ -2529,14 +2361,14 @@
 
     invoke-virtual {v0, p2, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 650
+    .line 615
     invoke-virtual {p0, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->key(Ljava/lang/String;)Landroid/widget/TextView;
 
     move-result-object p2
 
     invoke-virtual {v0, p2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 651
+    .line 616
     invoke-virtual {p0, p4, p1, v1, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object p1
@@ -2555,14 +2387,14 @@
 
     const/high16 v2, 0x41300000    # 11.0f
 
-    .line 656
+    .line 621
     invoke-virtual {p0, p1, v2, v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object p1
 
     const/high16 v0, 0x40e00000    # 7.0f
 
-    .line 657
+    .line 622
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v1
@@ -2583,14 +2415,14 @@
 
     invoke-virtual {p1, v1, v3, v4, v2}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 658
+    .line 623
     new-instance v1, Landroid/graphics/drawable/GradientDrawable;
 
     invoke-direct {v1}, Landroid/graphics/drawable/GradientDrawable;-><init>()V
 
     const/high16 v2, 0x3f800000    # 1.0f
 
-    .line 659
+    .line 624
     invoke-virtual {p0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v2
@@ -2601,7 +2433,7 @@
 
     const/high16 v2, 0x40c00000    # 6.0f
 
-    .line 660
+    .line 625
     invoke-virtual {p0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v2
@@ -2610,24 +2442,24 @@
 
     invoke-virtual {v1, v2}, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
 
-    .line 661
+    .line 626
     invoke-virtual {p1, v1}, Landroid/widget/TextView;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 662
+    .line 627
     new-instance v1, Landroid/widget/LinearLayout$LayoutParams;
 
     const/4 v2, -0x2
 
     invoke-direct {v1, v2, v2}, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
 
-    .line 663
+    .line 628
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v0
 
     iput v0, v1, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
 
-    .line 664
+    .line 629
     invoke-virtual {p1, v1}, Landroid/widget/TextView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
 
     return-object p1
@@ -2636,7 +2468,7 @@
 .method synthetic lambda$askSearch$10$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/EditText;Landroid/app/AlertDialog;)V
     .locals 1
 
-    .line 299
+    .line 296
     invoke-virtual {p1}, Landroid/widget/EditText;->getText()Landroid/text/Editable;
 
     move-result-object v0
@@ -2660,7 +2492,7 @@
 
     move-result-object p1
 
-    .line 300
+    .line 297
     :goto_0
     invoke-virtual {p1}, Ljava/lang/String;->isEmpty()Z
 
@@ -2670,18 +2502,18 @@
 
     return-void
 
-    .line 301
+    .line 298
     :cond_1
     invoke-virtual {p2}, Landroid/app/AlertDialog;->dismiss()V
 
-    .line 302
+    .line 299
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->query:Ljava/lang/String;
 
     const/4 p1, 0x0
 
     move p2, p1
 
-    .line 303
+    .line 300
     :goto_1
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
@@ -2705,7 +2537,7 @@
 
     goto :goto_1
 
-    .line 304
+    .line 301
     :cond_2
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->reload()V
 
@@ -2718,7 +2550,7 @@
     .line 0
     const-string p2, ""
 
-    .line 334
+    .line 331
     invoke-virtual {p0, p1, p2, p2}, Lcom/mcp2p/media/MediaScreen$Screen;->saveSources(Landroid/content/SharedPreferences;Ljava/lang/String;Ljava/lang/String;)V
 
     return-void
@@ -2727,7 +2559,7 @@
 .method synthetic lambda$askSources$15$com-mcp2p-media-MediaScreen$Screen(Landroid/content/SharedPreferences;Landroid/widget/EditText;Landroid/widget/EditText;Landroid/content/DialogInterface;I)V
     .locals 0
 
-    .line 335
+    .line 332
     invoke-virtual {p2}, Landroid/widget/EditText;->getText()Landroid/text/Editable;
 
     move-result-object p2
@@ -2752,7 +2584,7 @@
 .method synthetic lambda$buildCatalog$0$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
     .locals 0
 
-    .line 160
+    .line 157
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->askSearch()V
 
     return-void
@@ -2761,7 +2593,7 @@
 .method synthetic lambda$buildCatalog$1$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
     .locals 0
 
-    .line 163
+    .line 160
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->askSources()V
 
     return-void
@@ -2773,7 +2605,7 @@
     .line 0
     const/4 p2, 0x0
 
-    .line 170
+    .line 167
     aget-object p1, p1, p2
 
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->selectTab(Ljava/lang/String;)V
@@ -2784,7 +2616,7 @@
 .method synthetic lambda$buildCatalog$3$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/AdapterView;Landroid/view/View;IJ)V
     .locals 0
 
-    .line 195
+    .line 192
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
 
     invoke-interface {p1}, Ljava/util/List;->size()I
@@ -2810,7 +2642,7 @@
 .method synthetic lambda$buildHero$16$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
     .locals 0
 
-    .line 413
+    .line 410
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->closeMovie()V
 
     return-void
@@ -2819,7 +2651,7 @@
 .method synthetic lambda$check$7$com-mcp2p-media-MediaScreen$Screen(Lcom/mcp2p/media/Catalog$Movie;)V
     .locals 5
 
-    .line 265
+    .line 262
     :try_start_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cat:Lcom/mcp2p/media/Catalog;
 
@@ -2827,7 +2659,7 @@
 
     move-result-object v0
 
-    .line 266
+    .line 263
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->found:Ljava/util/Map;
 
     iget-wide v2, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -2838,7 +2670,7 @@
 
     invoke-interface {v1, v2, v0}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 267
+    .line 264
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->foundAt:Ljava/util/Map;
 
     iget-wide v2, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -2857,7 +2689,7 @@
 
     invoke-interface {v1, v2, v3}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 268
+    .line 265
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
 
     iget-wide v2, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -2880,7 +2712,7 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 272
+    .line 269
     :catchall_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->checking:Ljava/util/Set;
 
@@ -2892,7 +2724,7 @@
 
     invoke-interface {v0, p1}, Ljava/util/Set;->remove(Ljava/lang/Object;)Z
 
-    .line 273
+    .line 270
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->refreshSoon()V
 
     return-void
@@ -2901,14 +2733,14 @@
 .method synthetic lambda$loadMore$4$com-mcp2p-media-MediaScreen$Screen()V
     .locals 2
 
-    .line 253
+    .line 250
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
     const/4 v1, 0x0
 
     invoke-virtual {v0, v1}, Landroid/widget/GridView;->setSelection(I)V
 
-    .line 254
+    .line 251
     iget-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v0, :cond_0
@@ -2924,7 +2756,7 @@
 .method synthetic lambda$loadMore$5$com-mcp2p-media-MediaScreen$Screen(ILjava/util/List;Ljava/lang/String;ILjava/lang/String;)V
     .locals 1
 
-    .line 240
+    .line 237
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->gen:I
 
     if-eq p1, v0, :cond_0
@@ -2934,23 +2766,23 @@
     :cond_0
     const/4 p1, 0x0
 
-    .line 241
+    .line 238
     iput-boolean p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->loading:Z
 
     if-nez p2, :cond_1
 
-    .line 243
+    .line 240
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->status:Landroid/widget/TextView;
 
     invoke-virtual {p1, p3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
     return-void
 
-    .line 246
+    .line 243
     :cond_1
     iput p4, p0, Lcom/mcp2p/media/MediaScreen$Screen;->page:I
 
-    .line 247
+    .line 244
     invoke-interface {p2}, Ljava/util/List;->isEmpty()Z
 
     move-result p1
@@ -2961,13 +2793,13 @@
 
     iput-boolean p3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->end:Z
 
-    .line 248
+    .line 245
     :cond_2
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
 
     invoke-interface {p1, p2}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
 
-    .line 249
+    .line 246
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->status:Landroid/widget/TextView;
 
     const-string p2, ""
@@ -3005,7 +2837,7 @@
 
     goto :goto_0
 
-    .line 250
+    .line 247
     :cond_4
     iget-object p4, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
 
@@ -3017,17 +2849,17 @@
 
     const-string p2, "No hay pel\u00edculas."
 
-    .line 249
+    .line 246
     :cond_5
     :goto_0
     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 251
+    .line 248
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {p1}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->notifyDataSetChanged()V
 
-    .line 252
+    .line 249
     iget p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->page:I
 
     if-ne p1, p3, :cond_6
@@ -3042,9 +2874,9 @@
 
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->grid:Landroid/widget/GridView;
 
-    new-instance p2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda8;
+    new-instance p2, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;
 
-    invoke-direct {p2, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda8;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {p2, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {p1, p2}, Landroid/widget/GridView;->post(Ljava/lang/Runnable;)Z
 
@@ -3060,7 +2892,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 232
+    .line 229
     :try_start_0
     iget-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cat:Lcom/mcp2p/media/Catalog;
 
@@ -3093,7 +2925,7 @@
 
     const-string v2, "No se pudo cargar el cat\u00e1logo"
 
-    .line 234
+    .line 231
     invoke-static {v1, v2, p3}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     const-string p3, "No se pudo cargar el cat\u00e1logo. Comprueba la conexi\u00f3n."
@@ -3102,11 +2934,11 @@
 
     move-object v4, v0
 
-    .line 239
+    .line 236
     :goto_1
     iget-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->main:Landroid/os/Handler;
 
-    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda17;
+    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda16;
 
     move-object v1, v0
 
@@ -3118,7 +2950,7 @@
 
     move-object v7, p1
 
-    invoke-direct/range {v1 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda17;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;ILjava/util/List;Ljava/lang/String;ILjava/lang/String;)V
+    invoke-direct/range {v1 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda16;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;ILjava/util/List;Ljava/lang/String;ILjava/lang/String;)V
 
     invoke-virtual {p3, v0}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
@@ -3128,7 +2960,7 @@
 .method synthetic lambda$openMovie$17$com-mcp2p-media-MediaScreen$Screen(ILcom/mcp2p/media/Catalog$Movie;Lcom/mcp2p/media/Catalog$Found;Ljava/lang/String;)V
     .locals 1
 
-    .line 490
+    .line 476
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailGen:I
 
     if-ne p1, v0, :cond_2
@@ -3139,7 +2971,7 @@
 
     goto :goto_0
 
-    .line 491
+    .line 477
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
 
@@ -3151,7 +2983,7 @@
 
     if-nez p3, :cond_1
 
-    .line 492
+    .line 478
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->sourceAdapter:Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
     const/4 p2, 0x0
@@ -3160,7 +2992,7 @@
 
     goto :goto_0
 
-    .line 493
+    .line 479
     :cond_1
     invoke-virtual {p0, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->showSources(Lcom/mcp2p/media/Catalog$Found;)V
 
@@ -3175,13 +3007,13 @@
     .line 0
     const/4 v0, 0x0
 
-    .line 478
+    .line 464
     :try_start_0
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cat:Lcom/mcp2p/media/Catalog;
 
     invoke-virtual {v1, p1}, Lcom/mcp2p/media/Catalog;->details(Lcom/mcp2p/media/Catalog$Movie;)V
 
-    .line 479
+    .line 465
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cat:Lcom/mcp2p/media/Catalog;
 
     invoke-virtual {v1, p1}, Lcom/mcp2p/media/Catalog;->sources(Lcom/mcp2p/media/Catalog$Movie;)Lcom/mcp2p/media/Catalog$Found;
@@ -3190,7 +3022,7 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_1
 
-    .line 480
+    .line 466
     :try_start_1
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->found:Ljava/util/Map;
 
@@ -3202,7 +3034,7 @@
 
     invoke-interface {v2, v3, v1}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 481
+    .line 467
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->foundAt:Ljava/util/Map;
 
     iget-wide v3, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -3221,7 +3053,7 @@
 
     invoke-interface {v2, v3, v4}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 482
+    .line 468
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
 
     iget-wide v3, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -3265,7 +3097,7 @@
 
     const-string v3, "No se pudieron obtener las fuentes"
 
-    .line 484
+    .line 470
     invoke-static {v2, v3, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     const-string v0, "No se ha podido conectar con Peerflix ni con Torrentio. Comprueba la conexi\u00f3n y vuelve a entrar."
@@ -3275,10 +3107,10 @@
 
     move-object v6, v1
 
-    .line 489
+    .line 475
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->main:Landroid/os/Handler;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda12;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda11;
 
     move-object v2, v1
 
@@ -3288,7 +3120,7 @@
 
     move-object v5, p1
 
-    invoke-direct/range {v2 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda12;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;ILcom/mcp2p/media/Catalog$Movie;Lcom/mcp2p/media/Catalog$Found;Ljava/lang/String;)V
+    invoke-direct/range {v2 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda11;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;ILcom/mcp2p/media/Catalog$Movie;Lcom/mcp2p/media/Catalog$Found;Ljava/lang/String;)V
 
     invoke-virtual {v0, v1}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
@@ -3301,10 +3133,10 @@
     .line 0
     const/4 v0, 0x0
 
-    .line 283
+    .line 280
     iput-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->refreshPosted:Z
 
-    .line 284
+    .line 281
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->notifyDataSetChanged()V
@@ -3315,7 +3147,7 @@
 .method synthetic lambda$refreshSoon$9$com-mcp2p-media-MediaScreen$Screen()V
     .locals 4
 
-    .line 280
+    .line 277
     iget-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->refreshPosted:Z
 
     if-eqz v0, :cond_0
@@ -3325,15 +3157,15 @@
     :cond_0
     const/4 v0, 0x1
 
-    .line 281
+    .line 278
     iput-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->refreshPosted:Z
 
-    .line 282
+    .line 279
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->main:Landroid/os/Handler;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda14;
 
-    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda14;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     const-wide/16 v2, 0x190
 
@@ -3342,22 +3174,10 @@
     return-void
 .end method
 
-.method synthetic lambda$showSources$19$com-mcp2p-media-MediaScreen$Screen(Ljava/lang/String;Lcom/mcp2p/media/Catalog$Found;Landroid/view/View;)V
-    .locals 0
-
-    .line 510
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->qFilter:Ljava/lang/String;
-
-    .line 511
-    invoke-virtual {p0, p2}, Lcom/mcp2p/media/MediaScreen$Screen;->showSources(Lcom/mcp2p/media/Catalog$Found;)V
-
-    return-void
-.end method
-
 .method loadMore()V
     .locals 8
 
-    .line 223
+    .line 220
     iget-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->loading:Z
 
     if-nez v0, :cond_2
@@ -3377,20 +3197,20 @@
     :cond_0
     const/4 v1, 0x1
 
-    .line 224
+    .line 221
     iput-boolean v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->loading:Z
 
-    .line 225
+    .line 222
     iget v7, p0, Lcom/mcp2p/media/MediaScreen$Screen;->gen:I
 
     add-int/lit8 v5, v0, 0x1
 
-    .line 226
+    .line 223
     iget-object v6, p0, Lcom/mcp2p/media/MediaScreen$Screen;->kind:Ljava/lang/String;
 
     iget-object v4, p0, Lcom/mcp2p/media/MediaScreen$Screen;->query:Ljava/lang/String;
 
-    .line 227
+    .line 224
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->status:Landroid/widget/TextView;
 
     if-nez v0, :cond_1
@@ -3405,16 +3225,16 @@
     :goto_0
     invoke-virtual {v1, v0}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 228
+    .line 225
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->io:Ljava/util/concurrent/ExecutorService;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda9;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda8;
 
     move-object v2, v1
 
     move-object v3, p0
 
-    invoke-direct/range {v2 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda9;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Ljava/lang/String;ILjava/lang/String;I)V
+    invoke-direct/range {v2 .. v7}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda8;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Ljava/lang/String;ILjava/lang/String;I)V
 
     invoke-interface {v0, v1}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
@@ -3426,14 +3246,14 @@
 .method makeCatalog()V
     .locals 6
 
-    .line 128
+    .line 125
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cat:Lcom/mcp2p/media/Catalog;
 
     if-eqz v0, :cond_0
 
     invoke-virtual {v0}, Lcom/mcp2p/media/Catalog;->close()V
 
-    .line 129
+    .line 126
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
@@ -3445,7 +3265,7 @@
 
     move-result-object v0
 
-    .line 130
+    .line 127
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-virtual {v1}, Landroid/app/Activity;->getResources()Landroid/content/res/Resources;
@@ -3474,7 +3294,7 @@
 
     goto :goto_0
 
-    .line 131
+    .line 128
     :cond_1
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
@@ -3482,7 +3302,7 @@
 
     move-result-object v1
 
-    .line 132
+    .line 129
     :goto_0
     new-instance v3, Lcom/mcp2p/media/Catalog;
 
@@ -3508,12 +3328,12 @@
 .method meta(Lcom/mcp2p/media/Catalog$Movie;)Ljava/lang/String;
     .locals 8
 
-    .line 588
+    .line 553
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
 
-    .line 589
+    .line 554
     iget v1, p1, Lcom/mcp2p/media/Catalog$Movie;->year:I
 
     if-lez v1, :cond_0
@@ -3522,7 +3342,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
-    .line 590
+    .line 555
     :cond_0
     iget v1, p1, Lcom/mcp2p/media/Catalog$Movie;->runtime:I
 
@@ -3568,7 +3388,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 591
+    .line 556
     :cond_2
     iget-object v1, p1, Lcom/mcp2p/media/Catalog$Movie;->genres:Ljava/util/List;
 
@@ -3604,7 +3424,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 592
+    .line 557
     :cond_4
     iget-wide v4, p1, Lcom/mcp2p/media/Catalog$Movie;->vote:D
 
@@ -3656,7 +3476,7 @@
 
     invoke-virtual {v0, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 593
+    .line 558
     :cond_6
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -3668,7 +3488,7 @@
 .method onBack()Z
     .locals 2
 
-    .line 574
+    .line 539
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
 
     invoke-virtual {v0}, Landroid/widget/LinearLayout;->getVisibility()I
@@ -3679,12 +3499,12 @@
 
     if-nez v0, :cond_0
 
-    .line 575
+    .line 540
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->closeMovie()V
 
     return v1
 
-    .line 578
+    .line 543
     :cond_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->query:Ljava/lang/String;
 
@@ -3692,7 +3512,7 @@
 
     const-string v0, "popular"
 
-    .line 579
+    .line 544
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->selectTab(Ljava/lang/String;)V
 
     return v1
@@ -3706,50 +3526,45 @@
 .method openMovie(Lcom/mcp2p/media/Catalog$Movie;)V
     .locals 8
 
-    .line 456
+    .line 444
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cur:Lcom/mcp2p/media/Catalog$Movie;
 
-    const-string v0, "Todas"
-
-    .line 457
-    iput-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->qFilter:Ljava/lang/String;
-
-    .line 458
+    .line 445
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailGen:I
 
     add-int/lit8 v0, v0, 0x1
 
     iput v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailGen:I
 
-    .line 459
+    .line 446
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
 
     const/16 v2, 0x8
 
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->setVisibility(I)V
 
-    .line 460
+    .line 447
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
 
     const/4 v2, 0x0
 
     invoke-virtual {v1, v2}, Landroid/widget/LinearLayout;->setVisibility(I)V
 
-    .line 461
+    .line 448
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroTitle:Landroid/widget/TextView;
 
     iget-object v3, p1, Lcom/mcp2p/media/Catalog$Movie;->title:Ljava/lang/String;
 
     invoke-virtual {v1, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 462
+    .line 449
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroOv:Landroid/widget/TextView;
 
     iget-object v3, p1, Lcom/mcp2p/media/Catalog$Movie;->overview:Ljava/lang/String;
 
     invoke-virtual {v1, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 463
+    .line 450
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroMeta:Landroid/widget/TextView;
 
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->meta(Lcom/mcp2p/media/Catalog$Movie;)Ljava/lang/String;
@@ -3758,7 +3573,7 @@
 
     invoke-virtual {v1, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 464
+    .line 451
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroBg:Landroid/widget/ImageView;
 
     iget-object v3, p1, Lcom/mcp2p/media/Catalog$Movie;->backdrop:Ljava/lang/String;
@@ -3795,7 +3610,7 @@
 
     invoke-static {v1, v3, v4}, Lcom/mcp2p/media/Images;->load(Landroid/widget/ImageView;Ljava/lang/String;I)V
 
-    .line 465
+    .line 452
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->heroPoster:Landroid/widget/ImageView;
 
     invoke-static {p1}, Lcom/mcp2p/media/MediaScreen$Screen;->poster(Lcom/mcp2p/media/Catalog$Movie;)Ljava/lang/String;
@@ -3810,7 +3625,7 @@
 
     invoke-static {v1, v3, v4}, Lcom/mcp2p/media/Images;->load(Landroid/widget/ImageView;Ljava/lang/String;I)V
 
-    .line 466
+    .line 453
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->foundAt:Ljava/util/Map;
 
     iget-wide v3, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -3825,7 +3640,7 @@
 
     check-cast v1, Ljava/lang/Long;
 
-    .line 467
+    .line 454
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->found:Ljava/util/Map;
 
     iget-wide v4, p1, Lcom/mcp2p/media/Catalog$Movie;->id:J
@@ -3844,7 +3659,7 @@
 
     if-eqz v1, :cond_1
 
-    .line 468
+    .line 455
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
     move-result-wide v4
@@ -3865,12 +3680,12 @@
 
     if-eqz v1, :cond_1
 
-    .line 469
+    .line 456
     invoke-virtual {p0, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->showSources(Lcom/mcp2p/media/Catalog$Found;)V
 
     goto :goto_1
 
-    .line 471
+    .line 458
     :cond_1
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->sourceAdapter:Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
@@ -3880,34 +3695,29 @@
 
     invoke-virtual {v1, v3, v4}, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->set(Ljava/util/List;Ljava/lang/String;)V
 
-    .line 472
-    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->chips:Landroid/widget/LinearLayout;
-
-    invoke-virtual {v1}, Landroid/widget/LinearLayout;->removeAllViews()V
-
-    .line 473
+    .line 459
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
 
     const-string v3, ""
 
     invoke-virtual {v1, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 474
+    .line 460
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->io:Ljava/util/concurrent/ExecutorService;
 
-    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda14;
+    new-instance v3, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda13;
 
-    invoke-direct {v3, p0, p1, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda14;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Lcom/mcp2p/media/Catalog$Movie;I)V
+    invoke-direct {v3, p0, p1, v0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda13;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Lcom/mcp2p/media/Catalog$Movie;I)V
 
     invoke-interface {v1, v3}, Ljava/util/concurrent/ExecutorService;->execute(Ljava/lang/Runnable;)V
 
-    .line 497
+    .line 483
     :goto_1
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
     invoke-virtual {p1, v2}, Landroid/widget/ListView;->setSelection(I)V
 
-    .line 498
+    .line 484
     iget-boolean p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz p1, :cond_2
@@ -3929,17 +3739,17 @@
 
     const/high16 v2, 0x41600000    # 14.0f
 
-    .line 611
+    .line 576
     invoke-virtual {p0, p1, v2, v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object p1
 
     const/16 v0, 0x11
 
-    .line 612
+    .line 577
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setGravity(I)V
 
-    .line 613
+    .line 578
     invoke-virtual {p0, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v0
@@ -3962,10 +3772,10 @@
 
     const/4 v0, 0x1
 
-    .line 614
+    .line 579
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setFocusable(Z)V
 
-    .line 615
+    .line 580
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setClickable(Z)V
 
     const v0, -0xe4e1cf
@@ -3974,17 +3784,17 @@
 
     const v2, -0xebe9db
 
-    .line 616
+    .line 581
     invoke-virtual {p0, v2, v0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->states(III)Landroid/graphics/drawable/StateListDrawable;
 
     move-result-object v0
 
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 617
+    .line 582
     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setOnClickListener(Landroid/view/View$OnClickListener;)V
 
-    .line 618
+    .line 583
     invoke-static {p1}, Lcom/mcp2p/tv/TvFocus;->markOwnStyle(Landroid/view/View;)V
 
     return-object p1
@@ -3995,7 +3805,7 @@
 
     const/4 v0, 0x1
 
-    .line 558
+    .line 523
     :try_start_0
     iget-object v1, p1, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
 
@@ -4003,12 +3813,12 @@
 
     invoke-static {v1, v2}, Lcom/mcp2p/media/TorrentFiles;->hint(Ljava/lang/String;I)V
 
-    .line 559
+    .line 524
     new-instance v1, Landroid/content/Intent;
 
     invoke-direct {v1}, Landroid/content/Intent;-><init>()V
 
-    .line 560
+    .line 525
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     const-string v3, "com.mcp2p.app.ui.PlayerActivity"
@@ -4017,7 +3827,7 @@
 
     const-string v2, "com.mcp2p.app.extra.P2P_INPUT"
 
-    .line 561
+    .line 526
     iget-object v3, p0, Lcom/mcp2p/media/MediaScreen$Screen;->cur:Lcom/mcp2p/media/Catalog$Movie;
 
     iget-object v3, v3, Lcom/mcp2p/media/Catalog$Movie;->title:Ljava/lang/String;
@@ -4030,7 +3840,7 @@
 
     const-string v2, "com.mcp2p.app.extra.TITLE"
 
-    .line 562
+    .line 527
     new-instance v3, Ljava/lang/StringBuilder;
 
     invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
@@ -4055,17 +3865,17 @@
 
     invoke-virtual {v1, v2, v3}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
-    .line 563
+    .line 528
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-virtual {v2, v1}, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
 
-    .line 564
+    .line 529
     iget p1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     if-nez p1, :cond_0
 
-    .line 565
+    .line 530
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     const-string v1, "Esta fuente no tiene semillas ahora mismo: puede tardar o no arrancar"
@@ -4087,10 +3897,10 @@
 
     const-string v2, "No se pudo abrir el reproductor"
 
-    .line 567
+    .line 532
     invoke-static {v1, v2, p1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 568
+    .line 533
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     const-string v1, "No se ha podido abrir el reproductor"
@@ -4109,12 +3919,12 @@
 .method refreshSoon()V
     .locals 2
 
-    .line 279
+    .line 276
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->main:Landroid/os/Handler;
 
-    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;
+    new-instance v1, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda9;
 
-    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v1, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda9;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {v0, v1}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
@@ -4124,35 +3934,35 @@
 .method reload()V
     .locals 1
 
-    .line 213
+    .line 210
     iget v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->gen:I
 
     add-int/lit8 v0, v0, 0x1
 
     iput v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->gen:I
 
-    .line 214
+    .line 211
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movies:Ljava/util/List;
 
     invoke-interface {v0}, Ljava/util/List;->clear()V
 
     const/4 v0, 0x0
 
-    .line 215
+    .line 212
     iput v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->page:I
 
-    .line 216
+    .line 213
     iput-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->end:Z
 
-    .line 217
+    .line 214
     iput-boolean v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->loading:Z
 
-    .line 218
+    .line 215
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->notifyDataSetChanged()V
 
-    .line 219
+    .line 216
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->loadMore()V
 
     return-void
@@ -4161,17 +3971,17 @@
 .method round(II)Landroid/graphics/drawable/GradientDrawable;
     .locals 1
 
-    .line 676
+    .line 641
     new-instance v0, Landroid/graphics/drawable/GradientDrawable;
 
     invoke-direct {v0}, Landroid/graphics/drawable/GradientDrawable;-><init>()V
 
-    .line 677
+    .line 642
     invoke-virtual {v0, p1}, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
 
     int-to-float p1, p2
 
-    .line 678
+    .line 643
     invoke-virtual {p0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result p1
@@ -4186,7 +3996,7 @@
 .method saveSources(Landroid/content/SharedPreferences;Ljava/lang/String;Ljava/lang/String;)V
     .locals 1
 
-    .line 340
+    .line 337
     invoke-interface {p1}, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
 
     move-result-object p1
@@ -4213,30 +4023,30 @@
 
     invoke-interface {p1}, Landroid/content/SharedPreferences$Editor;->apply()V
 
-    .line 341
+    .line 338
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->makeCatalog()V
 
-    .line 342
+    .line 339
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->counts:Ljava/util/Map;
 
     invoke-interface {p1}, Ljava/util/Map;->clear()V
 
-    .line 343
+    .line 340
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->found:Ljava/util/Map;
 
     invoke-interface {p1}, Ljava/util/Map;->clear()V
 
-    .line 344
+    .line 341
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->foundAt:Ljava/util/Map;
 
     invoke-interface {p1}, Ljava/util/Map;->clear()V
 
-    .line 345
+    .line 342
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->movieAdapter:Lcom/mcp2p/media/MediaScreen$MovieAdapter;
 
     invoke-virtual {p1}, Lcom/mcp2p/media/MediaScreen$MovieAdapter;->notifyDataSetChanged()V
 
-    .line 346
+    .line 343
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     const-string p2, "Fuentes guardadas"
@@ -4255,17 +4065,17 @@
 .method selectTab(Ljava/lang/String;)V
     .locals 3
 
-    .line 203
+    .line 200
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->kind:Ljava/lang/String;
 
     const/4 v0, 0x0
 
-    .line 204
+    .line 201
     iput-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->query:Ljava/lang/String;
 
     const/4 v0, 0x0
 
-    .line 205
+    .line 202
     :goto_0
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
@@ -4275,14 +4085,14 @@
 
     if-ge v0, v1, :cond_0
 
-    .line 206
+    .line 203
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tabsRow:Landroid/widget/LinearLayout;
 
     invoke-virtual {v1, v0}, Landroid/widget/LinearLayout;->getChildAt(I)Landroid/view/View;
 
     move-result-object v1
 
-    .line 207
+    .line 204
     move-object v2, v1
 
     check-cast v2, Landroid/widget/TextView;
@@ -4301,7 +4111,7 @@
 
     goto :goto_0
 
-    .line 209
+    .line 206
     :cond_0
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->reload()V
 
@@ -4311,7 +4121,7 @@
 .method show()V
     .locals 4
 
-    .line 136
+    .line 133
     new-instance v0, Landroid/widget/FrameLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -4322,16 +4132,16 @@
 
     const v1, -0xf4f3ec
 
-    .line 137
+    .line 134
     invoke-virtual {v0, v1}, Landroid/widget/FrameLayout;->setBackgroundColor(I)V
 
-    .line 138
+    .line 135
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->buildCatalog()V
 
-    .line 139
+    .line 136
     invoke-virtual {p0}, Lcom/mcp2p/media/MediaScreen$Screen;->buildDetail()V
 
-    .line 140
+    .line 137
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->root:Landroid/widget/FrameLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->catalogView:Landroid/widget/LinearLayout;
@@ -4344,7 +4154,7 @@
 
     invoke-virtual {v0, v1, v2}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 141
+    .line 138
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->root:Landroid/widget/FrameLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
@@ -4355,28 +4165,28 @@
 
     invoke-virtual {v0, v1, v2}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 142
+    .line 139
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
 
     const/16 v1, 0x8
 
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setVisibility(I)V
 
-    .line 143
+    .line 140
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->root:Landroid/widget/FrameLayout;
 
     invoke-virtual {v0, v1}, Landroid/app/Activity;->setContentView(Landroid/view/View;)V
 
-    .line 144
+    .line 141
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-virtual {v0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
     move-result-object v0
 
-    .line 145
+    .line 142
     new-instance v1, Lcom/mcp2p/media/MediaScreen$BackKeys;
 
     invoke-virtual {v0}, Landroid/view/Window;->getCallback()Landroid/view/Window$Callback;
@@ -4389,293 +4199,144 @@
 
     const-string v0, "popular"
 
-    .line 146
+    .line 143
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->selectTab(Ljava/lang/String;)V
 
     return-void
 .end method
 
 .method showSources(Lcom/mcp2p/media/Catalog$Found;)V
-    .locals 10
+    .locals 5
 
-    .line 502
+    .line 488
     iget-object v0, p1, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
 
-    .line 503
-    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->chips:Landroid/widget/LinearLayout;
+    .line 489
+    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
 
-    invoke-virtual {v1}, Landroid/widget/LinearLayout;->removeAllViews()V
-
-    .line 504
-    sget-object v1, Lcom/mcp2p/media/MediaScreen;->QUALITIES:[Ljava/lang/String;
-
-    array-length v2, v1
-
-    const/4 v3, 0x0
-
-    move v4, v3
-
-    :goto_0
-    const/4 v5, 0x1
-
-    if-ge v4, v2, :cond_4
-
-    aget-object v6, v1, v4
-
-    const-string v7, "Todas"
-
-    .line 505
-    invoke-virtual {v7, v6}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result v7
-
-    .line 506
-    invoke-interface {v0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
-
-    move-result-object v8
-
-    :cond_0
-    :goto_1
-    invoke-interface {v8}, Ljava/util/Iterator;->hasNext()Z
-
-    move-result v9
-
-    if-eqz v9, :cond_1
-
-    invoke-interface {v8}, Ljava/util/Iterator;->next()Ljava/lang/Object;
-
-    move-result-object v9
-
-    check-cast v9, Lcom/mcp2p/media/Sources$Stream;
-
-    invoke-static {v9, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->matches(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Z
-
-    move-result v9
-
-    if-eqz v9, :cond_0
-
-    move v7, v5
-
-    goto :goto_1
-
-    :cond_1
-    if-eqz v7, :cond_3
-
-    .line 507
-    invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
-
-    move-result v5
-
-    if-eqz v5, :cond_2
-
-    goto :goto_2
-
-    .line 509
-    :cond_2
-    new-instance v5, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda0;
-
-    invoke-direct {v5, p0, v6, p1}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda0;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;Ljava/lang/String;Lcom/mcp2p/media/Catalog$Found;)V
-
-    invoke-virtual {p0, v6, v5}, Lcom/mcp2p/media/MediaScreen$Screen;->chip(Ljava/lang/String;Landroid/view/View$OnClickListener;)Landroid/widget/TextView;
-
-    move-result-object v5
-
-    .line 513
-    iget-object v7, p0, Lcom/mcp2p/media/MediaScreen$Screen;->qFilter:Ljava/lang/String;
-
-    invoke-virtual {v6, v7}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result v6
-
-    invoke-virtual {p0, v5, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->styleChip(Landroid/widget/TextView;Z)V
-
-    .line 514
-    iget-object v6, p0, Lcom/mcp2p/media/MediaScreen$Screen;->chips:Landroid/widget/LinearLayout;
-
-    invoke-virtual {v6, v5}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
-
-    :cond_3
-    :goto_2
-    add-int/lit8 v4, v4, 0x1
-
-    goto :goto_0
-
-    .line 516
-    :cond_4
-    new-instance v1, Ljava/util/ArrayList;
-
-    invoke-direct {v1}, Ljava/util/ArrayList;-><init>()V
-
-    .line 517
-    invoke-interface {v0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
-
-    move-result-object v2
-
-    :cond_5
-    :goto_3
-    invoke-interface {v2}, Ljava/util/Iterator;->hasNext()Z
-
-    move-result v4
-
-    if-eqz v4, :cond_6
-
-    invoke-interface {v2}, Ljava/util/Iterator;->next()Ljava/lang/Object;
-
-    move-result-object v4
-
-    check-cast v4, Lcom/mcp2p/media/Sources$Stream;
-
-    iget-object v6, p0, Lcom/mcp2p/media/MediaScreen$Screen;->qFilter:Ljava/lang/String;
-
-    invoke-static {v4, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->matches(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Z
-
-    move-result v6
-
-    if-eqz v6, :cond_5
-
-    invoke-interface {v1, v4}, Ljava/util/List;->add(Ljava/lang/Object;)Z
-
-    goto :goto_3
-
-    .line 518
-    :cond_6
-    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->srcCount:Landroid/widget/TextView;
-
-    invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
-
-    move-result v4
-
-    if-eqz v4, :cond_7
-
-    const-string v4, ""
-
-    goto :goto_4
-
-    :cond_7
-    new-instance v4, Ljava/lang/StringBuilder;
-
-    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
-
-    invoke-interface {v1}, Ljava/util/List;->size()I
-
-    move-result v6
-
-    invoke-virtual {v4, v6}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-
-    const-string v6, " de "
-
-    invoke-virtual {v4, v6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-interface {v0}, Ljava/util/List;->size()I
-
-    move-result v6
-
-    invoke-virtual {v4, v6}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object v4
-
-    :goto_4
-    invoke-virtual {v2, v4}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-
-    .line 519
     invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
 
     move-result v2
 
-    if-eqz v2, :cond_8
+    if-eqz v2, :cond_0
 
-    const-string v2, "Todav\u00eda no hay ninguna versi\u00f3n en castellano en Peerflix ni en Torrentio. Vuelve a mirarlo en unos d\u00edas."
+    const-string v2, ""
 
-    goto :goto_5
+    goto :goto_0
 
-    :cond_8
-    const/4 v2, 0x0
+    :cond_0
+    invoke-interface {v0}, Ljava/util/List;->size()I
 
-    .line 522
-    :goto_5
-    iget-object v4, p1, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
+    move-result v2
 
-    invoke-interface {v4}, Ljava/util/List;->isEmpty()Z
+    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
 
-    move-result v4
+    move-result-object v2
 
-    if-nez v4, :cond_9
+    :goto_0
+    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+
+    .line 490
+    invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
+
+    move-result v1
+
+    if-eqz v1, :cond_1
+
+    const-string v1, "Todav\u00eda no hay ninguna versi\u00f3n en castellano en Peerflix ni en Torrentio. Vuelve a mirarlo en unos d\u00edas."
+
+    goto :goto_1
+
+    :cond_1
+    const/4 v1, 0x0
+
+    .line 493
+    :goto_1
+    iget-object v2, p1, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
+
+    invoke-interface {v2}, Ljava/util/List;->isEmpty()Z
+
+    move-result v2
+
+    if-nez v2, :cond_2
 
     invoke-interface {v0}, Ljava/util/List;->isEmpty()Z
 
-    move-result v0
+    move-result v2
 
-    if-nez v0, :cond_9
+    if-nez v2, :cond_2
 
-    .line 523
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
+    .line 494
+    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
-    new-instance v4, Ljava/lang/StringBuilder;
+    new-instance v3, Ljava/lang/StringBuilder;
 
-    const-string v6, "Sin respuesta de "
+    const-string v4, "Sin respuesta de "
 
-    invoke-direct {v4, v6}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+    invoke-direct {v3, v4}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
     iget-object p1, p1, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
 
-    invoke-interface {p1, v3}, Ljava/util/List;->get(I)Ljava/lang/Object;
+    const/4 v4, 0x0
+
+    invoke-interface {p1, v4}, Ljava/util/List;->get(I)Ljava/lang/Object;
 
     move-result-object p1
 
     check-cast p1, Ljava/lang/String;
 
-    invoke-virtual {v4, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invoke-virtual {v3, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     const-string p1, ": se muestran las dem\u00e1s fuentes"
 
-    invoke-virtual {v4, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invoke-virtual {v3, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
     move-result-object p1
 
-    invoke-static {v0, p1, v5}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
+    const/4 v3, 0x1
+
+    invoke-static {v2, p1, v3}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
     move-result-object p1
 
     invoke-virtual {p1}, Landroid/widget/Toast;->show()V
 
-    .line 524
-    :cond_9
+    .line 495
+    :cond_2
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->sourceAdapter:Lcom/mcp2p/media/MediaScreen$SourceAdapter;
 
-    invoke-virtual {p1, v1, v2}, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->set(Ljava/util/List;Ljava/lang/String;)V
+    invoke-virtual {p1, v0, v1}, Lcom/mcp2p/media/MediaScreen$SourceAdapter;->set(Ljava/util/List;Ljava/lang/String;)V
 
-    .line 525
+    .line 496
     iget-boolean p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
-    if-eqz p1, :cond_a
+    if-eqz p1, :cond_3
 
     iget-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->list:Landroid/widget/ListView;
 
-    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda1;
+    new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda0;
 
-    invoke-direct {v0, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda1;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
+    invoke-direct {v0, p0}, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda0;-><init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
 
     invoke-virtual {p1, v0}, Landroid/widget/ListView;->post(Ljava/lang/Runnable;)Z
 
-    :cond_a
+    :cond_3
     return-void
 .end method
 
 .method states(III)Landroid/graphics/drawable/StateListDrawable;
     .locals 2
 
-    .line 683
+    .line 648
     invoke-virtual {p0, p2, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->round(II)Landroid/graphics/drawable/GradientDrawable;
 
     move-result-object p2
 
     const/high16 v0, 0x40200000    # 2.5f
 
-    .line 684
+    .line 649
     invoke-virtual {p0, v0}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v0
@@ -4684,14 +4345,14 @@
 
     invoke-virtual {p2, v0, v1}, Landroid/graphics/drawable/GradientDrawable;->setStroke(II)V
 
-    .line 685
+    .line 650
     new-instance v0, Landroid/graphics/drawable/StateListDrawable;
 
     invoke-direct {v0}, Landroid/graphics/drawable/StateListDrawable;-><init>()V
 
     const v1, 0x101009c
 
-    .line 686
+    .line 651
     filled-new-array {v1}, [I
 
     move-result-object v1
@@ -4700,7 +4361,7 @@
 
     const v1, 0x10100a7
 
-    .line 687
+    .line 652
     filled-new-array {v1}, [I
 
     move-result-object v1
@@ -4711,7 +4372,7 @@
 
     new-array p2, p2, [I
 
-    .line 688
+    .line 653
     invoke-virtual {p0, p1, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->round(II)Landroid/graphics/drawable/GradientDrawable;
 
     move-result-object p1
@@ -4746,7 +4407,7 @@
     :goto_1
     const/16 v2, 0x12
 
-    .line 637
+    .line 602
     invoke-virtual {p0, v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->states(III)Landroid/graphics/drawable/StateListDrawable;
 
     move-result-object v0
@@ -4762,13 +4423,13 @@
     :cond_2
     const v0, -0x726d56
 
-    .line 638
+    .line 603
     :goto_2
     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setTextColor(I)V
 
     if-eqz p2, :cond_3
 
-    .line 639
+    .line 604
     sget-object p2, Landroid/graphics/Typeface;->DEFAULT_BOLD:Landroid/graphics/Typeface;
 
     goto :goto_3
@@ -4785,25 +4446,25 @@
 .method text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
     .locals 2
 
-    .line 601
+    .line 566
     new-instance v0, Landroid/widget/TextView;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v0, v1}, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
 
-    .line 602
+    .line 567
     invoke-virtual {v0, p1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 603
+    .line 568
     invoke-virtual {v0, p2}, Landroid/widget/TextView;->setTextSize(F)V
 
-    .line 604
+    .line 569
     invoke-virtual {v0, p3}, Landroid/widget/TextView;->setTextColor(I)V
 
     if-eqz p4, :cond_0
 
-    .line 605
+    .line 570
     sget-object p1, Landroid/graphics/Typeface;->DEFAULT_BOLD:Landroid/graphics/Typeface;
 
     invoke-virtual {v0, p1}, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
@@ -4811,7 +4472,7 @@
     :cond_0
     const/4 p1, 0x0
 
-    .line 606
+    .line 571
     invoke-virtual {v0, p1}, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
 
     return-object v0
@@ -4820,7 +4481,7 @@
 .method urlField(Ljava/lang/String;Ljava/lang/String;)Landroid/widget/EditText;
     .locals 2
 
-    .line 350
+    .line 347
     new-instance v0, Landroid/widget/EditText;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -4829,23 +4490,23 @@
 
     const/4 v1, 0x1
 
-    .line 351
+    .line 348
     invoke-virtual {v0, v1}, Landroid/widget/EditText;->setSingleLine(Z)V
 
-    .line 352
+    .line 349
     invoke-virtual {v0, p1}, Landroid/widget/EditText;->setHint(Ljava/lang/CharSequence;)V
 
-    .line 353
+    .line 350
     invoke-virtual {v0, p2}, Landroid/widget/EditText;->setText(Ljava/lang/CharSequence;)V
 
     const/high16 p1, 0x41600000    # 14.0f
 
-    .line 354
+    .line 351
     invoke-virtual {v0, p1}, Landroid/widget/EditText;->setTextSize(F)V
 
     const/16 p1, 0x11
 
-    .line 355
+    .line 352
     invoke-virtual {v0, p1}, Landroid/widget/EditText;->setInputType(I)V
 
     return-object v0
@@ -4854,7 +4515,7 @@
 .method wrap(Landroid/view/View;)Landroid/view/View;
     .locals 5
 
-    .line 669
+    .line 634
     new-instance v0, Landroid/widget/FrameLayout;
 
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -4863,7 +4524,7 @@
 
     const/high16 v1, 0x41b00000    # 22.0f
 
-    .line 670
+    .line 635
     invoke-virtual {p0, v1}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v2
@@ -4882,7 +4543,7 @@
 
     invoke-virtual {v0, v2, v3, v1, v4}, Landroid/widget/FrameLayout;->setPadding(IIII)V
 
-    .line 671
+    .line 636
     invoke-virtual {v0, p1}, Landroid/widget/FrameLayout;->addView(Landroid/view/View;)V
 
     return-object v0

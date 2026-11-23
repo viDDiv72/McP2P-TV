@@ -3,38 +3,40 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/View$OnClickListener;
+.implements Landroid/widget/AdapterView$OnItemClickListener;
 
 
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-.field public final synthetic f$1:[Ljava/lang/String;
-
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;[Ljava/lang/String;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;->f$1:[Ljava/lang/String;
-
     return-void
 .end method
 
 
 # virtual methods
-.method public final onClick(Landroid/view/View;)V
-    .locals 2
+.method public final onItemClick(Landroid/widget/AdapterView;Landroid/view/View;IJ)V
+    .locals 6
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda6;->f$1:[Ljava/lang/String;
+    move-object v1, p1
 
-    invoke-virtual {v0, v1, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$2$com-mcp2p-media-MediaScreen$Screen([Ljava/lang/String;Landroid/view/View;)V
+    move-object v2, p2
+
+    move v3, p3
+
+    move-wide v4, p4
+
+    invoke-virtual/range {v0 .. v5}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$3$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/AdapterView;Landroid/view/View;IJ)V
 
     return-void
 .end method

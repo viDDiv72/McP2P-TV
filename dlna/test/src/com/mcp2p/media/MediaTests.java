@@ -49,7 +49,10 @@ public final class MediaTests {
         List<Sources.Stream> origen = Sources.merge(Arrays.asList(
                 Sources.parse("Peerflix", read(dir, "peerflix_tt1375666.json"), 2010),
                 Sources.parse("Torrentio", read(dir, "torrentio_tt1375666.json"), 2010)));
-        eq("Origen: 20 fuentes en castellano", 20, origen.size());
+        eq("Origen: 17 fuentes en castellano (4K/1080p/720p)", 17, origen.size());
+        boolean onlyHd = true;
+        for (Sources.Stream s : origen) if (!Sources.ALLOWED.contains(s.quality)) onlyHd = false;
+        ok("Origen: solo 4K, 1080p y 720p (fuera SD, 3D y cine)", onlyHd);
         boolean allEs = true, anyEn = false, sorted = true;
         for (Sources.Stream s : origen) {
             String t = s.title.toLowerCase();
@@ -74,7 +77,7 @@ public final class MediaTests {
         List<Sources.Stream> noche = Sources.merge(Arrays.asList(
                 Sources.parse("Peerflix", read(dir, "peerflix_tt0063350.json"), 1968),
                 Sources.parse("Torrentio", read(dir, "torrentio_tt0063350.json"), 1968)));
-        eq("Noche de los muertos vivientes: 10 fuentes", 10, noche.size());
+        eq("Noche de los muertos vivientes: 7 fuentes", 7, noche.size());
         boolean remake = false;
         for (Sources.Stream s : noche) if (s.title.contains("2026")) remake = true;
         ok("Noche: fuera la versión de 2026", !remake);

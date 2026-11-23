@@ -100,6 +100,9 @@ public final class Sources {
         return "SD";
     }
 
+    /** Calidades que se muestran: el resto (SD, 3D, grabaciones de cine) se descarta. */
+    static final java.util.Set<String> ALLOWED = new java.util.HashSet<>(java.util.Arrays.asList("4K", "1080p", "720p"));
+
     static int rank(String q) {
         switch (q) {
             case "4K": return 5;
@@ -139,6 +142,7 @@ public final class Sources {
             s.infoHash = hash.toLowerCase(Locale.ROOT);
             s.title = title;
             s.quality = quality(Json.str(x, "name"), title);
+            if (!ALLOWED.contains(s.quality)) continue; // solo 4K, 1080p y 720p
             s.fileIdx = (int) Json.lng(x, "fileIdx", -1);
             s.seeds = (int) Json.lng(x, "seed", seedsFrom(text));
             s.size = Json.lng(x, "sizebytes", sizeFrom(text));

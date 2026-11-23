@@ -12,6 +12,16 @@
 
 
 # static fields
+.field static final ALLOWED:Ljava/util/Set;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Ljava/util/Set<",
+            "Ljava/lang/String;",
+            ">;"
+        }
+    .end annotation
+.end field
+
 .field private static final CAST:Ljava/util/regex/Pattern;
 
 .field private static final CAST_WORD:Ljava/util/regex/Pattern;
@@ -33,7 +43,7 @@
 
 # direct methods
 .method static constructor <clinit>()V
-    .locals 2
+    .locals 4
 
     const-string v0, "castellano|\\bcast\\b|espa[\u00f1n]ol|\\[esp\\]|\\(esp\\)|\\bspanish\\b"
 
@@ -100,6 +110,27 @@
 
     sput-object v0, Lcom/mcp2p/media/Sources;->YEAR:Ljava/util/regex/Pattern;
 
+    .line 104
+    new-instance v0, Ljava/util/HashSet;
+
+    const-string v1, "1080p"
+
+    const-string v2, "720p"
+
+    const-string v3, "4K"
+
+    filled-new-array {v3, v1, v2}, [Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v1}, Ljava/util/Arrays;->asList([Ljava/lang/Object;)Ljava/util/List;
+
+    move-result-object v1
+
+    invoke-direct {v0, v1}, Ljava/util/HashSet;-><init>(Ljava/util/Collection;)V
+
+    sput-object v0, Lcom/mcp2p/media/Sources;->ALLOWED:Ljava/util/Set;
+
     return-void
 .end method
 
@@ -118,7 +149,7 @@
     :try_start_0
     const-string v0, "UTF-8"
 
-    .line 227
+    .line 231
     invoke-static {p0, v0}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
@@ -303,7 +334,7 @@
 .method static synthetic lambda$sort$0(Lcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Sources$Stream;)I
     .locals 4
 
-    .line 206
+    .line 210
     iget v0, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     const/4 v1, 0x1
@@ -338,7 +369,7 @@
 
     return v0
 
-    .line 208
+    .line 212
     :cond_2
     iget-object v0, p1, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
 
@@ -360,7 +391,7 @@
 
     return v0
 
-    .line 210
+    .line 214
     :cond_3
     iget p1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
@@ -376,7 +407,7 @@
 .method public static magnet(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
-    .line 218
+    .line 222
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "magnet:?xt=urn:btih:"
@@ -389,7 +420,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 219
+    .line 223
     invoke-virtual {p1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -406,7 +437,7 @@
 
     invoke-virtual {v0, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 220
+    .line 224
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -439,7 +470,7 @@
 
     goto :goto_0
 
-    .line 221
+    .line 225
     :cond_1
     iget p1, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
@@ -453,7 +484,7 @@
 
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
-    .line 222
+    .line 226
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -477,12 +508,12 @@
         }
     .end annotation
 
-    .line 182
+    .line 186
     new-instance v0, Ljava/util/LinkedHashMap;
 
     invoke-direct {v0}, Ljava/util/LinkedHashMap;-><init>()V
 
-    .line 183
+    .line 187
     invoke-interface {p0}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object p0
@@ -500,7 +531,7 @@
 
     check-cast v1, Ljava/util/List;
 
-    .line 184
+    .line 188
     invoke-interface {v1}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
     move-result-object v1
@@ -519,7 +550,7 @@
 
     check-cast v2, Lcom/mcp2p/media/Sources$Stream;
 
-    .line 185
+    .line 189
     iget-object v3, v2, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
 
     invoke-interface {v0, v3}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
@@ -530,14 +561,14 @@
 
     if-nez v3, :cond_2
 
-    .line 187
+    .line 191
     iget-object v3, v2, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
 
     invoke-interface {v0, v3, v2}, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
     goto :goto_0
 
-    .line 190
+    .line 194
     :cond_2
     iget-object v4, v3, Lcom/mcp2p/media/Sources$Stream;->addon:Ljava/lang/String;
 
@@ -571,7 +602,7 @@
 
     iput-object v4, v3, Lcom/mcp2p/media/Sources$Stream;->addon:Ljava/lang/String;
 
-    .line 191
+    .line 195
     :cond_3
     iget v4, v3, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
@@ -583,7 +614,7 @@
 
     iput v4, v3, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
-    .line 192
+    .line 196
     iget-wide v4, v3, Lcom/mcp2p/media/Sources$Stream;->size:J
 
     const-wide/16 v6, 0x0
@@ -596,7 +627,7 @@
 
     iput-wide v4, v3, Lcom/mcp2p/media/Sources$Stream;->size:J
 
-    .line 193
+    .line 197
     :cond_4
     iget v4, v3, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
@@ -606,7 +637,7 @@
 
     iput v4, v3, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
-    .line 194
+    .line 198
     :cond_5
     iget-object v4, v3, Lcom/mcp2p/media/Sources$Stream;->file:Ljava/lang/String;
 
@@ -616,7 +647,7 @@
 
     iput-object v4, v3, Lcom/mcp2p/media/Sources$Stream;->file:Ljava/lang/String;
 
-    .line 195
+    .line 199
     :cond_6
     iget-object v2, v2, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -662,7 +693,7 @@
 
     goto :goto_1
 
-    .line 198
+    .line 202
     :cond_8
     new-instance p0, Ljava/util/ArrayList;
 
@@ -672,7 +703,7 @@
 
     invoke-direct {p0, v0}, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
 
-    .line 199
+    .line 203
     invoke-static {p0}, Lcom/mcp2p/media/Sources;->sort(Ljava/util/List;)V
 
     return-object p0
@@ -692,12 +723,12 @@
         }
     .end annotation
 
-    .line 118
+    .line 121
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
-    .line 121
+    .line 124
     :try_start_0
     invoke-static {p1}, Lcom/mcp2p/media/Json;->parse(Ljava/lang/String;)Ljava/lang/Object;
 
@@ -711,7 +742,7 @@
 
     const-string v1, "streams"
 
-    .line 125
+    .line 128
     invoke-interface {p1, v1}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p1
@@ -730,20 +761,20 @@
 
     move-result v1
 
-    if-eqz v1, :cond_9
+    if-eqz v1, :cond_a
 
     invoke-interface {p1}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
     move-result-object v1
 
-    .line 126
+    .line 129
     invoke-static {v1}, Lcom/mcp2p/media/Json;->obj(Ljava/lang/Object;)Ljava/util/Map;
 
     move-result-object v1
 
     const-string v2, "infoHash"
 
-    .line 127
+    .line 130
     invoke-static {v1, v2}, Lcom/mcp2p/media/Json;->str(Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -752,7 +783,7 @@
 
     const-string v3, "(?i)[0-9a-f]{40}"
 
-    .line 128
+    .line 131
     invoke-virtual {v2, v3}, Ljava/lang/String;->matches(Ljava/lang/String;)Z
 
     move-result v3
@@ -764,7 +795,7 @@
     :cond_1
     const-string v3, "title"
 
-    .line 129
+    .line 132
     invoke-static {v1, v3}, Lcom/mcp2p/media/Json;->str(Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v3
@@ -773,7 +804,7 @@
 
     const-string v3, "description"
 
-    .line 130
+    .line 133
     invoke-static {v1, v3}, Lcom/mcp2p/media/Json;->str(Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v3
@@ -788,28 +819,28 @@
     :cond_3
     const-string v5, "\r"
 
-    .line 132
+    .line 135
     invoke-virtual {v3, v5, v4}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
 
     move-result-object v3
 
     const-string v4, "\n"
 
-    .line 133
+    .line 136
     invoke-virtual {v3, v4}, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
 
     move-result-object v4
 
     const/4 v5, 0x0
 
-    .line 134
+    .line 137
     aget-object v6, v4, v5
 
     invoke-virtual {v6}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object v6
 
-    .line 135
+    .line 138
     invoke-static {p0, v1, v6}, Lcom/mcp2p/media/Sources;->isCastilian(Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Z
 
     move-result v7
@@ -824,16 +855,16 @@
 
     goto :goto_0
 
-    .line 137
+    .line 140
     :cond_4
     new-instance v7, Lcom/mcp2p/media/Sources$Stream;
 
     invoke-direct {v7}, Lcom/mcp2p/media/Sources$Stream;-><init>()V
 
-    .line 138
+    .line 141
     iput-object p0, v7, Lcom/mcp2p/media/Sources$Stream;->addon:Ljava/lang/String;
 
-    .line 139
+    .line 142
     sget-object v8, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
 
     invoke-virtual {v2, v8}, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
@@ -842,12 +873,12 @@
 
     iput-object v2, v7, Lcom/mcp2p/media/Sources$Stream;->infoHash:Ljava/lang/String;
 
-    .line 140
+    .line 143
     iput-object v6, v7, Lcom/mcp2p/media/Sources$Stream;->title:Ljava/lang/String;
 
     const-string v2, "name"
 
-    .line 141
+    .line 144
     invoke-static {v1, v2}, Lcom/mcp2p/media/Json;->str(Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
@@ -858,11 +889,25 @@
 
     iput-object v2, v7, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
 
+    .line 145
+    sget-object v2, Lcom/mcp2p/media/Sources;->ALLOWED:Ljava/util/Set;
+
+    iget-object v8, v7, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
+
+    invoke-interface {v2, v8}, Ljava/util/Set;->contains(Ljava/lang/Object;)Z
+
+    move-result v2
+
+    if-nez v2, :cond_5
+
+    goto :goto_0
+
+    :cond_5
     const-string v2, "fileIdx"
 
     const-wide/16 v8, -0x1
 
-    .line 142
+    .line 146
     invoke-static {v1, v2, v8, v9}, Lcom/mcp2p/media/Json;->lng(Ljava/util/Map;Ljava/lang/String;J)J
 
     move-result-wide v8
@@ -871,7 +916,7 @@
 
     iput v2, v7, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
-    .line 143
+    .line 147
     invoke-static {v3}, Lcom/mcp2p/media/Sources;->seedsFrom(Ljava/lang/String;)I
 
     move-result v2
@@ -890,7 +935,7 @@
 
     const-string v2, "sizebytes"
 
-    .line 144
+    .line 148
     invoke-static {v3}, Lcom/mcp2p/media/Sources;->sizeFrom(Ljava/lang/String;)J
 
     move-result-wide v8
@@ -901,14 +946,14 @@
 
     iput-wide v8, v7, Lcom/mcp2p/media/Sources$Stream;->size:J
 
-    .line 145
+    .line 149
     invoke-static {v3, p0}, Lcom/mcp2p/media/Sources;->providerFrom(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
 
     iput-object v2, v7, Lcom/mcp2p/media/Sources$Stream;->provider:Ljava/lang/String;
 
-    .line 146
+    .line 150
     sget-object v2, Lcom/mcp2p/media/Sources;->ENGLISH:Ljava/util/regex/Pattern;
 
     invoke-virtual {v2, v6}, Ljava/util/regex/Pattern;->matcher(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
@@ -923,7 +968,7 @@
 
     const-string v2, "behaviorHints"
 
-    .line 147
+    .line 151
     invoke-interface {v1, v2}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v2
@@ -934,19 +979,19 @@
 
     const-string v3, "filename"
 
-    .line 148
+    .line 152
     invoke-static {v2, v3}, Lcom/mcp2p/media/Json;->str(Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
 
     const/4 v3, 0x1
 
-    if-nez v2, :cond_5
+    if-nez v2, :cond_6
 
-    .line 149
+    .line 153
     array-length v8, v4
 
-    if-le v8, v3, :cond_5
+    if-le v8, v3, :cond_6
 
     aget-object v8, v4, v3
 
@@ -956,7 +1001,7 @@
 
     move-result v8
 
-    if-nez v8, :cond_5
+    if-nez v8, :cond_6
 
     aget-object v2, v4, v3
 
@@ -964,11 +1009,11 @@
 
     move-result-object v2
 
-    .line 150
-    :cond_5
+    .line 154
+    :cond_6
     iput-object v2, v7, Lcom/mcp2p/media/Sources$Stream;->file:Ljava/lang/String;
 
-    .line 151
+    .line 155
     sget-object v4, Lcom/mcp2p/media/Sources;->PACK:Ljava/util/regex/Pattern;
 
     invoke-virtual {v4, v6}, Ljava/util/regex/Pattern;->matcher(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
@@ -979,24 +1024,24 @@
 
     move-result v4
 
-    if-eqz v4, :cond_6
+    if-eqz v4, :cond_7
 
-    if-eqz v2, :cond_6
+    if-eqz v2, :cond_7
 
     invoke-virtual {v2}, Ljava/lang/String;->isEmpty()Z
 
     move-result v2
 
-    if-nez v2, :cond_6
+    if-nez v2, :cond_7
 
     move v5, v3
 
-    :cond_6
+    :cond_7
     iput-boolean v5, v7, Lcom/mcp2p/media/Sources$Stream;->pack:Z
 
     const-string v2, "sources"
 
-    .line 152
+    .line 156
     invoke-interface {v1, v2}, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v1
@@ -1009,31 +1054,31 @@
 
     move-result-object v1
 
-    :cond_7
+    :cond_8
     :goto_1
     invoke-interface {v1}, Ljava/util/Iterator;->hasNext()Z
 
     move-result v2
 
-    if-eqz v2, :cond_8
+    if-eqz v2, :cond_9
 
     invoke-interface {v1}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
     move-result-object v2
 
-    .line 153
+    .line 157
     invoke-static {v2}, Ljava/lang/String;->valueOf(Ljava/lang/Object;)Ljava/lang/String;
 
     move-result-object v2
 
     const-string v3, "tracker:"
 
-    .line 154
+    .line 158
     invoke-virtual {v2, v3}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v3
 
-    if-eqz v3, :cond_7
+    if-eqz v3, :cond_8
 
     iget-object v3, v7, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -1043,7 +1088,7 @@
 
     const/16 v4, 0xc
 
-    if-ge v3, v4, :cond_7
+    if-ge v3, v4, :cond_8
 
     iget-object v3, v7, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -1057,14 +1102,14 @@
 
     goto :goto_1
 
-    .line 156
-    :cond_8
+    .line 160
+    :cond_9
     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
 
     goto/16 :goto_0
 
     :catch_0
-    :cond_9
+    :cond_a
     return-object v0
 .end method
 
@@ -1073,7 +1118,7 @@
 
     const-string v0, "(?:\u2699\ufe0f|\ud83c\udf10)\\s*([^\\n]+)"
 
-    .line 174
+    .line 178
     invoke-static {v0}, Ljava/util/regex/Pattern;->compile(Ljava/lang/String;)Ljava/util/regex/Pattern;
 
     move-result-object v0
@@ -1082,7 +1127,7 @@
 
     move-result-object p0
 
-    .line 175
+    .line 179
     invoke-virtual {p0}, Ljava/util/regex/Matcher;->find()Z
 
     move-result v0
@@ -1293,7 +1338,7 @@
 .method static rank(Ljava/lang/String;)I
     .locals 7
 
-    .line 104
+    .line 107
     invoke-virtual {p0}, Ljava/lang/String;->hashCode()I
 
     invoke-virtual {p0}, Ljava/lang/String;->hashCode()I
@@ -1442,7 +1487,7 @@
 
     const-string v0, "\ud83d\udc64\\s*(\\d+)"
 
-    .line 162
+    .line 166
     invoke-static {v0}, Ljava/util/regex/Pattern;->compile(Ljava/lang/String;)Ljava/util/regex/Pattern;
 
     move-result-object v0
@@ -1451,7 +1496,7 @@
 
     move-result-object p0
 
-    .line 163
+    .line 167
     invoke-virtual {p0}, Ljava/util/regex/Matcher;->find()Z
 
     move-result v0
@@ -1499,7 +1544,7 @@
 
     const-string v0, "es-ES"
 
-    .line 236
+    .line 240
     invoke-static {v0}, Ljava/util/Locale;->forLanguageTag(Ljava/lang/String;)Ljava/util/Locale;
 
     move-result-object v0
@@ -1526,7 +1571,7 @@
 
     return-object p0
 
-    .line 237
+    .line 241
     :cond_1
     new-instance v0, Ljava/lang/StringBuilder;
 
@@ -1554,7 +1599,7 @@
 
     const-string v0, "\ud83d\udcbe\\s*([\\d.]+)\\s*(GB|MB)"
 
-    .line 167
+    .line 171
     invoke-static {v0}, Ljava/util/regex/Pattern;->compile(Ljava/lang/String;)Ljava/util/regex/Pattern;
 
     move-result-object v0
@@ -1563,7 +1608,7 @@
 
     move-result-object p0
 
-    .line 168
+    .line 172
     invoke-virtual {p0}, Ljava/util/regex/Matcher;->find()Z
 
     move-result v0
@@ -1577,7 +1622,7 @@
     :cond_0
     const/4 v0, 0x1
 
-    .line 169
+    .line 173
     invoke-virtual {p0, v0}, Ljava/util/regex/Matcher;->group(I)Ljava/lang/String;
 
     move-result-object v0
@@ -1588,7 +1633,7 @@
 
     const/4 v2, 0x2
 
-    .line 170
+    .line 174
     invoke-virtual {p0, v2}, Ljava/util/regex/Matcher;->group(I)Ljava/lang/String;
 
     move-result-object p0
@@ -1629,7 +1674,7 @@
         }
     .end annotation
 
-    .line 205
+    .line 209
     new-instance v0, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;
 
     invoke-direct {v0}, Lcom/mcp2p/media/Sources$$ExternalSyntheticLambda0;-><init>()V

@@ -55,7 +55,6 @@ public final class MediaScreen {
     static final int BG = 0xFF0B0C14, S1 = 0xFF141625, S2 = 0xFF1B1E31, LINE = 0xFF24283F, TEXT = 0xFFEEF0F8,
             MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF, OK = 0xFF4FD08A, STAR = 0xFFF0B44C;
     static final String[][] TABS = {{"popular", "Populares"}, {"now_playing", "Estrenos"}, {"top_rated", "Mejor valoradas"}};
-    static final String[] QUALITIES = {"Todas", "4K", "1080p", "720p", "SD"};
     static final String PREFS = "mcp2p_media";
 
     private MediaScreen() {}
@@ -100,11 +99,9 @@ public final class MediaScreen {
         ListView list;
         final SourceAdapter sourceAdapter;
         Catalog.Movie cur;
-        String qFilter = "Todas";
         ImageView heroBg, heroPoster;
         TextView backBtn;
         TextView heroTitle, heroMeta, heroOv, srcCount;
-        LinearLayout chips;
         int detailGen;
 
         Screen(Activity a) {
@@ -431,8 +428,6 @@ public final class MediaScreen {
             wrapAll.addView(hero, new LinearLayout.LayoutParams(-1, dp(tv ? 300 : 280)));
 
             LinearLayout bar = new LinearLayout(a);
-            bar.setOrientation(tv ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-            bar.setGravity(tv ? Gravity.CENTER_VERTICAL : Gravity.START);
             bar.setPadding(0, dp(4), 0, dp(10));
             LinearLayout t = new LinearLayout(a);
             t.setGravity(Gravity.BOTTOM);
@@ -440,21 +435,13 @@ public final class MediaScreen {
             srcCount = text("", 13, DIM, false);
             srcCount.setPadding(dp(8), 0, 0, dp(1));
             t.addView(srcCount);
-            bar.addView(t, new LinearLayout.LayoutParams(tv ? 0 : -1, -2, tv ? 1f : 0f));
-            HorizontalScrollView hs = new HorizontalScrollView(a);
-            hs.setHorizontalScrollBarEnabled(false);
-            chips = new LinearLayout(a);
-            hs.addView(chips);
-            LinearLayout.LayoutParams cl = new LinearLayout.LayoutParams(-2, -2);
-            if (!tv) cl.topMargin = dp(8);
-            bar.addView(hs, cl);
+            bar.addView(t, new LinearLayout.LayoutParams(-1, -2));
             wrapAll.addView(bar);
             return wrapAll;
         }
 
         void openMovie(final Catalog.Movie m) {
             cur = m;
-            qFilter = "Todas";
             final int g = ++detailGen;
             catalogView.setVisibility(View.GONE);
             detailView.setVisibility(View.VISIBLE);
@@ -469,7 +456,6 @@ public final class MediaScreen {
                 showSources(f);
             } else {
                 sourceAdapter.set(null, "Buscando fuentes en castellano en Peerflix y Torrentio…");
-                chips.removeAllViews();
                 srcCount.setText("");
                 io.execute(() -> {
                     Catalog.Found r = null;
@@ -500,28 +486,13 @@ public final class MediaScreen {
 
         void showSources(Catalog.Found f) {
             List<Sources.Stream> all = f.streams;
-            chips.removeAllViews();
-            for (String q : QUALITIES) {
-                boolean has = "Todas".equals(q);
-                for (Sources.Stream s : all) if (matches(s, q)) has = true;
-                if (!has || all.isEmpty()) continue;
-                final String qq = q;
-                TextView c = chip(q, v -> {
-                    qFilter = qq;
-                    showSources(f);
-                });
-                styleChip(c, q.equals(qFilter));
-                chips.addView(c);
-            }
-            List<Sources.Stream> shown = new ArrayList<>();
-            for (Sources.Stream s : all) if (matches(s, qFilter)) shown.add(s);
-            srcCount.setText(all.isEmpty() ? "" : shown.size() + " de " + all.size());
+            srcCount.setText(all.isEmpty() ? "" : String.valueOf(all.size()));
             String empty = all.isEmpty()
                     ? "Todavía no hay ninguna versión en castellano en Peerflix ni en Torrentio. Vuelve a mirarlo en unos días."
                     : null;
             if (!f.failed.isEmpty() && !all.isEmpty())
                 Toast.makeText(a, "Sin respuesta de " + f.failed.get(0) + ": se muestran las demás fuentes", Toast.LENGTH_LONG).show();
-            sourceAdapter.set(shown, empty);
+            sourceAdapter.set(all, empty);
             if (tv) list.post(this::focusFirstRow);
         }
 
@@ -533,12 +504,6 @@ public final class MediaScreen {
                     return;
                 }
             }
-        }
-
-        static boolean matches(Sources.Stream s, String q) {
-            if ("Todas".equals(q)) return true;
-            if ("SD".equals(q)) return "SD".equals(s.quality) || "CINE".equals(s.quality) || "3D".equals(s.quality);
-            return q.equals(s.quality);
         }
 
         void closeMovie() {
@@ -802,7 +767,7 @@ public final class MediaScreen {
         void set(List<Sources.Stream> l, String msg) {
             items.clear();
             if (l != null) items.addAll(l);
-            message = items.isEmpty() ? (msg == null ? "No hay fuentes con esta calidad." : msg) : null;
+            message = items.isEmpty() ? (msg == null ? "No hay fuentes en castellano." : msg) : null;
             notifyDataSetChanged();
         }
 

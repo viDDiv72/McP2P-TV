@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/widget/AdapterView$OnItemClickListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
@@ -23,20 +23,12 @@
 
 
 # virtual methods
-.method public final onItemClick(Landroid/widget/AdapterView;Landroid/view/View;IJ)V
-    .locals 6
+.method public final run()V
+    .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda7;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    move-object v1, p1
-
-    move-object v2, p2
-
-    move v3, p3
-
-    move-wide v4, p4
-
-    invoke-virtual/range {v0 .. v5}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$3$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/AdapterView;Landroid/view/View;IJ)V
+    invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$loadMore$4$com-mcp2p-media-MediaScreen$Screen()V
 
     return-void
 .end method

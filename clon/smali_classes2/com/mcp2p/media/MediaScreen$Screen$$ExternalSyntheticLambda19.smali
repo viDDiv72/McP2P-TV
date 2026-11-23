@@ -3,34 +3,38 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/widget/TextView$OnEditorActionListener;
+.implements Landroid/content/DialogInterface$OnShowListener;
 
 
 # instance fields
-.field public final synthetic f$0:Ljava/lang/Runnable;
+.field public final synthetic f$0:Landroid/app/AlertDialog;
+
+.field public final synthetic f$1:Ljava/lang/Runnable;
 
 
 # direct methods
-.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Landroid/app/AlertDialog;Ljava/lang/Runnable;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$0:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$0:Landroid/app/AlertDialog;
+
+    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$1:Ljava/lang/Runnable;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-    .locals 1
+.method public final onShow(Landroid/content/DialogInterface;)V
+    .locals 2
 
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$0:Ljava/lang/Runnable;
+    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$0:Landroid/app/AlertDialog;
 
-    invoke-static {v0, p1, p2, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$11(Ljava/lang/Runnable;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda19;->f$1:Ljava/lang/Runnable;
 
-    move-result p1
+    invoke-static {v0, v1, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$13(Landroid/app/AlertDialog;Ljava/lang/Runnable;Landroid/content/DialogInterface;)V
 
-    return p1
+    return-void
 .end method

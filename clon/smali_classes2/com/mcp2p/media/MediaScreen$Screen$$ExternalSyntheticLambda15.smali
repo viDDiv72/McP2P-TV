@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
@@ -23,12 +23,12 @@
 
 
 # virtual methods
-.method public final run()V
+.method public final onClick(Landroid/view/View;)V
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$refreshSoon$8$com-mcp2p-media-MediaScreen$Screen()V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildHero$16$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
 
     return-void
 .end method

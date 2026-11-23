@@ -34,13 +34,13 @@
 .method constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 13
 
-    .line 867
+    .line 832
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 868
+    .line 833
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Row;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    .line 869
+    .line 834
     new-instance v0, Landroid/widget/LinearLayout;
 
     iget-object v1, p1, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
@@ -51,18 +51,18 @@
 
     const/16 v1, 0x10
 
-    .line 870
+    .line 835
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setGravity(I)V
 
     const/4 v1, 0x1
 
-    .line 871
+    .line 836
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setFocusable(Z)V
 
-    .line 872
+    .line 837
     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setClickable(Z)V
 
-    .line 873
+    .line 838
     iget-boolean v2, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     const/high16 v3, 0x41800000    # 16.0f
@@ -139,17 +139,17 @@
 
     const v5, -0xebe9db
 
-    .line 874
+    .line 839
     invoke-virtual {p1, v5, v2, v4}, Lcom/mcp2p/media/MediaScreen$Screen;->states(III)Landroid/graphics/drawable/StateListDrawable;
 
     move-result-object v2
 
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 875
+    .line 840
     invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->markOwnStyle(Landroid/view/View;)V
 
-    .line 876
+    .line 841
     iget-boolean v2, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     const/high16 v4, 0x41480000    # 12.5f
@@ -178,12 +178,12 @@
 
     const/16 v9, 0x11
 
-    .line 877
+    .line 842
     invoke-virtual {v2, v9}, Landroid/widget/TextView;->setGravity(I)V
 
     const/high16 v9, 0x40c00000    # 6.0f
 
-    .line 878
+    .line 843
     invoke-virtual {p1, v9}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v10
@@ -196,7 +196,7 @@
 
     invoke-virtual {v2, v11, v10, v11, v9}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 879
+    .line 844
     new-instance v9, Landroid/widget/LinearLayout$LayoutParams;
 
     iget-boolean v10, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
@@ -221,17 +221,17 @@
 
     invoke-virtual {v0, v2, v9}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 880
+    .line 845
     new-instance v2, Landroid/widget/LinearLayout;
 
     iget-object v9, p1, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v2, v9}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    .line 881
+    .line 846
     invoke-virtual {v2, v1}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
-    .line 882
+    .line 847
     iget-boolean v9, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v9, :cond_6
@@ -254,7 +254,7 @@
 
     invoke-virtual {v2, v9, v11, v6, v11}, Landroid/widget/LinearLayout;->setPadding(IIII)V
 
-    .line 883
+    .line 848
     iget-boolean v6, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v6, :cond_7
@@ -273,18 +273,18 @@
 
     iput-object v6, p0, Lcom/mcp2p/media/MediaScreen$Row;->title:Landroid/widget/TextView;
 
-    .line 884
+    .line 849
     invoke-virtual {v6, v1}, Landroid/widget/TextView;->setSingleLine(Z)V
 
-    .line 885
+    .line 850
     sget-object v9, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
 
     invoke-virtual {v6, v9}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
 
-    .line 886
+    .line 851
     invoke-virtual {v2, v6}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 887
+    .line 852
     iget-boolean v6, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v6, :cond_8
@@ -303,27 +303,27 @@
 
     iput-object v4, p0, Lcom/mcp2p/media/MediaScreen$Row;->sub:Landroid/widget/TextView;
 
-    .line 888
+    .line 853
     invoke-virtual {v4, v1}, Landroid/widget/TextView;->setSingleLine(Z)V
 
-    .line 889
+    .line 854
     sget-object v6, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
 
     invoke-virtual {v4, v6}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
 
     const/high16 v6, 0x40800000    # 4.0f
 
-    .line 890
+    .line 855
     invoke-virtual {p1, v6}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result v6
 
     invoke-virtual {v4, v11, v6, v11, v11}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 891
+    .line 856
     invoke-virtual {v2, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 892
+    .line 857
     new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
 
     const/high16 v6, 0x3f800000    # 1.0f
@@ -332,22 +332,22 @@
 
     invoke-virtual {v0, v2, v4}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
 
-    .line 893
+    .line 858
     new-instance v2, Landroid/widget/LinearLayout;
 
     iget-object v4, p1, Lcom/mcp2p/media/MediaScreen$Screen;->a:Landroid/app/Activity;
 
     invoke-direct {v2, v4}, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
 
-    .line 894
+    .line 859
     invoke-virtual {v2, v1}, Landroid/widget/LinearLayout;->setOrientation(I)V
 
     const v4, 0x800005
 
-    .line 895
+    .line 860
     invoke-virtual {v2, v4}, Landroid/widget/LinearLayout;->setGravity(I)V
 
-    .line 896
+    .line 861
     iget-boolean v4, p1, Lcom/mcp2p/media/MediaScreen$Screen;->tv:Z
 
     if-eqz v4, :cond_9
@@ -364,12 +364,12 @@
 
     iput-object v1, p0, Lcom/mcp2p/media/MediaScreen$Row;->seeds:Landroid/widget/TextView;
 
-    .line 897
+    .line 862
     invoke-virtual {v2, v1}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
     const/high16 v1, 0x41280000    # 10.5f
 
-    .line 898
+    .line 863
     invoke-virtual {p1, v7, v1, v5, v11}, Lcom/mcp2p/media/MediaScreen$Screen;->text(Ljava/lang/String;FIZ)Landroid/widget/TextView;
 
     move-result-object v1
@@ -378,17 +378,17 @@
 
     const/high16 v3, 0x40000000    # 2.0f
 
-    .line 899
+    .line 864
     invoke-virtual {p1, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->dp(F)I
 
     move-result p1
 
     invoke-virtual {v1, v11, p1, v11, v11}, Landroid/widget/TextView;->setPadding(IIII)V
 
-    .line 900
+    .line 865
     invoke-virtual {v2, v1}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
-    .line 901
+    .line 866
     invoke-virtual {v0, v2}, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
 
     return-void
@@ -399,7 +399,7 @@
 .method bind(Lcom/mcp2p/media/Sources$Stream;)V
     .locals 5
 
-    .line 905
+    .line 870
     iget-object v0, p1, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
 
     const-string v1, "CINE"
@@ -415,13 +415,13 @@
     :cond_0
     iget-object v1, p1, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
 
-    .line 906
+    .line 871
     :goto_0
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->q:Landroid/widget/TextView;
 
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 908
+    .line 873
     iget-object v0, p1, Lcom/mcp2p/media/Sources$Stream;->quality:Ljava/lang/String;
 
     invoke-virtual {v0}, Ljava/lang/String;->hashCode()I
@@ -510,7 +510,7 @@
 
     const v1, -0x262c01
 
-    .line 914
+    .line 879
     :goto_2
     iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Row;->q:Landroid/widget/TextView;
 
@@ -524,12 +524,12 @@
 
     invoke-virtual {v2, v0}, Landroid/widget/TextView;->setBackground(Landroid/graphics/drawable/Drawable;)V
 
-    .line 915
+    .line 880
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->q:Landroid/widget/TextView;
 
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setTextColor(I)V
 
-    .line 916
+    .line 881
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->title:Landroid/widget/TextView;
 
     iget-boolean v1, p1, Lcom/mcp2p/media/Sources$Stream;->pack:Z
@@ -550,14 +550,14 @@
     :goto_3
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 917
+    .line 882
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "\ud83c\uddea\ud83c\uddf8 Castellano"
 
     invoke-direct {v0, v1}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
-    .line 918
+    .line 883
     iget-boolean v1, p1, Lcom/mcp2p/media/Sources$Stream;->dualEnglish:Z
 
     if-eqz v1, :cond_5
@@ -572,7 +572,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 919
+    .line 884
     :cond_5
     iget-wide v1, p1, Lcom/mcp2p/media/Sources$Stream;->size:J
 
@@ -580,7 +580,7 @@
 
     move-result-object v1
 
-    .line 920
+    .line 885
     invoke-virtual {v1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v2
@@ -593,7 +593,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 921
+    .line 886
     :cond_6
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Row;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
@@ -607,7 +607,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 922
+    .line 887
     :cond_7
     iget-boolean v1, p1, Lcom/mcp2p/media/Sources$Stream;->pack:Z
 
@@ -623,7 +623,7 @@
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 923
+    .line 888
     :cond_8
     iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Row;->sub:Landroid/widget/TextView;
 
@@ -633,7 +633,7 @@
 
     invoke-virtual {v1, v0}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 924
+    .line 889
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->seeds:Landroid/widget/TextView;
 
     new-instance v1, Ljava/lang/StringBuilder;
@@ -652,7 +652,7 @@
 
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 
-    .line 925
+    .line 890
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->seeds:Landroid/widget/TextView;
 
     iget v1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I
@@ -669,7 +669,7 @@
     :goto_4
     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setTextColor(I)V
 
-    .line 926
+    .line 891
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Row;->seedsLbl:Landroid/widget/TextView;
 
     iget p1, p1, Lcom/mcp2p/media/Sources$Stream;->seeds:I

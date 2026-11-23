@@ -34,8 +34,6 @@
 
 .field static final PREFS:Ljava/lang/String; = "mcp2p_media"
 
-.field static final QUALITIES:[Ljava/lang/String;
-
 .field static final S1:I = -0xebe9db
 
 .field static final S2:I = -0xe4e1cf
@@ -53,7 +51,7 @@
 
 # direct methods
 .method static constructor <clinit>()V
-    .locals 5
+    .locals 4
 
     const-string v0, "popular"
 
@@ -86,30 +84,13 @@
 
     sput-object v0, Lcom/mcp2p/media/MediaScreen;->TABS:[[Ljava/lang/String;
 
-    const-string v0, "720p"
-
-    const-string v1, "SD"
-
-    const-string v2, "Todas"
-
-    const-string v3, "4K"
-
-    const-string v4, "1080p"
-
-    .line 58
-    filled-new-array {v2, v3, v4, v0, v1}, [Ljava/lang/String;
-
-    move-result-object v0
-
-    sput-object v0, Lcom/mcp2p/media/MediaScreen;->QUALITIES:[Ljava/lang/String;
-
     return-void
 .end method
 
 .method private constructor <init>()V
     .locals 0
 
-    .line 61
+    .line 60
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -118,7 +99,7 @@
 .method public static install(Landroid/app/Activity;)V
     .locals 2
 
-    .line 65
+    .line 64
     :try_start_0
     new-instance v0, Lcom/mcp2p/media/MediaScreen$Screen;
 
@@ -137,7 +118,7 @@
 
     const-string v1, "No se pudo montar la Mediateca nueva; se mantiene la original"
 
-    .line 67
+    .line 66
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
