@@ -133,7 +133,9 @@ svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-l
 .idfield .short,.phone .idfield .long{display:none}
 .phone .idfield .short{display:inline}
 .phone .idfield .go{width:42px;height:42px;font-size:18px}
-.phone .acts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.phone .acts{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+/* USB solo en TV/TVBox/Fire TV: en el móvil no se muestra */
+.phone .act.usb{display:none}
 .phone .act{height:54px;padding:0 14px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:13px}
 .phone .act .ico{width:32px;height:32px;font-size:17px;border-radius:9px}
 .phone .lists{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
@@ -196,6 +198,7 @@ svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-l
   <div><b>Menos ruido</b>Sin bordes en las tarjetas, un solo color de acento y textos secundarios en gris. El foco del mando es lo único que resalta.</div>
   <div><b>Misma distribución</b>Arriba «Abrir contenido» (ID o enlace, QR, USB); debajo Mis listas (máx. 4) y Favoritos (máx. 12). Menú: Inicio, Listas, Favoritos, Mediateca, Buscar, Ajustes.</div>
   <div><b>TV</b>Menú lateral fino con el logo, favoritos en rejilla de 6 sin desplazamiento lateral y barra de ayuda del mando abajo.</div>
+  <div><b>USB solo donde tiene sentido</b>La app detecta el tipo de aparato al abrirse: TV/TVBox/Fire TV (modo TV del sistema, «leanback», Fire TV o sin pantalla táctil) muestran «Desde USB»; en el móvil no aparece.</div>
   <div><b>Móvil</b>El menú pasa a la barra inferior (al alcance del pulgar), listas en 2 columnas, favoritos en 3 y diálogos como hoja inferior.</div>
 </div>
 
@@ -227,7 +230,7 @@ svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-l
         </button>
         <div class="acts">
           <button class="card act f" data-act="add:QR"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M17 21h4v-4M14 21v-.01"/></svg></span>Lista por QR</button>
-          <button class="card act f" data-act="add:USB"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v13M8 7l4-4 4 4M7 13v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"/><circle cx="12" cy="19.5" r="1.5"/></svg></span>Desde USB</button>
+          <button class="card act f usb" data-act="add:USB"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v13M8 7l4-4 4 4M7 13v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"/><circle cx="12" cy="19.5" r="1.5"/></svg></span>Desde USB</button>
         </div>
       </div>
       <div class="sec"><h2>Mis listas</h2><span class="n nlists"></span></div>
