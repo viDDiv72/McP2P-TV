@@ -16,6 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
+| [1.9.0](#190--2026-11-23) | 34 | Estable | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
 | [1.7.1](#171--2026-11-22) | 25 | Pre-release | Reproducción más estable en directos largos |
 | [1.7.0](#170--2026-11-22) | 24 | Pre-release | Navegación con mando en TV |
@@ -26,8 +27,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.0-beta.7] · rama `ui-limpia` (sin publicar)
-versionCode 33 · solo local (`build/McP2P-TV-v1.9.0-beta.7.apk`), pendiente de probar en la Vontar X4.
+## [1.9.0] · 2026-11-23
+**Estable** · versionCode 34 · etiqueta `v1.9.0` · probada en la Vontar X4 (betas 1.9.0-beta.1…7)
 
 ### Añadido
 - Mediateca nueva: catálogo de TMDB con carátulas y fuentes **solo en castellano** de Peerflix y Torrentio;
@@ -41,28 +42,29 @@ versionCode 33 · solo local (`build/McP2P-TV-v1.9.0-beta.7.apk`), pendiente de 
 - Películas por magnet a trompicones: el reproductor arrancaba sin nada descargado y libtorrent bajaba trozos
   sueltos de toda la película. Ahora hay **precarga** (1 % del archivo, 32–128 MB, más el final del archivo)
   con progreso, velocidad y fuentes en pantalla, y **descarga en orden** (`com.mcp2p.media.StreamTuner`).
-- Las fuentes se ordenan por probabilidad de verse sin cortes (semillas frente a tamaño), con la mejor marcada
-  como «Recomendada» y aviso en las «Muy pesadas» (más de 25 GB); antes iban primero los 4K de 60 GB.
+- Las fuentes se ordenan para que se vean sin cortes, con la mejor marcada como «Recomendada»; antes iban
+  primero los 4K de 60 GB con pocas semillas.
+- Navegación en TV con el mando en modo ratón: solo funcionaban arriba y abajo.
 
+### Mejorado
 - La Mediateca solo ofrece fuentes fiables: 10 semillas o más y 20 GB como máximo, las 5 mejores (más semillas
   por grupos y, dentro de cada grupo, mejor calidad). En la Vontar X4 una fuente con «4 semillas» no tenía a nadie.
 - Arranque adaptado a la velocidad: con conexión sobrada basta ~30 s de película (antes, siempre el 1 % del
   archivo); con conexión justa se guarda más y se avisa. Más conexiones (500) y subida
   limitada a 2 MB/s para no frenar la bajada; durante la reproducción sigue descargando en orden por delante.
 - La Mediateca solo muestra películas con fuentes fiables (se comprueban en segundo plano y se recuerdan 6 h).
-- Modo ratón (touchpad o mando): se captura el puntero y cada movimiento salta a la caja de al lado; clic = OK.
-  Si el mando cambia de modo y Android suelta la captura, la app la vuelve a pedir.
-  El puntero de la Vontar X4 es de la app del fabricante «Mouse Assist»: hay que quitar McP2P de esa app.
+- Modo ratón (touchpad o mando): se captura el puntero y cada movimiento salta a la caja de al lado; clic = OK,
+  botón derecho = ATRÁS. Si el mando cambia de modo y Android suelta la captura, la app la vuelve a pedir.
+  Nota Vontar X4: la app del fabricante «Mouse Assist» dibuja su propio puntero; debe estar desactivada para McP2P.
 - Las semillas se comprueban en el momento con los trackers públicos (scrape UDP, `Trackers.java`): las de los
   addons están desactualizadas (la «recomendada» de Iron Man decía 4 y tenía 0). Si ningún tracker responde, se
   usan las de los addons.
 - Si una fuente no responde (sin datos del torrent en 45 s o precarga a 0 durante 1 min), se prueba sola la siguiente.
-- TV: el puntero del ratón se oculta dentro de la app; en modo ratón, moverlo selecciona la caja de debajo.
 - Inicio y Mediateca: el foco ya no recorta la casilla «Reproducir» ni los títulos de las carátulas.
 
 ### Cambiado
 - La Mediateca deja de usar listas de AceStream.
-- «Desde USB» solo en TV/TVBox/Fire TV (prototipo).
+- «Desde USB» solo en TV/TVBox/Fire TV (prototipo del móvil).
 
 ## [1.8.0] · 2026-11-22
 **Pre-release** · versionCode 26 · etiqueta `v1.8.0` · pendiente de probar en la Vontar X4
@@ -148,6 +150,7 @@ versionCode 33 · solo local (`build/McP2P-TV-v1.9.0-beta.7.apk`), pendiente de 
 Estado exacto de la app original descompilada con apktool, sin ningún cambio. Sirve para comparar
 cualquier versión con el original: `git diff v1.5.6-original v1.7.1 -- clon/`.
 
+[1.9.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.9.0
 [1.8.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.8.0
 [1.7.1]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.7.1
 [1.7.0]: https://github.com/viDDiv72/McP2P-TV/releases/tag/v1.7.0
