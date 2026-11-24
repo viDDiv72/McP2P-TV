@@ -16,7 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
-| 1.9.2-beta1 | 37 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
+| [1.9.2](#192--2026-11-24) | 43 | Estable | Mediateca con Recientes y Favoritas, listas por carpetas, favoritos rápidos, carátulas en caché, estabilidad de reproducción |
 | [1.9.1](#191--2026-11-23) | 35 | Estable | Hilos de la Mediateca, arranque más rápido |
 | [1.9.0](#190--2026-11-23) | 34 | Anterior | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
@@ -28,6 +28,26 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 | [1.5.6-original](#156-original) | 20 | Referencia | App original sin modificar (punto de partida del clon) |
 
 ---
+
+## [1.9.2] · 2026-11-24
+versionCode 43 · **Estable**. Publicada desde la rama `estabilidad-1.9.2`. Las betas 1.9.2-beta… quedan como historial.
+
+### Añadido
+- Mediateca: pestañas **Recientes** (estrenos ya salidos, de más nuevo a más antiguo) y **Favoritas** (guardadas en el aparato).
+- Mediateca: botón «Añadir a favoritas» en la ficha de cada película.
+- Inicio: cada lista tiene un color propio para distinguirla.
+- Inicio: pulsación larga sobre un favorito lo quita al instante.
+- Guardas de regresión (`tools/check-behaviour.js`) dentro de `build.sh`.
+
+### Cambiado
+- Inicio: al tocar una lista se ven todas sus carpetas (antes entraba directamente en la primera).
+- Mediateca: las fuentes aparecen en cuanto responden Peerflix/Torrentio; la comprobación actualiza la lista después.
+- Mediateca: carátulas en 6 descargas a la vez, caché en disco que sobrevive a cerrar la app.
+- Mediateca: el vigilante espera a que se lea la primera imagen y registra el motivo de cada corte.
+
+### Corregido
+- Mediateca: al cambiar de fuente no se vuelve a probar ninguna ya intentada en esa película.
+- Mediateca: un fallo puntual de una carátula ya no deja el hueco vacío.
 
 ## [1.9.2-beta2] · sin publicar (rama `estabilidad-1.9.2`)
 versionCode 38 · solo local (`build/McP2P-TV-v1.9.2-beta2.apk`).
