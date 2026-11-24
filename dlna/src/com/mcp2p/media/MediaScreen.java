@@ -556,7 +556,7 @@ public final class MediaScreen {
                     String err = null;
                     try {
                         cat.details(m);
-                        r = cat.verify(cached != null ? cached : cat.sources(m));
+                        r = cat.verify(cached != null ? cached : cat.sources(m), m.runtime * 60, StreamTuner.knownSpeed(a));
                         found.put(m.id, r);
                         foundAt.put(m.id, System.currentTimeMillis());
                         counts.put(m.id, r.streams.size());
@@ -636,6 +636,7 @@ public final class MediaScreen {
 
         List<Sources.Stream> shownStreams = new ArrayList<>();
         int watchGen;
+        static final long SLOW_MS = 60_000;
         static final long NO_METADATA_MS = 30_000, NO_PROGRESS_MS = 60_000;
 
         /**
@@ -660,9 +661,13 @@ public final class MediaScreen {
                         boolean meta = TorrentFiles.FILES.containsKey(s.infoHash);
                         boolean dead = (!meta && now - t0 > NO_METADATA_MS)
                                 || (meta && pr != null && pr[0] == 0 && now - pr[2] > NO_PROGRESS_MS);
-                        if (dead) {
+                        // Demasiado lenta para esta conexión: al minuto de precarga no lleva ni la mitad
+                        boolean slow = !dead && pr != null && pr.length > 4 && pr[3] == 0
+                                && now - pr[4] > SLOW_MS && pr[0] * 2 < pr[1];
+                        if (dead || slow) {
                             final Activity toClose = started;
-                            main.post(() -> fallback(g, s, m, toClose));
+                            final boolean tooSlow = slow;
+                            main.post(() -> fallback(g, s, m, toClose, tooSlow));
                             return;
                         }
                     }
@@ -672,20 +677,30 @@ public final class MediaScreen {
             t.start();
         }
 
-        void fallback(int g, Sources.Stream failed, Catalog.Movie m, Activity player) {
+        void fallback(int g, Sources.Stream failed, Catalog.Movie m, Activity player, boolean tooSlow) {
             if (g != watchGen || m != cur) return;
             int i = shownStreams.indexOf(failed);
-            Sources.Stream next = i >= 0 && i + 1 < shownStreams.size() ? shownStreams.get(i + 1) : null;
+            Sources.Stream next = null;
+            if (tooSlow) { // una más ligera (pide menos velocidad)
+                for (Sources.Stream x : shownStreams) {
+                    if (x != failed && x.size > 0 && failed.size > 0 && x.size < failed.size * 0.8) {
+                        next = x;
+                        break;
+                    }
+                }
+            }
+            if (next == null) next = i >= 0 && i + 1 < shownStreams.size() ? shownStreams.get(i + 1) : null;
             Log.i(TAG, "La fuente " + failed.infoHash + " no responde; " + (next == null ? "no quedan más" : "se prueba la siguiente"));
             if (player != null && !player.isFinishing()) player.finish();
             if (next == null) {
                 Toast.makeText(a, "Ninguna fuente ha respondido ahora mismo. Prueba más tarde u otra película.", Toast.LENGTH_LONG).show();
                 return;
             }
-            Toast.makeText(a, "Esa fuente no responde: probando la siguiente (" + (i + 2) + " de " + shownStreams.size() + ")…",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(a, tooSlow ? "Esa versión va demasiado lenta para tu conexión: probando una más ligera…"
+                    : "Esa fuente no responde: probando la siguiente…", Toast.LENGTH_LONG).show();
+            final Sources.Stream go = next;
             main.postDelayed(() -> {
-                if (m == cur) play(next);
+                if (m == cur) play(go);
             }, 800);
         }
 

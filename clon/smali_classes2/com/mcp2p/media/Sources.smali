@@ -26,6 +26,8 @@
 
 .field private static final CAST_WORD:Ljava/util/regex/Pattern;
 
+.field public static final DEFAULT_SPEED:D = 1572864.0
+
 .field private static final ENGLISH:Ljava/util/regex/Pattern;
 
 .field public static final HEAVY:J = 0x640000000L
@@ -288,7 +290,7 @@
     :try_start_0
     const-string v0, "UTF-8"
 
-    .line 292
+    .line 318
     invoke-static {p0, v0}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
@@ -310,7 +312,7 @@
 .method static fluency(Lcom/mcp2p/media/Sources$Stream;)D
     .locals 7
 
-    .line 273
+    .line 299
     iget v0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
     if-gtz v0, :cond_0
@@ -319,7 +321,7 @@
 
     return-wide v0
 
-    .line 274
+    .line 300
     :cond_0
     iget-wide v0, p0, Lcom/mcp2p/media/Sources$Stream;->size:J
 
@@ -378,7 +380,7 @@
     :cond_4
     const-wide v0, 0x3fc3333333333333L    # 0.15
 
-    .line 276
+    .line 302
     :goto_1
     iget p0, p0, Lcom/mcp2p/media/Sources$Stream;->seeds:I
 
@@ -711,7 +713,7 @@
 .method public static magnet(Lcom/mcp2p/media/Sources$Stream;Ljava/lang/String;)Ljava/lang/String;
     .locals 3
 
-    .line 283
+    .line 309
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "magnet:?xt=urn:btih:"
@@ -724,7 +726,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 284
+    .line 310
     invoke-virtual {p1}, Ljava/lang/String;->isEmpty()Z
 
     move-result v1
@@ -741,7 +743,7 @@
 
     invoke-virtual {v0, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 285
+    .line 311
     :cond_0
     iget-object p1, p0, Lcom/mcp2p/media/Sources$Stream;->trackers:Ljava/util/List;
 
@@ -774,7 +776,7 @@
 
     goto :goto_0
 
-    .line 286
+    .line 312
     :cond_1
     iget p1, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
@@ -788,7 +790,7 @@
 
     invoke-virtual {v0, p0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 
-    .line 287
+    .line 313
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -1786,6 +1788,137 @@
     .end packed-switch
 .end method
 
+.method public static recommend(Ljava/util/List;ID)I
+    .locals 11
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Ljava/util/List<",
+            "Lcom/mcp2p/media/Sources$Stream;",
+            ">;ID)I"
+        }
+    .end annotation
+
+    .line 274
+    invoke-interface {p0}, Ljava/util/List;->isEmpty()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    const/4 p0, -0x1
+
+    return p0
+
+    :cond_0
+    const-wide/16 v0, 0x0
+
+    cmpl-double v0, p2, v0
+
+    if-lez v0, :cond_1
+
+    goto :goto_0
+
+    :cond_1
+    const-wide/high16 p2, 0x4138000000000000L    # 1572864.0
+
+    :goto_0
+    if-lez p1, :cond_2
+
+    goto :goto_1
+
+    :cond_2
+    const/16 p1, 0x1770
+
+    :goto_1
+    const/4 v0, 0x0
+
+    const-wide v1, 0x7fefffffffffffffL    # Double.MAX_VALUE
+
+    move-wide v2, v1
+
+    move v1, v0
+
+    .line 279
+    :goto_2
+    invoke-interface {p0}, Ljava/util/List;->size()I
+
+    move-result v4
+
+    if-ge v0, v4, :cond_6
+
+    .line 280
+    invoke-interface {p0, v0}, Ljava/util/List;->get(I)Ljava/lang/Object;
+
+    move-result-object v4
+
+    check-cast v4, Lcom/mcp2p/media/Sources$Stream;
+
+    .line 281
+    iget-wide v5, v4, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    const-wide/16 v7, 0x0
+
+    cmp-long v5, v5, v7
+
+    if-lez v5, :cond_3
+
+    iget-wide v5, v4, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    long-to-double v5, v5
+
+    int-to-double v9, p1
+
+    div-double/2addr v5, v9
+
+    goto :goto_3
+
+    :cond_3
+    move-wide v5, p2
+
+    .line 282
+    :goto_3
+    iget-wide v9, v4, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    cmp-long v9, v9, v7
+
+    if-lez v9, :cond_4
+
+    const-wide v9, 0x3fe6666666666666L    # 0.7
+
+    mul-double/2addr v9, p2
+
+    cmpg-double v9, v5, v9
+
+    if-gtz v9, :cond_4
+
+    return v0
+
+    .line 283
+    :cond_4
+    iget-wide v9, v4, Lcom/mcp2p/media/Sources$Stream;->size:J
+
+    cmp-long v4, v9, v7
+
+    if-lez v4, :cond_5
+
+    cmpg-double v4, v5, v2
+
+    if-gez v4, :cond_5
+
+    move v1, v0
+
+    move-wide v2, v5
+
+    :cond_5
+    add-int/lit8 v0, v0, 0x1
+
+    goto :goto_2
+
+    :cond_6
+    return v1
+.end method
+
 .method static seedsFrom(Ljava/lang/String;)I
     .locals 1
 
@@ -1848,7 +1981,7 @@
 
     const-string v0, "es-ES"
 
-    .line 301
+    .line 327
     invoke-static {v0}, Ljava/util/Locale;->forLanguageTag(Ljava/lang/String;)Ljava/util/Locale;
 
     move-result-object v0
@@ -1875,7 +2008,7 @@
 
     return-object p0
 
-    .line 302
+    .line 328
     :cond_1
     new-instance v0, Ljava/lang/StringBuilder;
 

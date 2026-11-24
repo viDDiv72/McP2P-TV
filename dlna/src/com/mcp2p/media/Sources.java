@@ -262,6 +262,32 @@ public final class Sources {
         return seeds >= 50 ? 2 : seeds >= 20 ? 1 : 0;
     }
 
+    /** Velocidad supuesta si aún no se ha medido ninguna descarga (B/s). */
+    public static final double DEFAULT_SPEED = 1.5 * 1048576;
+
+    /**
+     * Cuál recomendar entre las fuentes comprobadas (en el orden en que se muestran): la primera cuyo vídeo pide como
+     * mucho el 70 % de la velocidad real medida en esta casa (tamaño ÷ duración); si ninguna cabe con ese margen, la
+     * que menos pide. Devuelve el índice, o -1 si la lista está vacía.
+     */
+    public static int recommend(List<Stream> verified, int runtimeSec, double speedBytesPerSec) {
+        if (verified.isEmpty()) return -1;
+        double speed = speedBytesPerSec > 0 ? speedBytesPerSec : DEFAULT_SPEED;
+        int secs = runtimeSec > 0 ? runtimeSec : 6000;
+        int lightest = 0;
+        double lightestNeed = Double.MAX_VALUE;
+        for (int i = 0; i < verified.size(); i++) {
+            Stream st = verified.get(i);
+            double need = st.size > 0 ? st.size / (double) secs : speed; // sin tamaño: no se puede saber
+            if (st.size > 0 && need <= speed * 0.7) return i;
+            if (st.size > 0 && need < lightestNeed) {
+                lightestNeed = need;
+                lightest = i;
+            }
+        }
+        return lightest;
+    }
+
     /** Archivo pesado: necesita mucha velocidad para verse sin cortes (remux 4K de 30–80 GB…). */
     public static final long HEAVY = 25L * 1073741824L;
 

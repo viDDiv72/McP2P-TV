@@ -62,10 +62,12 @@ public final class StreamTuner {
 
     private static void run(Object session, android.os.Handler main, Runnable openPlayer, Object callback) {
         boolean opened = false;
+        AtomicBoolean closedRef = null;
         try {
             Object handle = field(session, "v");
             String hash = String.valueOf(field(session, "D")).toLowerCase(Locale.ROOT);
             AtomicBoolean closed = (AtomicBoolean) field(session, "h");
+            closedRef = closed;
             TorrentFiles.Geometry g = TorrentFiles.FILES.get(hash);
             Object player = findPlayer(callback);
             if (handle == null || g == null) {
@@ -103,7 +105,7 @@ public final class StreamTuner {
                     lastDone = done;
                     lastChange = System.currentTimeMillis();
                 }
-                PROGRESS.put(hash, new long[]{done, need.size(), lastChange, 0});
+                PROGRESS.put(hash, new long[]{done, need.size(), lastChange, 0, start});
                 // comienzo descargado sin huecos y final del archivo (índice)
                 int k = first;
                 while (k <= last && Boolean.TRUE.equals(have.invoke(handle, k))) k++;
@@ -126,7 +128,8 @@ public final class StreamTuner {
                 Thread.sleep(700);
             }
             endOverlay();
-            PROGRESS.put(hash, new long[]{need.size(), need.size(), System.currentTimeMillis(), 1});
+            PROGRESS.put(hash, new long[]{need.size(), need.size(), System.currentTimeMillis(), 1, start});
+            rememberSpeed(player, rateAvg);
             android.util.Log.i(TAG, "Precarga lista en " + (System.currentTimeMillis() - start) / 1000 + " s");
             if (closed == null || !closed.get()) {
                 main.post(openPlayer);
@@ -134,8 +137,49 @@ public final class StreamTuner {
             }
         } catch (Throwable e) {
             endOverlay();
+            // Al salir del reproductor durante la carga, libtorrent invalida el torrent: no es un fallo y no hay que
+            // abrir nada (antes se registraba «invalid torrent handle» y se intentaba abrir el reproductor).
+            if ((closedRef != null && closedRef.get()) || String.valueOf(rootCause(e).getMessage()).contains("invalid torrent handle")) {
+                android.util.Log.i(TAG, "Carga cancelada al salir del reproductor");
+                return;
+            }
             android.util.Log.w(TAG, "Fallo en la precarga; se reproduce directamente", e);
             if (!opened) main.post(openPlayer);
+        }
+    }
+
+    static Throwable rootCause(Throwable t) {
+        while (t.getCause() != null && t.getCause() != t) t = t.getCause();
+        return t;
+    }
+
+    // ------------------------------------------------------------ velocidad real de esta casa
+
+    private static final String SPEED_PREFS = "mcp2p_media";
+    private static final String SPEED_KEY = "speed_bps";
+
+    /**
+     * Guarda la velocidad a la que ha descargado esta película (media al terminar la precarga). Se queda con el
+     * máximo de las recientes (un torrent con pocas fuentes no dice cuánto da la conexión), con un leve olvido.
+     */
+    static void rememberSpeed(Object player, double rate) {
+        try {
+            if (!(player instanceof android.content.Context) || rate <= 0) return;
+            android.content.SharedPreferences p = ((android.content.Context) player)
+                    .getSharedPreferences(SPEED_PREFS, android.content.Context.MODE_PRIVATE);
+            double old = p.getFloat(SPEED_KEY, 0f);
+            double now = Math.max(old * 0.85, rate);
+            p.edit().putFloat(SPEED_KEY, (float) now).apply();
+            android.util.Log.i(TAG, "Velocidad medida " + speed((int) rate) + " → referencia " + speed((int) now));
+        } catch (Throwable ignored) {}
+    }
+
+    /** Velocidad de descarga de referencia en esta casa (B/s); 0 si aún no se ha medido. */
+    public static double knownSpeed(android.content.Context c) {
+        try {
+            return c.getSharedPreferences(SPEED_PREFS, android.content.Context.MODE_PRIVATE).getFloat(SPEED_KEY, 0f);
+        } catch (Throwable e) {
+            return 0;
         }
     }
 

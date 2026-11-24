@@ -28,7 +28,7 @@ public final class AppInfo {
     }
 
     /**
-     * Aparato con poca memoria (p. ej. Xiaomi Mi Box S, 2 GB y sistema de 32 bits): se usan menos conexiones P2P y
+     * Aparato con poca memoria (menos de ~2,8 GB de RAM, p. ej. Xiaomi Mi Box S con 2 GB): se usan menos conexiones P2P y
      * colas más cortas para que la reproducción no se bloquee (también se puede ver 4K).
      */
     public static boolean lowMemory(Context c) {
@@ -39,7 +39,8 @@ public final class AppInfo {
             ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             am.getMemoryInfo(mi);
-            low = am.isLowRamDevice() || mi.totalMem < 2800L * 1024 * 1024 || Build.SUPPORTED_64_BIT_ABIS.length == 0;
+            // Solo cuenta la RAM: muchas TVBox con 4 GB (Vontar X4) usan Android de 32 bits y van sobradas.
+            low = am.isLowRamDevice() || mi.totalMem < 2800L * 1024 * 1024;
         } catch (Throwable ignored) {}
         lowMemory = low;
         return low;

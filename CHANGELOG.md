@@ -45,6 +45,12 @@ versionCode 36 · solo local (`build/McP2P-TV-v1.9.2-beta.apk`). Todas las prueb
   se piden como urgentes en cuanto el reproductor avanza; antes solo 3 piezas y solo al quedarse parado) y VLC
   guarda al menos 30 s con magnets (20 s con poca memoria; antes 8 s).
 - «Acerca de McP2P» muestra solo la versión.
+- La recomendada se elige según la velocidad real de descarga de esta casa (se mide en cada película): la mejor
+  calidad que se puede mantener sin parones. En la Vontar X4 se recomendaba un 4K de 18,5 GB que pedía 3,3 MB/s
+  y no terminaba de cargar.
+- Si la precarga va demasiado lenta (al minuto no lleva la mitad), se pasa sola a una versión más ligera.
+- El modo ligero solo depende de la RAM (la Vontar X4, con 4 GB y Android de 32 bits, entraba por error).
+- Salir del reproductor durante la carga ya no intenta abrirlo después.
 - Fuentes comprobadas de verdad antes de recomendarlas: al abrir una película se pide a los trackers la lista de
   personas y se saluda por BitTorrent a varias. La ★ RECOMENDADA solo va a una fuente que ha contestado («✔
   Comprobada»); las que nadie comparte se quitan. Si una fuente no arranca, se pasa a la siguiente a los 30 s

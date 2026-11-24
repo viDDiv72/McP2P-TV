@@ -148,7 +148,7 @@ public final class Catalog {
      * Las que nadie comparte se quitan; las que han contestado van primero y la mejor lleva la estrella. Si la red
      * no deja comprobarlo, se deja como estaba.
      */
-    public Found verify(Found f) {
+    public Found verify(Found f, int runtimeSec, double speedBytesPerSec) {
         if (f.streams.isEmpty()) {
             f.checked = true;
             return f;
@@ -179,6 +179,9 @@ public final class Catalog {
             else if (s.reachable == 0 || s.reachable == -1) maybe.add(s);
             // -2: los trackers dicen que nadie la comparte → fuera
         }
+        // La recomendada: entre las que han contestado, la mejor que aguanta la velocidad real de esta casa.
+        int rec = Sources.recommend(ok, runtimeSec, speedBytesPerSec);
+        if (rec > 0) ok.add(0, ok.remove(rec));
         List<Sources.Stream> out = new ArrayList<>(ok);
         out.addAll(maybe);
         for (int i = 0; i < out.size(); i++) out.get(i).recommended = i == 0 && out.get(i).reachable > 0;

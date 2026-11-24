@@ -107,6 +107,17 @@ public final class MediaTests {
         Sources.lowMemory = false;
         ok("modo ligero: el 4K sigue disponible y va primero", lmb.size() == 2 && lmb.get(0) == k4);
 
+        // ---- recomendada según la velocidad real (caso real: La otra madre, 93 min)
+        java.util.List<Sources.Stream> om = new java.util.ArrayList<>();
+        long[] sizes = {18510240002L, 8L * G, 4373963996L};
+        String[] qs = {"4K", "1080p", "720p"};
+        for (int i = 0; i < 3; i++) { Sources.Stream x = new Sources.Stream(); x.size = sizes[i]; x.quality = qs[i]; x.seeds = 100; x.infoHash = "o" + i; x.addon = "T"; om.add(x); }
+        eq("con 3 MB/s: la 1080p de 8 GB (el 4K pide 3,3 MB/s)", 1, Sources.recommend(om, 93 * 60, 3.0 * 1048576));
+        eq("sin velocidad medida (1,5 MB/s): la 720p", 2, Sources.recommend(om, 93 * 60, 0));
+        eq("con 6 MB/s: el 4K", 0, Sources.recommend(om, 93 * 60, 6.0 * 1048576));
+        eq("conexión muy lenta: la más ligera", 2, Sources.recommend(om, 93 * 60, 0.3 * 1048576));
+        eq("lista vacía", -1, Sources.recommend(new java.util.ArrayList<Sources.Stream>(), 93 * 60, 1));
+
         // ---- arranque según la velocidad
         long g11 = 11L * 1073741824L, MBy = 1048576L;
         long fast = TorrentFiles.startBytes(g11, 7200, 3.0 * MBy);

@@ -75,12 +75,12 @@
 .method public static isLowMemory()Z
     .locals 1
 
-    .line 50
+    .line 51
     sget-object v0, Lcom/mcp2p/tv/AppInfo;->lowMemory:Ljava/lang/Boolean;
 
     if-eqz v0, :cond_0
 
-    .line 51
+    .line 52
     invoke-virtual {v0}, Ljava/lang/Boolean;->booleanValue()Z
 
     move-result v0
@@ -134,7 +134,7 @@
     .line 41
     invoke-virtual {p0, v1}, Landroid/app/ActivityManager;->getMemoryInfo(Landroid/app/ActivityManager$MemoryInfo;)V
 
-    .line 42
+    .line 43
     invoke-virtual {p0}, Landroid/app/ActivityManager;->isLowRamDevice()Z
 
     move-result p0
@@ -142,27 +142,21 @@
     if-nez p0, :cond_1
 
     iget-wide v1, v1, Landroid/app/ActivityManager$MemoryInfo;->totalMem:J
+    :try_end_0
+    .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
     const-wide v3, 0xaf000000L
 
     cmp-long p0, v1, v3
 
-    if-ltz p0, :cond_1
-
-    sget-object p0, Landroid/os/Build;->SUPPORTED_64_BIT_ABIS:[Ljava/lang/String;
-
-    array-length p0, p0
-    :try_end_0
-    .catchall {:try_start_0 .. :try_end_0} :catchall_0
-
-    if-nez p0, :cond_2
+    if-gez p0, :cond_2
 
     :cond_1
     const/4 p0, 0x1
 
     move v0, p0
 
-    .line 44
+    .line 45
     :catchall_0
     :cond_2
     invoke-static {v0}, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
