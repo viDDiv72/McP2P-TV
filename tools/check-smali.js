@@ -56,6 +56,9 @@ const checks = [
   ['Motor P2P: la sesión arranca con los ajustes (modo ligero)', () =>
     read('smali/T1/a.smali').includes('StreamTuner;->start(Ljava/lang/Object;)V') && !read('smali/T1/a.smali').includes('SessionManager;->start()V')],
   ['Acerca de: versión instalada', () => read('smali/d4/I0.smali').includes('AppInfo;->about(')],
+  ['Reproducción: lectura adelantada continua en T3/m', () =>
+    read('smali/T3/m.smali').includes('StreamTuner;->ahead(Ljava/lang/Object;I)V')],
+  ['VLC: al menos 30 s de buffer con magnets', () => read('smali/X3/a.smali').includes('StreamTuner;->vlcCachingSeconds(I)I')],
   // Seguridad (v1.6.1)
   ['Copias de seguridad desactivadas', () => read('AndroidManifest.xml').includes('android:allowBackup="false"')],
   ['Arranque: CrashLog, TvFocus y DLNA enganchados', () => {

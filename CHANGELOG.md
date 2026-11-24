@@ -41,6 +41,10 @@ versionCode 36 · solo local (`build/McP2P-TV-v1.9.2-beta.apk`). Todas las prueb
   activo el modo ligero (`com.mcp2p.tv.AppInfo`).
 
 ### Mejorado
+- Fluidez: lectura adelantada continua mientras se ve la película (las siguientes ~96 MB, 48 MB con poca memoria,
+  se piden como urgentes en cuanto el reproductor avanza; antes solo 3 piezas y solo al quedarse parado) y VLC
+  guarda al menos 30 s con magnets (20 s con poca memoria; antes 8 s).
+- «Acerca de McP2P» muestra solo la versión.
 - Fuentes comprobadas de verdad antes de recomendarlas: al abrir una película se pide a los trackers la lista de
   personas y se saluda por BitTorrent a varias. La ★ RECOMENDADA solo va a una fuente que ha contestado («✔
   Comprobada»); las que nadie comparte se quitan. Si una fuente no arranca, se pasa a la siguiente a los 30 s

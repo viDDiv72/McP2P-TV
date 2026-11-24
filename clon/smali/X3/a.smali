@@ -90,6 +90,11 @@
     .line 36
     move-result v2
 
+    # McP2P-TV: con magnets, VLC guarda al menos 30 s (20 s con poca memoria); antes 8 s
+    invoke-static {v2}, Lcom/mcp2p/media/StreamTuner;->vlcCachingSeconds(I)I
+
+    move-result v2
+
     .line 37
     mul-int/lit16 v2, v2, 0x3e8
 

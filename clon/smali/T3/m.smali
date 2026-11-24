@@ -277,6 +277,9 @@
 
     long-to-int v4, v4
 
+    # McP2P-TV: lectura adelantada continua (marca como urgentes las piezas que se van a ver pronto)
+    invoke-static {p0, v4}, Lcom/mcp2p/media/StreamTuner;->ahead(Ljava/lang/Object;I)V
+
     .line 9
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 

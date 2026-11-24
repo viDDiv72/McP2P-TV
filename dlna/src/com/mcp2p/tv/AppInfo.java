@@ -24,10 +24,7 @@ public final class AppInfo {
             PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
             v = pi.versionName;
         } catch (Exception ignored) {}
-        return "McP2P-TV\nVersión " + v + "\n\nReproductor multimedia y motor P2P.\n"
-                + "Basado en McP2P 1.5.6.\n\nAparato: " + Build.MANUFACTURER + " " + Build.MODEL
-                + " · Android " + Build.VERSION.RELEASE
-                + (lowMemory(c) ? "\nModo ligero activado (poca memoria)." : "");
+        return "Versión " + v;
     }
 
     /**

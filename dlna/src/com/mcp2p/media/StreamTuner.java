@@ -222,6 +222,52 @@ public final class StreamTuner {
         setInt(pack, "piece_timeout", 10);                        // por defecto 20 s
     }
 
+    // ------------------------------------------------------------ durante la reproducción
+
+    /** Última pieza leída por cada lector (T3/m): solo se recalcula la ventana al cambiar de pieza. */
+    private static final java.util.Map<Object, Integer> LAST_PIECE =
+            java.util.Collections.synchronizedMap(new java.util.WeakHashMap<Object, Integer>());
+
+    /**
+     * Lectura adelantada continua (como Elementum/Torrest en Kodi). Lo llama T3/m.read() con la pieza que el
+     * reproductor está leyendo: cada vez que avanza de pieza se marcan como urgentes las siguientes ~96 MB (48 MB
+     * con poca memoria), con plazos crecientes. Así la descarga va siempre por delante de lo que se ve y no hay
+     * que esperar a que el reproductor se quede sin datos para pedirlas (antes solo se pedían 3 piezas, y solo
+     * cuando ya estaba parado). Nunca lanza.
+     */
+    public static void ahead(Object reader, int piece) {
+        try {
+            Integer last = LAST_PIECE.get(reader);
+            if (last != null && last == piece) return;
+            LAST_PIECE.put(reader, piece);
+            Class<?> c = reader.getClass();
+            Object handle = c.getField("t").get(reader);
+            int pieceLen = c.getField("h").getInt(reader);
+            int numPieces = c.getField("m").getInt(reader);
+            if (handle == null || pieceLen <= 0) return;
+            long window = (com.mcp2p.tv.AppInfo.isLowMemory() ? 48 : 96) * MB;
+            int count = (int) Math.max(4, Math.min(160, window / pieceLen));
+            Method have = handle.getClass().getMethod("havePiece", int.class);
+            Method deadline = handle.getClass().getMethod("setPieceDeadline", int.class, int.class);
+            for (int i = 1; i <= count && piece + i < numPieces; i++) {
+                int p = piece + i;
+                if (Boolean.TRUE.equals(have.invoke(handle, p))) continue;
+                deadline.invoke(handle, p, 1500 + i * 400);
+            }
+        } catch (Throwable ignored) {
+            // la lectura sigue como antes
+        }
+    }
+
+    /**
+     * Segundos que guarda VLC con películas por magnet (lo llama X3/a con el ajuste «buffer_seconds», 8 s por
+     * defecto): al menos 30 s (20 s con poca memoria). Con 8 s, cualquier bajón de la descarga paraba la imagen.
+     */
+    public static int vlcCachingSeconds(int configured) {
+        int min = com.mcp2p.tv.AppInfo.isLowMemory() ? 20 : 30;
+        return Math.max(configured, min);
+    }
+
     private static void setInt(Object pack, String name, int value) {
         try {
             Class<?> types = Class.forName("org.libtorrent4j.swig.settings_pack$int_types");
