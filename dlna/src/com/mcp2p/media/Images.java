@@ -19,8 +19,9 @@ import java.util.concurrent.Executors;
  * y caché de 60 imágenes (~10 MB).
  */
 final class Images {
-    private static final LruCache<String, Bitmap> CACHE = new LruCache<>(60);
-    private static final ExecutorService POOL = Executors.newFixedThreadPool(3);
+    private static final LruCache<String, Bitmap> CACHE = new LruCache<>(120);
+    // 6 descargas a la vez (antes 3): la parrilla carga antes todas las carátulas
+    private static final ExecutorService POOL = Executors.newFixedThreadPool(6);
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
     private Images() {}
@@ -39,10 +40,11 @@ final class Images {
         iv.setImageDrawable(null);
         POOL.execute(() -> {
             Bitmap bm = fetch(url, targetWidth);
-            if (bm == null) return;
-            CACHE.put(url, bm);
+            final Bitmap ok = bm != null ? bm : fetch(url, targetWidth); // un reintento: un fallo puntual dejaba el hueco vacío
+            if (ok == null) return;
+            CACHE.put(url, ok);
             MAIN.post(() -> {
-                if (url.equals(iv.getTag())) iv.setImageBitmap(bm);
+                if (url.equals(iv.getTag())) iv.setImageBitmap(ok);
             });
         });
     }
@@ -51,8 +53,8 @@ final class Images {
         HttpURLConnection c = null;
         try {
             c = (HttpURLConnection) new URL(url).openConnection();
-            c.setConnectTimeout(8000);
-            c.setReadTimeout(12000);
+            c.setConnectTimeout(6000);
+            c.setReadTimeout(8000);
             if (c.getResponseCode() != 200) return null;
             byte[] data;
             try (InputStream in = c.getInputStream()) {

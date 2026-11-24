@@ -58,6 +58,11 @@ public final class Catalog {
 
     /** kind: popular, now_playing, top_rated. */
     public List<Movie> list(String kind, int page) throws IOException {
+        if ("recent".equals(kind)) { // estrenos ya salidos, de la más nueva a la más antigua
+            String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+            return movies(get(TMDB + "/discover/movie?api_key=" + key + "&language=es-ES&region=ES&sort_by=primary_release_date.desc"
+                    + "&primary_release_date.lte=" + today + "&vote_count.gte=20&page=" + page, 15000));
+        }
         return movies(get(TMDB + "/movie/" + kind + "?api_key=" + key + "&language=es-ES&region=ES&page=" + page, 15000));
     }
 

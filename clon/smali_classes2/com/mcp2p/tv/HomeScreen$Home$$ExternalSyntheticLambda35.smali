@@ -9,18 +9,14 @@
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-.field public final synthetic f$1:I
-
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;I)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda35;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
-
-    iput p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda35;->f$1:I
 
     return-void
 .end method
@@ -28,13 +24,11 @@
 
 # virtual methods
 .method public final run()V
-    .locals 2
+    .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda35;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    iget v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda35;->f$1:I
-
-    invoke-virtual {v0, v1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$reload$34$com-mcp2p-tv-HomeScreen$Home(I)V
+    invoke-virtual {v0}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$favOptions$26$com-mcp2p-tv-HomeScreen$Home()V
 
     return-void
 .end method

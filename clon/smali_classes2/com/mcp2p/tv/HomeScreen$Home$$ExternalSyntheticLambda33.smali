@@ -28,7 +28,7 @@
 
     iget v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda33;->f$0:F
 
-    invoke-static {v0, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$ownFocus$35(FLandroid/view/View;Z)V
+    invoke-static {v0, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$ownFocus$37(FLandroid/view/View;Z)V
 
     return-void
 .end method

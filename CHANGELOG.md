@@ -29,6 +29,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
+## [1.9.2-beta2] · sin publicar (rama `estabilidad-1.9.2`)
+versionCode 38 · solo local (`build/McP2P-TV-v1.9.2-beta2.apk`).
+
+### Corregido
+- Mediateca: el vigilante ya no da por buena la precarga hasta que el reproductor lee datos (primera imagen); si no empieza en 60 s, prueba la siguiente fuente.
+- Mediateca: al cambiar de fuente no se repite ninguna ya probada en esa película.
+- Mediateca: carátulas en 6 descargas a la vez, caché de 120 y un reintento si una falla (antes quedaban huecos).
+- Mediateca: la ficha muestra las fuentes en cuanto responden Peerflix/Torrentio y comprueba después.
+
 ## [1.9.2-beta1] · sin publicar (rama `estabilidad-1.9.2`)
 versionCode 37 · solo local (`build/McP2P-TV-v1.9.2-beta1.apk`). Las pruebas se numeran 1.9.2-beta, -beta1, -beta2… hasta publicar.
 

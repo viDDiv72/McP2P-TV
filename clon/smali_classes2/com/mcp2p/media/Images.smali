@@ -27,22 +27,22 @@
     .line 22
     new-instance v0, Landroid/util/LruCache;
 
-    const/16 v1, 0x3c
+    const/16 v1, 0x78
 
     invoke-direct {v0, v1}, Landroid/util/LruCache;-><init>(I)V
 
     sput-object v0, Lcom/mcp2p/media/Images;->CACHE:Landroid/util/LruCache;
 
-    const/4 v0, 0x3
+    const/4 v0, 0x6
 
-    .line 23
+    .line 24
     invoke-static {v0}, Ljava/util/concurrent/Executors;->newFixedThreadPool(I)Ljava/util/concurrent/ExecutorService;
 
     move-result-object v0
 
     sput-object v0, Lcom/mcp2p/media/Images;->POOL:Ljava/util/concurrent/ExecutorService;
 
-    .line 24
+    .line 25
     new-instance v0, Landroid/os/Handler;
 
     invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -59,7 +59,7 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 26
+    .line 27
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -70,7 +70,7 @@
 
     const/4 v0, 0x0
 
-    .line 53
+    .line 55
     :try_start_0
     new-instance v1, Ljava/net/URL;
 
@@ -84,18 +84,18 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_2
 
-    const/16 v1, 0x1f40
+    const/16 v1, 0x1770
 
-    .line 54
+    .line 56
     :try_start_1
     invoke-virtual {p0, v1}, Ljava/net/HttpURLConnection;->setConnectTimeout(I)V
 
-    const/16 v1, 0x2ee0
+    const/16 v1, 0x1f40
 
-    .line 55
+    .line 57
     invoke-virtual {p0, v1}, Ljava/net/HttpURLConnection;->setReadTimeout(I)V
 
-    .line 56
+    .line 58
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getResponseCode()I
 
     move-result v1
@@ -108,13 +108,13 @@
 
     if-eqz p0, :cond_0
 
-    .line 80
+    .line 82
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_0
     return-object v0
 
-    .line 58
+    .line 60
     :cond_1
     :try_start_2
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getInputStream()Ljava/io/InputStream;
@@ -123,7 +123,7 @@
     :try_end_2
     .catchall {:try_start_2 .. :try_end_2} :catchall_3
 
-    .line 59
+    .line 61
     :try_start_3
     new-instance v2, Ljava/io/ByteArrayOutputStream;
 
@@ -133,7 +133,7 @@
 
     new-array v3, v3, [B
 
-    .line 62
+    .line 64
     :cond_2
     invoke-virtual {v1, v3}, Ljava/io/InputStream;->read([B)I
 
@@ -143,10 +143,10 @@
 
     if-lez v4, :cond_5
 
-    .line 63
+    .line 65
     invoke-virtual {v2, v3, v5, v4}, Ljava/io/ByteArrayOutputStream;->write([BII)V
 
-    .line 64
+    .line 66
     invoke-virtual {v2}, Ljava/io/ByteArrayOutputStream;->size()I
 
     move-result v4
@@ -159,7 +159,7 @@
 
     if-eqz v1, :cond_3
 
-    .line 67
+    .line 69
     :try_start_4
     invoke-virtual {v1}, Ljava/io/InputStream;->close()V
     :try_end_4
@@ -168,13 +168,13 @@
     :cond_3
     if-eqz p0, :cond_4
 
-    .line 80
+    .line 82
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_4
     return-object v0
 
-    .line 66
+    .line 68
     :cond_5
     :try_start_5
     invoke-virtual {v2}, Ljava/io/ByteArrayOutputStream;->toByteArray()[B
@@ -185,11 +185,11 @@
 
     if-eqz v1, :cond_6
 
-    .line 67
+    .line 69
     :try_start_6
     invoke-virtual {v1}, Ljava/io/InputStream;->close()V
 
-    .line 68
+    .line 70
     :cond_6
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
 
@@ -197,10 +197,10 @@
 
     const/4 v3, 0x1
 
-    .line 69
+    .line 71
     iput-boolean v3, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
 
-    .line 70
+    .line 72
     array-length v4, v2
 
     invoke-static {v2, v5, v4, v1}, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
@@ -208,7 +208,7 @@
     :goto_0
     if-lez p1, :cond_7
 
-    .line 72
+    .line 74
     iget v4, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
 
     mul-int/lit8 v6, v3, 0x2
@@ -221,21 +221,21 @@
 
     goto :goto_0
 
-    .line 73
+    .line 75
     :cond_7
     new-instance p1, Landroid/graphics/BitmapFactory$Options;
 
     invoke-direct {p1}, Landroid/graphics/BitmapFactory$Options;-><init>()V
 
-    .line 74
+    .line 76
     iput v3, p1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
 
-    .line 75
+    .line 77
     sget-object v1, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
 
     iput-object v1, p1, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
 
-    .line 76
+    .line 78
     array-length v1, v2
 
     invoke-static {v2, v5, v1, p1}, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
@@ -246,7 +246,7 @@
 
     if-eqz p0, :cond_8
 
-    .line 80
+    .line 82
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_8
@@ -257,7 +257,7 @@
 
     if-eqz v1, :cond_9
 
-    .line 58
+    .line 60
     :try_start_7
     invoke-virtual {v1}, Ljava/io/InputStream;->close()V
     :try_end_7
@@ -283,7 +283,7 @@
     :catchall_3
     if-eqz p0, :cond_a
 
-    .line 80
+    .line 82
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_a
@@ -293,7 +293,7 @@
 .method static synthetic lambda$load$0(Ljava/lang/String;Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
     .locals 1
 
-    .line 45
+    .line 47
     invoke-virtual {p1}, Landroid/widget/ImageView;->getTag()Ljava/lang/Object;
 
     move-result-object v0
@@ -313,29 +313,40 @@
 .method static synthetic lambda$load$1(Ljava/lang/String;ILandroid/widget/ImageView;)V
     .locals 2
 
-    .line 41
+    .line 42
     invoke-static {p0, p1}, Lcom/mcp2p/media/Images;->fetch(Ljava/lang/String;I)Landroid/graphics/Bitmap;
 
-    move-result-object p1
+    move-result-object v0
 
-    if-nez p1, :cond_0
+    if-eqz v0, :cond_0
 
-    return-void
+    goto :goto_0
 
     .line 43
     :cond_0
-    sget-object v0, Lcom/mcp2p/media/Images;->CACHE:Landroid/util/LruCache;
+    invoke-static {p0, p1}, Lcom/mcp2p/media/Images;->fetch(Ljava/lang/String;I)Landroid/graphics/Bitmap;
 
-    invoke-virtual {v0, p0, p1}, Landroid/util/LruCache;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v0
 
-    .line 44
-    sget-object v0, Lcom/mcp2p/media/Images;->MAIN:Landroid/os/Handler;
+    :goto_0
+    if-nez v0, :cond_1
+
+    return-void
+
+    .line 45
+    :cond_1
+    sget-object p1, Lcom/mcp2p/media/Images;->CACHE:Landroid/util/LruCache;
+
+    invoke-virtual {p1, p0, v0}, Landroid/util/LruCache;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 46
+    sget-object p1, Lcom/mcp2p/media/Images;->MAIN:Landroid/os/Handler;
 
     new-instance v1, Lcom/mcp2p/media/Images$$ExternalSyntheticLambda1;
 
-    invoke-direct {v1, p0, p2, p1}, Lcom/mcp2p/media/Images$$ExternalSyntheticLambda1;-><init>(Ljava/lang/String;Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
+    invoke-direct {v1, p0, p2, v0}, Lcom/mcp2p/media/Images$$ExternalSyntheticLambda1;-><init>(Ljava/lang/String;Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
 
-    invoke-virtual {v0, v1}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+    invoke-virtual {p1, v1}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
     return-void
 .end method
@@ -343,19 +354,19 @@
 .method static load(Landroid/widget/ImageView;Ljava/lang/String;I)V
     .locals 2
 
-    .line 29
+    .line 30
     invoke-virtual {p0, p1}, Landroid/widget/ImageView;->setTag(Ljava/lang/Object;)V
 
     const/4 v0, 0x0
 
     if-nez p1, :cond_0
 
-    .line 31
+    .line 32
     invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
 
     return-void
 
-    .line 34
+    .line 35
     :cond_0
     sget-object v1, Lcom/mcp2p/media/Images;->CACHE:Landroid/util/LruCache;
 
@@ -367,16 +378,16 @@
 
     if-eqz v1, :cond_1
 
-    .line 36
+    .line 37
     invoke-virtual {p0, v1}, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
 
     return-void
 
-    .line 39
+    .line 40
     :cond_1
     invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
 
-    .line 40
+    .line 41
     sget-object v0, Lcom/mcp2p/media/Images;->POOL:Ljava/util/concurrent/ExecutorService;
 
     new-instance v1, Lcom/mcp2p/media/Images$$ExternalSyntheticLambda0;

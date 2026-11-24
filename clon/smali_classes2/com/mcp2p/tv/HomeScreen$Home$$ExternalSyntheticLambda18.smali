@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/View$OnClickListener;
+.implements Landroid/view/ViewTreeObserver$OnWindowFocusChangeListener;
 
 
 # instance fields
@@ -23,12 +23,12 @@
 
 
 # virtual methods
-.method public final onClick(Landroid/view/View;)V
+.method public final onWindowFocusChanged(Z)V
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda18;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$buildRail$1$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$show$0$com-mcp2p-tv-HomeScreen$Home(Z)V
 
     return-void
 .end method

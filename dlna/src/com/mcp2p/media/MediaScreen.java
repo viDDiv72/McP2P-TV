@@ -35,6 +35,9 @@ import com.mcp2p.dlna.DlnaRenderer;
 import com.mcp2p.tv.TvFocus;
 import com.mcp2p.tv.WindowCallbackWrapper;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,10 +57,71 @@ public final class MediaScreen {
     static final String TAG = "Mcp2pMedia";
     static final int BG = 0xFF0B0C14, S1 = 0xFF141625, S2 = 0xFF1B1E31, LINE = 0xFF24283F, TEXT = 0xFFEEF0F8,
             MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF, OK = 0xFF4FD08A, STAR = 0xFFF0B44C;
-    static final String[][] TABS = {{"popular", "Populares"}, {"now_playing", "Estrenos"}, {"top_rated", "Mejor valoradas"}};
+    static final String[][] TABS = {{"popular", "Populares"}, {"recent", "Recientes"}, {"now_playing", "Estrenos"},
+            {"top_rated", "Mejor valoradas"}, {"fav", "Favoritas"}};
     static final String PREFS = "mcp2p_media";
 
     private MediaScreen() {}
+
+    /** Películas marcadas como favoritas (se guardan en el aparato, sin cuenta). */
+    static List<Catalog.Movie> readFavs(Context c) {
+        List<Catalog.Movie> out = new ArrayList<>();
+        try {
+            JSONArray arr = new JSONArray(c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("favs", "[]"));
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                Catalog.Movie m = new Catalog.Movie();
+                m.id = o.optLong("id");
+                m.title = o.optString("title", "");
+                m.poster = o.optString("poster", null);
+                m.backdrop = o.optString("backdrop", null);
+                m.overview = o.optString("overview", "");
+                m.imdb = o.optString("imdb", null);
+                m.year = o.optInt("year");
+                m.runtime = o.optInt("runtime");
+                m.vote = o.optDouble("vote");
+                out.add(m);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudieron leer los favoritos", t);
+        }
+        return out;
+    }
+
+    /** Alterna el favorito de una película. Devuelve true si queda marcada. */
+    static boolean toggleFav(Context c, Catalog.Movie m) {
+        List<Catalog.Movie> all = readFavs(c);
+        boolean now = true;
+        for (int i = 0; i < all.size(); i++) {
+            if (all.get(i).id == m.id) { all.remove(i); now = false; break; }
+        }
+        if (now) all.add(0, m);
+        try {
+            JSONArray arr = new JSONArray();
+            for (Catalog.Movie x : all) {
+                JSONObject o = new JSONObject();
+                o.put("id", x.id);
+                o.put("title", x.title);
+                o.put("poster", x.poster);
+                o.put("backdrop", x.backdrop);
+                o.put("overview", x.overview);
+                o.put("imdb", x.imdb);
+                o.put("year", x.year);
+                o.put("runtime", x.runtime);
+                o.put("vote", x.vote);
+                arr.put(o);
+            }
+            c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("favs", arr.toString()).apply();
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudo guardar el favorito", t);
+        }
+        return now;
+    }
+
+    static boolean isFav(Context c, long id) {
+        for (Catalog.Movie x : readFavs(c)) if (x.id == id) return true;
+        return false;
+    }
 
     public static void install(Activity a) {
         try {
@@ -105,7 +169,7 @@ public final class MediaScreen {
         Catalog.Movie cur;
         ImageView heroBg, heroPoster;
         TextView backBtn;
-        TextView heroTitle, heroMeta, heroOv, srcCount;
+        TextView heroTitle, heroMeta, heroOv, srcCount, favBtn;
         int detailGen;
 
         Screen(Activity a) {
@@ -244,6 +308,12 @@ public final class MediaScreen {
          * fiables en castellano. Si quedan pocas, sigue con la página siguiente hasta llenar la pantalla.
          */
         void loadMore() {
+            if ("fav".equals(kind) && query == null) { // Favoritas: sale del aparato, sin red
+                for (Catalog.Movie m : readFavs(a)) addMovie(m);
+                end = true;
+                status.setText(movies.isEmpty() ? "Aún no tienes favoritas. Entra en una película y pulsa «Añadir a favoritas»." : "");
+                return;
+            }
             if (loading || end || page >= 15) return;
             loading = true;
             final int g = gen, next = page + 1;
@@ -515,6 +585,16 @@ public final class MediaScreen {
             heroOv.setPadding(dp(14), dp(10), dp(tv ? 120 : 0), 0);
             heroOv.setLineSpacing(dp(2), 1f);
             txt.addView(heroOv);
+            favBtn = chip("☆ Añadir a favoritas", v -> {
+                if (cur == null) return;
+                boolean now = toggleFav(a, cur);
+                favBtn.setText(now ? "★ En favoritas" : "☆ Añadir a favoritas");
+                Toast.makeText(a, now ? "Añadida a Favoritas" : "Quitada de Favoritas", Toast.LENGTH_SHORT).show();
+            });
+            LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(-2, -2);
+            fl.leftMargin = dp(14);
+            fl.topMargin = dp(10);
+            txt.addView(favBtn, fl);
             row.addView(txt, new LinearLayout.LayoutParams(0, -2, 1f));
             hero.addView(row, new FrameLayout.LayoutParams(-1, -2));
             wrapAll.addView(hero, new LinearLayout.LayoutParams(-1, dp(tv ? 300 : 280)));
@@ -534,10 +614,13 @@ public final class MediaScreen {
 
         void openMovie(final Catalog.Movie m) {
             cur = m;
+            tried.clear();
+            triedFor = null;
             final int g = ++detailGen;
             catalogView.setVisibility(View.GONE);
             detailView.setVisibility(View.VISIBLE);
             heroTitle.setText(m.title);
+            favBtn.setText(isFav(a, m.id) ? "★ En favoritas" : "☆ Añadir a favoritas");
             heroOv.setText(m.overview);
             heroMeta.setText(meta(m));
             Images.load(heroBg, m.backdrop != null ? Catalog.IMG + "w780" + m.backdrop : poster(m), dp(640));
@@ -552,26 +635,41 @@ public final class MediaScreen {
                         : "Comprobando que las fuentes tienen gente compartiéndolas ahora mismo…");
                 srcCount.setText("");
                 exec(io, () -> {
-                    Catalog.Found r = null;
+                    // 1) Enseguida: las fuentes que devuelven Peerflix y Torrentio, sin esperar a la comprobación.
+                    Catalog.Found base = null;
                     String err = null;
                     try {
                         cat.details(m);
-                        r = cat.verify(cached != null ? cached : cat.sources(m), m.runtime * 60, StreamTuner.knownSpeed(a));
-                        found.put(m.id, r);
-                        foundAt.put(m.id, System.currentTimeMillis());
-                        counts.put(m.id, r.streams.size());
-                        saveCount(m.id, r.streams.size());
+                        base = cached != null ? cached : cat.sources(m);
                     } catch (Throwable t) {
                         Log.w(TAG, "No se pudieron obtener las fuentes", t);
                         err = "No se ha podido conectar con Peerflix ni con Torrentio. Comprueba la conexión y vuelve a entrar.";
                     }
-                    final Catalog.Found res = r;
+                    final Catalog.Found first = base;
                     final String e = err;
                     main.post(() -> {
                         if (g != detailGen || cur != m) return;
                         heroMeta.setText(meta(m));
-                        if (res == null) sourceAdapter.set(null, e);
-                        else showSources(res);
+                        if (first == null) sourceAdapter.set(null, e);
+                        else showSources(first);
+                    });
+                    if (base == null) return;
+                    // 2) Después: comprobar que hay gente compartiéndolas y actualizar la lista.
+                    Catalog.Found r;
+                    try {
+                        r = cat.verify(base, m.runtime * 60, StreamTuner.knownSpeed(a));
+                    } catch (Throwable t) {
+                        Log.w(TAG, "Comprobación de fuentes fallida; se quedan las no comprobadas", t);
+                        r = base;
+                    }
+                    final Catalog.Found res = r;
+                    found.put(m.id, res);
+                    foundAt.put(m.id, System.currentTimeMillis());
+                    counts.put(m.id, res.streams.size());
+                    saveCount(m.id, res.streams.size());
+                    main.post(() -> {
+                        if (g != detailGen || cur != m) return;
+                        showSources(res);
                     });
                 });
             }
@@ -606,6 +704,7 @@ public final class MediaScreen {
             detailGen++;
             detailView.setVisibility(View.GONE);
             catalogView.setVisibility(View.VISIBLE);
+            if ("fav".equals(kind)) { reload(); return; } // la lista de favoritas se actualiza al volver
             movieAdapter.notifyDataSetChanged();
             if (cur != null) {
                 int i = movies.indexOf(cur);
@@ -620,6 +719,7 @@ public final class MediaScreen {
                 if (cur.runtime > 0) TorrentFiles.hintDuration(s.infoHash, cur.runtime * 60);
                 TorrentFiles.FILES.remove(s.infoHash);
                 StreamTuner.PROGRESS.remove(s.infoHash);
+                StreamTuner.READ_AT.remove(s.infoHash);
                 watch(s);
                 Intent i = new Intent();
                 i.setClassName(a, "com.mcp2p.app.ui.PlayerActivity");
@@ -635,9 +735,12 @@ public final class MediaScreen {
         // ---------------------------------------------------------------- si una fuente no responde, la siguiente
 
         List<Sources.Stream> shownStreams = new ArrayList<>();
+        /** Fuentes ya intentadas para la película actual (no se vuelve a probar ninguna). */
+        final java.util.Set<String> tried = new java.util.HashSet<>();
+        Catalog.Movie triedFor;
         int watchGen;
         static final long SLOW_MS = 60_000;
-        static final long NO_METADATA_MS = 30_000, NO_PROGRESS_MS = 60_000;
+        static final long NO_METADATA_MS = 30_000, NO_PROGRESS_MS = 60_000, NO_START_MS = 60_000;
 
         /**
          * Vigila el intento de reproducción: si en 45 s no llegan los datos del torrent (nadie lo comparte de verdad)
@@ -656,11 +759,15 @@ public final class MediaScreen {
                         if (p != null) started = p;
                         if (started != null && (started.isFinishing() || started.isDestroyed())) return; // ha salido
                         long[] pr = StreamTuner.PROGRESS.get(s.infoHash);
-                        if (pr != null && pr[3] == 1) return; // precarga lista: se está viendo
+                        // Precarga lista NO es lo mismo que «se está viendo»: solo se deja de vigilar cuando el
+                        // reproductor ya está leyendo datos (primera imagen en marcha).
+                        boolean reading = StreamTuner.READ_AT.containsKey(s.infoHash);
+                        if (pr != null && pr[3] == 1 && reading) return;
                         long now = System.currentTimeMillis();
                         boolean meta = TorrentFiles.FILES.containsKey(s.infoHash);
                         boolean dead = (!meta && now - t0 > NO_METADATA_MS)
-                                || (meta && pr != null && pr[0] == 0 && now - pr[2] > NO_PROGRESS_MS);
+                                || (meta && pr != null && pr[0] == 0 && now - pr[2] > NO_PROGRESS_MS)
+                                || (pr != null && pr[3] == 1 && !reading && now - pr[2] > NO_START_MS);
                         // Demasiado lenta para esta conexión: al minuto de precarga no lleva ni la mitad
                         boolean slow = !dead && pr != null && pr.length > 4 && pr[3] == 0
                                 && now - pr[4] > SLOW_MS && pr[0] * 2 < pr[1];
@@ -679,17 +786,24 @@ public final class MediaScreen {
 
         void fallback(int g, Sources.Stream failed, Catalog.Movie m, Activity player, boolean tooSlow) {
             if (g != watchGen || m != cur) return;
+            if (triedFor != m) { tried.clear(); triedFor = m; }
+            tried.add(failed.infoHash);
             int i = shownStreams.indexOf(failed);
             Sources.Stream next = null;
-            if (tooSlow) { // una más ligera (pide menos velocidad)
+            if (tooSlow) { // una más ligera que la fallida, que no se haya probado ya
                 for (Sources.Stream x : shownStreams) {
-                    if (x != failed && x.size > 0 && failed.size > 0 && x.size < failed.size * 0.8) {
+                    if (!tried.contains(x.infoHash) && x.size > 0 && failed.size > 0 && x.size < failed.size * 0.8) {
                         next = x;
                         break;
                     }
                 }
             }
-            if (next == null) next = i >= 0 && i + 1 < shownStreams.size() ? shownStreams.get(i + 1) : null;
+            if (next == null) { // la siguiente de la lista que no se haya probado
+                for (int k = i + 1; k < shownStreams.size(); k++) {
+                    Sources.Stream x = shownStreams.get(k);
+                    if (!tried.contains(x.infoHash)) { next = x; break; }
+                }
+            }
             Log.i(TAG, "La fuente " + failed.infoHash + " no responde; " + (next == null ? "no quedan más" : "se prueba la siguiente"));
             if (player != null && !player.isFinishing()) player.finish();
             if (next == null) {

@@ -68,6 +68,8 @@ public final class HomeScreen {
     public static final int MAX_LISTS = 4;
     public static final int MAX_FAVS = 12;
     public static final String EXTRA_ALL_LINKS = "com.mcp2p.tv.ALL_LINKS";
+    /** Colores de las tarjetas de lista en el Inicio (uno por lista, según su id). */
+    static final int[] LIST_COLORS = {0xFF7D6BFF, 0xFF3DDC97, 0xFFFFB547, 0xFF4FC3F7, 0xFFFF6B8B, 0xFFE0E05A};
 
     static final String FULL_LISTS = "Ya tienes " + MAX_LISTS + " listas en el Inicio: quita una (MENÚ sobre la lista) para añadir otra";
     static final String FULL_FAVS = "Máximo " + MAX_FAVS + " favoritos: quita uno para añadir otro";
@@ -777,7 +779,7 @@ public final class HomeScreen {
             favsHeader.setText(Math.min(dt.totalFavs, MAX_FAVS) + " de " + MAX_FAVS);
             if (dt.favs.isEmpty()) {
                 LinearLayout e = card("nofavs", 0, 88, v -> {
-                    if (!dt.lists.isEmpty()) openPlaylistFromHome(a, dt.lists.get(0).id, true);
+                    if (!dt.lists.isEmpty()) openPlaylistFromHome(a, dt.lists.get(0).id, false);
                     else showAddDialog();
                 }, null);
                 ((LinearLayout.LayoutParams) e.getLayoutParams()).rightMargin = 0;
@@ -821,11 +823,16 @@ public final class HomeScreen {
         }
 
         View listCard(final PlaylistItem p) {
-            LinearLayout c = card("list:" + p.id, 0, 88, v -> openPlaylistFromHome(a, p.id, true), v -> {
+            // Al entrar se ven todas las carpetas de la lista (no se salta a la primera)
+            LinearLayout c = card("list:" + p.id, 0, 88, v -> openPlaylistFromHome(a, p.id, false), v -> {
                 listOptions(p);
                 return true;
             });
             c.setContentDescription(p.name);
+            // Color propio por lista, para distinguirlas de un vistazo
+            View bar = new View(a);
+            bar.setBackgroundColor(LIST_COLORS[(int) (Math.abs(p.id) % LIST_COLORS.length)]);
+            c.addView(bar, 0, new LinearLayout.LayoutParams(-1, dp(5)));
             FrameLayout top = new FrameLayout(a);
             String src = sourceLabel(p.source);
             TextView tag = text(src.isEmpty() ? "" : src.toUpperCase(Locale.ROOT), 9.5f, DIM, false);
@@ -845,7 +852,7 @@ public final class HomeScreen {
         View favCard(final FavItem f) {
             LinearLayout c = card("fav:" + f.playlistId + ":" + f.input, 0, 100,
                     v -> play(a, f.input, f.title, false), v -> {
-                        favOptions(f);
+                        removeFav(f); // pulsación larga: se quita directamente, sin menú
                         return true;
                     });
             c.setPadding(dp(8), dp(10), dp(8), dp(10));
@@ -963,6 +970,21 @@ public final class HomeScreen {
                         });
                     }))
                     .show();
+        }
+
+        /** Quita un favorito del Inicio al instante (pulsación larga en su ficha). */
+        void removeFav(final FavItem f) {
+            io.execute(() -> {
+                try {
+                    if (isFavorite(db(a), f.playlistId, f.input)) toggleFavoriteRaw(a, f.playlistId, f.input);
+                } catch (Throwable t) {
+                    Log.w(TAG, "No se pudo quitar el favorito", t);
+                }
+                MAIN.post(() -> {
+                    Toast.makeText(a, "Quitado de favoritos", Toast.LENGTH_SHORT).show();
+                    reload();
+                });
+            });
         }
 
         void favOptions(final FavItem f) {

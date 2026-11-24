@@ -7,16 +7,16 @@
 
 
 # instance fields
-.field public final synthetic f$0:Ljava/lang/Runnable;
+.field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
 
 # direct methods
-.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;->f$0:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
 .end method
@@ -26,9 +26,9 @@
 .method public final onClick(Landroid/view/View;)V
     .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;->f$0:Ljava/lang/Runnable;
+    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda10;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-static {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$13(Ljava/lang/Runnable;Landroid/view/View;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$buildCatalog$1$com-mcp2p-media-MediaScreen$Screen(Landroid/view/View;)V
 
     return-void
 .end method

@@ -3,38 +3,58 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/content/DialogInterface$OnClickListener;
+.implements Landroid/view/View$OnLayoutChangeListener;
 
 
 # instance fields
-.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
+.field public final synthetic f$0:Landroid/widget/ImageView;
 
-.field public final synthetic f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+.field public final synthetic f$1:Landroid/graphics/drawable/GradientDrawable;
 
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;Lcom/mcp2p/tv/HomeScreen$FavItem;)V
+.method public synthetic constructor <init>(Landroid/widget/ImageView;Landroid/graphics/drawable/GradientDrawable;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$0:Landroid/widget/ImageView;
 
-    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$1:Landroid/graphics/drawable/GradientDrawable;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onClick(Landroid/content/DialogInterface;I)V
-    .locals 2
+.method public final onLayoutChange(Landroid/view/View;IIIIIIII)V
+    .locals 12
 
-    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
+    move-object v0, p0
 
-    iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$1:Lcom/mcp2p/tv/HomeScreen$FavItem;
+    iget-object v1, v0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$0:Landroid/widget/ImageView;
 
-    invoke-virtual {v0, v1, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$favOptions$26$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$FavItem;Landroid/content/DialogInterface;I)V
+    iget-object v2, v0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda16;->f$1:Landroid/graphics/drawable/GradientDrawable;
+
+    move-object v3, p1
+
+    move v4, p2
+
+    move v5, p3
+
+    move/from16 v6, p4
+
+    move/from16 v7, p5
+
+    move/from16 v8, p6
+
+    move/from16 v9, p7
+
+    move/from16 v10, p8
+
+    move/from16 v11, p9
+
+    invoke-static/range {v1 .. v11}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$favCard$18(Landroid/widget/ImageView;Landroid/graphics/drawable/GradientDrawable;Landroid/view/View;IIIIIIII)V
 
     return-void
 .end method

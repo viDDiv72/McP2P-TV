@@ -52,7 +52,7 @@
 
     iget-object v5, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda0;->f$4:Lcom/mcp2p/media/Catalog$Movie;
 
-    invoke-virtual/range {v0 .. v5}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$watch$21$com-mcp2p-media-MediaScreen$Screen(IJLcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Catalog$Movie;)V
+    invoke-virtual/range {v0 .. v5}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$watch$23$com-mcp2p-media-MediaScreen$Screen(IJLcom/mcp2p/media/Sources$Stream;Lcom/mcp2p/media/Catalog$Movie;)V
 
     return-void
 .end method

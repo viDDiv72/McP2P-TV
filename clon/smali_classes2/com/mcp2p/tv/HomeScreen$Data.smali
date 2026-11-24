@@ -44,17 +44,17 @@
 .method constructor <init>()V
     .locals 1
 
-    .line 290
+    .line 292
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 291
+    .line 293
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
     iput-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
 
-    .line 293
+    .line 295
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V

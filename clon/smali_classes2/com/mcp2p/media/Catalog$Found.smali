@@ -53,13 +53,13 @@
         }
     .end annotation
 
-    .line 121
+    .line 126
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 122
+    .line 127
     iput-object p1, p0, Lcom/mcp2p/media/Catalog$Found;->streams:Ljava/util/List;
 
-    .line 123
+    .line 128
     iput-object p2, p0, Lcom/mcp2p/media/Catalog$Found;->failed:Ljava/util/List;
 
     return-void

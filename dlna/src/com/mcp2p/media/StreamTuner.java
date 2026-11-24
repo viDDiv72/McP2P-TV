@@ -37,6 +37,12 @@ public final class StreamTuner {
      */
     public static final Map<String, long[]> PROGRESS = new ConcurrentHashMap<>();
 
+    /** Hash -> instante de la última lectura del reproductor (T3/m.read). Solo existe si ya se está viendo. */
+    public static final Map<String, Long> READ_AT = new ConcurrentHashMap<>();
+    /** Identidad del handle -> hash, para saber de qué torrent es cada lectura. */
+    private static final Map<Object, String> HASH_OF =
+            java.util.Collections.synchronizedMap(new java.util.WeakHashMap<Object, String>());
+
     static String speed(int bytesPerSec) {
         if (bytesPerSec <= 0) return "0 KB/s";
         if (bytesPerSec >= MB) return String.format(Locale.forLanguageTag("es-ES"), "%.1f MB/s", bytesPerSec / (double) MB);
@@ -90,6 +96,7 @@ public final class StreamTuner {
             int durationSec = dur == null ? 0 : dur;
             android.util.Log.i(TAG, "Precarga: hasta " + (TorrentFiles.bufferBytes(g.size) / MB) + " MB, piezas de "
                     + (g.pieceLength / 1024) + " KB, duración " + (durationSec / 60) + " min");
+            HASH_OF.put(handle, hash);
             long start = System.currentTimeMillis();
             long lastChange = start;
             int lastDone = -1;
@@ -281,11 +288,13 @@ public final class StreamTuner {
      */
     public static void ahead(Object reader, int piece) {
         try {
+            Class<?> c = reader.getClass();
+            Object handle = c.getField("t").get(reader);
+            String hash = handle == null ? null : HASH_OF.get(handle);
+            if (hash != null) READ_AT.put(hash, System.currentTimeMillis());
             Integer last = LAST_PIECE.get(reader);
             if (last != null && last == piece) return;
             LAST_PIECE.put(reader, piece);
-            Class<?> c = reader.getClass();
-            Object handle = c.getField("t").get(reader);
             int pieceLen = c.getField("h").getInt(reader);
             int numPieces = c.getField("m").getInt(reader);
             if (handle == null || pieceLen <= 0) return;
