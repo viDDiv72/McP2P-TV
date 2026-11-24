@@ -16,7 +16,7 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 | Versión | versionCode | Estado | Resumen |
 |---|---|---|---|
-| 1.9.2-beta | 36 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
+| 1.9.2-beta1 | 37 | Sin publicar | Controles que se esconden, modo ligero, fuentes comprobadas |
 | [1.9.1](#191--2026-11-23) | 35 | Estable | Hilos de la Mediateca, arranque más rápido |
 | [1.9.0](#190--2026-11-23) | 34 | Anterior | Diseño limpio en TV, Mediateca con Peerflix/Torrentio en castellano, precarga |
 | [1.8.0](#180--2026-11-22) | 26 | Pre-release | Inicio nuevo en TV, DLNA ante cambios de red, CI y pruebas |
@@ -29,8 +29,8 @@ Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Numeració
 
 ---
 
-## [1.9.2-beta] · sin publicar (rama `estabilidad-1.9.2`)
-versionCode 36 · solo local (`build/McP2P-TV-v1.9.2-beta.apk`). Todas las pruebas se llaman 1.9.2-beta hasta publicar.
+## [1.9.2-beta1] · sin publicar (rama `estabilidad-1.9.2`)
+versionCode 37 · solo local (`build/McP2P-TV-v1.9.2-beta1.apk`). Las pruebas se numeran 1.9.2-beta, -beta1, -beta2… hasta publicar.
 
 ### Corregido
 - Reproductor (Xiaomi Mi Box y TV con mando): la barra −10 s / Pausar / +10 s / Audio / Subt. no se escondía nunca.
