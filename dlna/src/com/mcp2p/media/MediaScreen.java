@@ -772,6 +772,10 @@ public final class MediaScreen {
                         boolean slow = !dead && pr != null && pr.length > 4 && pr[3] == 0
                                 && now - pr[4] > SLOW_MS && pr[0] * 2 < pr[1];
                         if (dead || slow) {
+                            Log.w(TAG, "Vigilante: " + (slow ? "demasiado lenta" : "sin respuesta") + " fuente="
+                                    + s.infoHash.substring(0, Math.min(8, s.infoHash.length())) + " calidad=" + s.quality
+                                    + " precarga=" + (pr == null ? "-" : java.util.Arrays.toString(pr))
+                                    + " leyendo=" + reading);
                             final Activity toClose = started;
                             final boolean tooSlow = slow;
                             main.post(() -> fallback(g, s, m, toClose, tooSlow));

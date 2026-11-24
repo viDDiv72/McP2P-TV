@@ -39,7 +39,7 @@
 .method constructor <init>()V
     .locals 0
 
-    .line 1232
+    .line 1236
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -52,7 +52,7 @@
 
     monitor-enter v0
 
-    .line 1238
+    .line 1242
     :try_start_0
     sget-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
@@ -65,10 +65,10 @@
     :cond_0
     const/4 v1, 0x1
 
-    .line 1239
+    .line 1243
     sput-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
-    .line 1240
+    .line 1244
     new-instance v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;
 
     invoke-direct {v1}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;-><init>()V
@@ -77,12 +77,12 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 1241
+    .line 1245
     monitor-exit v0
 
     return-void
 
-    .line 1238
+    .line 1242
     :cond_1
     :goto_0
     monitor-exit v0
@@ -100,12 +100,12 @@
 .method static player(J)Landroid/app/Activity;
     .locals 5
 
-    .line 1245
+    .line 1249
     sget-object v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
     if-eqz v0, :cond_0
 
-    .line 1246
+    .line 1250
     sget-wide v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->lastAt:J
 
     const-wide/16 v3, 0x3e8
@@ -136,7 +136,7 @@
 .method public onActivityCreated(Landroid/app/Activity;Landroid/os/Bundle;)V
     .locals 1
 
-    .line 1261
+    .line 1265
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p2
@@ -153,14 +153,14 @@
 
     if-eqz p2, :cond_0
 
-    .line 1262
+    .line 1266
     new-instance p2, Ljava/lang/ref/WeakReference;
 
     invoke-direct {p2, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     sput-object p2, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
-    .line 1263
+    .line 1267
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
     move-result-wide p1
@@ -180,7 +180,7 @@
 .method public onActivityPaused(Landroid/app/Activity;)V
     .locals 1
 
-    .line 1257
+    .line 1261
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p1
@@ -208,7 +208,7 @@
 .method public onActivityResumed(Landroid/app/Activity;)V
     .locals 1
 
-    .line 1253
+    .line 1257
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p1

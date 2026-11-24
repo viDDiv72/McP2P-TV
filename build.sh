@@ -50,6 +50,7 @@ node "$ROOT/tools/check-layouts.js" "$ROOT/clon/res"
 
 echo "== comprobación de arreglos en smali"
 node "$ROOT/tools/check-smali.js" "$ROOT/clon"
+node "$ROOT/tools/check-behaviour.js"
 
 echo "== pruebas del módulo DLNA (JVM)"
 "$ROOT/dlna/test/run-tests.sh"
