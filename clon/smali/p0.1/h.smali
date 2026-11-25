@@ -1,0 +1,31 @@
+.class public interface abstract Lp0/h;
+.super Ljava/lang/Object;
+.source "SourceFile"
+
+# interfaces
+.implements Lk0/h;
+
+
+# virtual methods
+.method public abstract close()V
+.end method
+
+.method public abstract f(Lp0/C;)V
+.end method
+
+.method public abstract getUri()Landroid/net/Uri;
+.end method
+
+.method public i()Ljava/util/Map;
+    .locals 1
+
+    .line 1
+    sget-object v0, Ljava/util/Collections;->EMPTY_MAP:Ljava/util/Map;
+
+    .line 2
+    .line 3
+    return-object v0
+.end method
+
+.method public abstract p(Lp0/l;)J
+.end method

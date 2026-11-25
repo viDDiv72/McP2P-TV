@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/mcp_background" android:padding="14.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="24.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:ellipsize="end" android:id="@id/telegram_title" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="Telegram" android:maxLines="1" android:layout_weight="1.0" />
+        <com.google.android.material.button.MaterialButton android:id="@id/telegram_sign_out" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Cerrar sesión" android:layout_marginEnd="6.0dp" style="@style/Widget.Mcp2p.OutlinedButton" />
+        <com.google.android.material.button.MaterialButton android:id="@id/telegram_back" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Volver" style="@style/Widget.Mcp2p.OutlinedButton" />
+    </LinearLayout>
+    <TextView android:textSize="16.0sp" android:textColor="@color/mcp_text" android:id="@id/telegram_status" android:paddingTop="8.0dp" android:paddingBottom="8.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:accessibilityLiveRegion="polite" />
+    <ScrollView android:id="@id/telegram_auth" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@id/telegram_qr" android:visibility="gone" android:layout_width="240.0dp" android:layout_height="240.0dp" android:layout_marginBottom="8.0dp" android:scaleType="fitCenter" android:contentDescription="Código QR para vincular Telegram" />
+            <EditText android:textColor="@color/mcp_text" android:textColorHint="@color/mcp_text_muted" android:id="@id/telegram_input" android:visibility="gone" android:saveEnabled="false" android:layout_width="match_parent" android:layout_height="wrap_content" android:singleLine="true" android:imeOptions="actionDone|flagNoPersonalizedLearning" android:importantForAutofill="no" />
+            <com.google.android.material.button.MaterialButton android:id="@id/telegram_submit" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="48.0dp" />
+            <com.google.android.material.button.MaterialButton android:id="@id/telegram_alternative" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="48.0dp" style="@style/Widget.Mcp2p.OutlinedButton" />
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:orientation="vertical" android:id="@id/telegram_catalog" android:visibility="gone" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <com.google.android.material.textfield.TextInputLayout android:id="@id/telegram_search_box" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="6.0dp" app:endIconMode="clear_text">
+            <com.google.android.material.textfield.TextInputEditText android:textColor="@color/mcp_text" android:id="@id/telegram_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="1" android:singleLine="true" android:inputType="text" android:imeOptions="actionSearch" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/telegram_posters" android:visibility="gone" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0" />
+        <ListView android:id="@id/telegram_items" android:layout_width="match_parent" android:layout_height="0.0dp" android:listSelector="@drawable/bg_telegram_row_focus" android:layout_weight="1.0" />
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton android:id="@id/telegram_more" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Cargar más" android:layout_marginEnd="6.0dp" />
+            <com.google.android.material.button.MaterialButton android:id="@id/telegram_source" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Usar como fuente" />
+            <com.google.android.material.button.MaterialButton android:id="@id/telegram_refresh" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Actualizar" style="@style/Widget.Mcp2p.OutlinedButton" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

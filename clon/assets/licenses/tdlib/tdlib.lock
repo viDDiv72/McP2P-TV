@@ -1,0 +1,27 @@
+# tdlib.lock: every pin of this build, sourceable by bash (`source tdlib.lock`) and by the workflows.
+# Changing any value here means a new release: bump RELEASE_TAG (a re-run of the same TDLib commit gets a `-rN`
+# suffix), on a branch, with the owner's yes (README, "Changing a pin").
+#
+# OpenSSL fallback rule: the build uses OpenSSL 3.5 LTS. Only if 3.5 fails to build, switch to OpenSSL 1.1.1w by
+# changing the four OPENSSL_* lines below to
+#   OPENSSL_VERSION=openssl-1.1.1w
+#   OPENSSL_URL=https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1w/openssl-1.1.1w.tar.gz
+#   OPENSSL_SHA256=<sha256 of that release asset>
+#   OPENSSL_DIR=openssl-1.1.1w
+# and record here, as a comment, the date and the reason 3.5 failed. Fallback in use: none.
+
+TDLIB_VERSION=1.8.70
+TDLIB_COMMIT=c8828d50f5eac2fc7089ce1089d7ce9095c61b5e
+RELEASE_TAG=tdlib-1.8.70-c8828d5
+ANDROID_NDK_VERSION=28.2.13676358
+ANDROID_API_LEVEL=26
+ABIS="arm64-v8a armeabi-v7a x86_64"
+TDLIB_INTERFACE=Java
+ANDROID_STL=c++_static
+OPENSSL_VERSION=openssl-3.5.9
+OPENSSL_URL=https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz
+OPENSSL_SHA256=603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a
+OPENSSL_DIR=openssl-3.5.9
+BASE_IMAGE=ubuntu:24.04@sha256:2198e4c65076e9cb0b3d695219df667c0e3b0072da64ca3c2648aca17dcecaf5
+APT_SNAPSHOT=20261115T000000Z
+ASSEMBLE_IMAGE=python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b

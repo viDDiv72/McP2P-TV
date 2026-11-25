@@ -1,0 +1,9 @@
+McP2P - Third-party notices
+
+LibVLC for Android
+Dependency: org.videolan.android:libvlc-all:3.7.7
+Project: https://code.videolan.org/videolan/libvlcjni
+License declared by the Maven Central artifact: GNU Lesser General Public License, version 2.1 (LGPL-2.1).
+License text: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
+
+The LibVLC dependency is resolved from Maven Central at build time. No native VLC libraries have been copied from Ace Stream Pro APKs.

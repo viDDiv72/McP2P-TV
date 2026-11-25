@@ -1,0 +1,202 @@
+.class public final synthetic Le4/S0;
+.super Ljava/lang/Object;
+.source "SourceFile"
+
+# interfaces
+.implements Ljava/util/function/Function;
+
+
+# instance fields
+.field public final synthetic a:I
+
+
+# direct methods
+.method public synthetic constructor <init>(I)V
+    .locals 0
+
+    .line 1
+    iput p1, p0, Le4/S0;->a:I
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final apply(Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 2
+
+    .line 1
+    iget v0, p0, Le4/S0;->a:I
+
+    .line 2
+    .line 3
+    packed-switch v0, :pswitch_data_0
+
+    .line 4
+    .line 5
+    .line 6
+    check-cast p1, Lorg/drinkless/tdlib/TdApi$Chat;
+
+    .line 7
+    .line 8
+    sget v0, Lcom/mcp2p/app/ui/TelegramLibraryActivity;->H0:I
+
+    .line 9
+    .line 10
+    iget-object p1, p1, Lorg/drinkless/tdlib/TdApi$Chat;->title:Ljava/lang/String;
+
+    .line 11
+    .line 12
+    return-object p1
+
+    .line 13
+    :pswitch_0
+    check-cast p1, Ld4/m;
+
+    .line 14
+    .line 15
+    sget v0, Lcom/mcp2p/app/ui/TelegramLibraryActivity;->H0:I
+
+    .line 16
+    .line 17
+    iget-object p1, p1, Ld4/m;->b:Ljava/lang/String;
+
+    .line 18
+    .line 19
+    return-object p1
+
+    .line 20
+    :pswitch_1
+    check-cast p1, Lorg/drinkless/tdlib/TdApi$Chat;
+
+    .line 21
+    .line 22
+    sget v0, Lcom/mcp2p/app/ui/TelegramLibraryActivity;->H0:I
+
+    .line 23
+    .line 24
+    iget-object p1, p1, Lorg/drinkless/tdlib/TdApi$Chat;->title:Ljava/lang/String;
+
+    .line 25
+    .line 26
+    return-object p1
+
+    .line 27
+    :pswitch_2
+    new-instance v0, Lorg/drinkless/tdlib/TdApi$SetAuthenticationEmailAddress;
+
+    .line 28
+    .line 29
+    check-cast p1, Ljava/lang/String;
+
+    .line 30
+    .line 31
+    invoke-direct {v0, p1}, Lorg/drinkless/tdlib/TdApi$SetAuthenticationEmailAddress;-><init>(Ljava/lang/String;)V
+
+    .line 32
+    .line 33
+    .line 34
+    return-object v0
+
+    .line 35
+    :pswitch_3
+    new-instance v0, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationPassword;
+
+    .line 36
+    .line 37
+    check-cast p1, Ljava/lang/String;
+
+    .line 38
+    .line 39
+    invoke-direct {v0, p1}, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationPassword;-><init>(Ljava/lang/String;)V
+
+    .line 40
+    .line 41
+    .line 42
+    return-object v0
+
+    .line 43
+    :pswitch_4
+    new-instance v0, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationCode;
+
+    .line 44
+    .line 45
+    check-cast p1, Ljava/lang/String;
+
+    .line 46
+    .line 47
+    invoke-direct {v0, p1}, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationCode;-><init>(Ljava/lang/String;)V
+
+    .line 48
+    .line 49
+    .line 50
+    return-object v0
+
+    .line 51
+    :pswitch_5
+    check-cast p1, Ljava/lang/String;
+
+    .line 52
+    .line 53
+    sget v0, Lcom/mcp2p/app/ui/TelegramLibraryActivity;->H0:I
+
+    .line 54
+    .line 55
+    new-instance v0, Lorg/drinkless/tdlib/TdApi$SetAuthenticationPhoneNumber;
+
+    .line 56
+    .line 57
+    const/4 v1, 0x0
+
+    .line 58
+    invoke-direct {v0, p1, v1}, Lorg/drinkless/tdlib/TdApi$SetAuthenticationPhoneNumber;-><init>(Ljava/lang/String;Lorg/drinkless/tdlib/TdApi$PhoneNumberAuthenticationSettings;)V
+
+    .line 59
+    .line 60
+    .line 61
+    return-object v0
+
+    .line 62
+    :pswitch_6
+    check-cast p1, Ljava/lang/String;
+
+    .line 63
+    .line 64
+    sget v0, Lcom/mcp2p/app/ui/TelegramLibraryActivity;->H0:I
+
+    .line 65
+    .line 66
+    new-instance v0, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationEmailCode;
+
+    .line 67
+    .line 68
+    new-instance v1, Lorg/drinkless/tdlib/TdApi$EmailAddressAuthenticationCode;
+
+    .line 69
+    .line 70
+    invoke-direct {v1, p1}, Lorg/drinkless/tdlib/TdApi$EmailAddressAuthenticationCode;-><init>(Ljava/lang/String;)V
+
+    .line 71
+    .line 72
+    .line 73
+    invoke-direct {v0, v1}, Lorg/drinkless/tdlib/TdApi$CheckAuthenticationEmailCode;-><init>(Lorg/drinkless/tdlib/TdApi$EmailAddressAuthentication;)V
+
+    .line 74
+    .line 75
+    .line 76
+    return-object v0
+
+    .line 77
+    :pswitch_data_0
+    .packed-switch 0x0
+        :pswitch_6
+        :pswitch_5
+        :pswitch_4
+        :pswitch_3
+        :pswitch_2
+        :pswitch_1
+        :pswitch_0
+    .end packed-switch
+.end method

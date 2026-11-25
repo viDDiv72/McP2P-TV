@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@color/mcp_background" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="match_parent" android:layout_weight="0.34" android:paddingEnd="18.0dp">
+        <com.google.android.material.button.MaterialButton android:id="@id/button_epg_back" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Volver" app:icon="@android:drawable/ic_media_previous" app:iconTint="@color/mcp_text" style="@style/Widget.Mcp2p.OutlinedButton" />
+        <TextView android:textSize="26.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:id="@id/epg_channel_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20.0dp" android:text="Canal" android:maxLines="2" />
+        <TextView android:textSize="14.0sp" android:textColor="@color/mcp_text_muted" android:id="@id/epg_channel_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6.0dp" android:text="Guía de programación" />
+        <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="@color/mcp_accent" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24.0dp" android:text="DÍAS" />
+        <ScrollView android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_marginTop="8.0dp" android:layout_weight="1.0">
+            <LinearLayout android:orientation="vertical" android:id="@id/epg_days_container" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </ScrollView>
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical" android:layout_width="0.0dp" android:layout_height="match_parent" android:layout_weight="0.66">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="Programación" android:layout_weight="1.0" />
+            <com.google.android.material.button.MaterialButton android:id="@id/button_epg_refresh" android:padding="0.0dp" android:layout_width="52.0dp" android:layout_height="48.0dp" android:minWidth="52.0dp" android:text="" android:contentDescription="Actualizar EPG" app:icon="@android:drawable/ic_popup_sync" app:iconTint="@color/mcp_text" style="@style/Widget.Mcp2p.OutlinedButton" />
+        </LinearLayout>
+        <TextView android:textSize="16.0sp" android:textColor="@color/mcp_text_muted" android:gravity="center" android:id="@id/text_epg_empty" android:background="@drawable/bg_empty_state" android:padding="20.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:text="Cargando programación…" />
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_epg_programmes" android:paddingBottom="8.0dp" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_marginTop="12.0dp" android:layout_weight="1.0" android:overScrollMode="never" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/mcp_background" android:paddingTop="18.0dp" android:paddingBottom="12.0dp" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingStart="22.0dp" android:paddingEnd="22.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <com.google.android.material.button.MaterialButton android:id="@id/button_history_back" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="‹  Volver" style="@style/Widget.Mcp2p.OutlinedButton" />
+        <TextView android:textSize="25.0sp" android:textStyle="bold" android:textColor="@color/mcp_text" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="Historial de IDs" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="18.0dp" />
+        <com.google.android.material.button.MaterialButton android:id="@id/button_history_clear" android:layout_width="wrap_content" android:layout_height="48.0dp" android:text="Borrar historial" style="@style/Widget.Mcp2p.OutlinedButton" />
+    </LinearLayout>
+    <TextView android:textSize="13.0sp" android:textColor="@color/mcp_text_muted" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:layout_marginBottom="12.0dp" android:text="Tus últimas reproducciones P2P correctas. Pulsa una ID para reproducirla, usa Eliminar para quitar solo esa entrada o mantenla pulsada para editar su nombre." />
+    <TextView android:textSize="16.0sp" android:textColor="@color/mcp_text_muted" android:gravity="center" android:id="@id/text_history_empty" android:visibility="gone" android:layout_width="match_parent" android:layout_height="0.0dp" android:text="Todavía no hay reproducciones en el historial.\nLas IDs aparecerán aquí cuando se reproduzcan correctamente." android:layout_weight="1.0" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_playback_history" android:paddingTop="2.0dp" android:paddingBottom="12.0dp" android:scrollbars="vertical" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0" />
+</LinearLayout>

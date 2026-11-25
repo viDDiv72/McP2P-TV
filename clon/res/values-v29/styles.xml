@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ThemeOverlay.Mcp2p.AlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:textColorPrimary">@color/mcp_text</item>
+        <item name="android:textColorSecondary">@color/mcp_text_muted</item>
+        <item name="android:windowBackground">@drawable/bg_tv_dialog_window</item>
+        <item name="android:textColorHint">@color/mcp_text_muted</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/bg_tv_dialog_list_item</item>
+        <item name="android:selectableItemBackground">@drawable/bg_tv_dialog_list_item</item>
+        <item name="android:windowMinWidthMajor">65.0%</item>
+        <item name="android:windowMinWidthMinor">90.0%</item>
+        <item name="android:listPreferredItemHeightSmall">58.0dp</item>
+        <item name="android:colorAccent">@color/mcp_accent</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Mcp2p.DialogButton.Negative</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Mcp2p.DialogButton.Positive</item>
+        <item name="colorAccent">@color/mcp_accent</item>
+        <item name="colorOnSurface">@color/mcp_text</item>
+        <item name="colorSurface">@color/mcp_surface_alt</item>
+        <item name="selectableItemBackground">@drawable/bg_tv_dialog_list_item</item>
+    </style>
+    <style name="ThemeOverlay.Mcp2p.ListDialog.Light" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:textColorPrimary">#172033</item>
+        <item name="android:textColorSecondary">#586579</item>
+        <item name="android:windowBackground">@drawable/bg_playlist_dialog_white</item>
+        <item name="android:textColorHint">#586579</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/bg_playlist_dialog_list_item</item>
+        <item name="android:selectableItemBackground">@drawable/bg_playlist_dialog_list_item</item>
+        <item name="android:windowMinWidthMajor">65.0%</item>
+        <item name="android:windowMinWidthMinor">90.0%</item>
+        <item name="android:listPreferredItemHeightSmall">58.0dp</item>
+        <item name="android:colorAccent">@color/mcp_primary_dark</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Mcp2p.ListDialogButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Mcp2p.ListDialogButton</item>
+        <item name="colorAccent">@color/mcp_primary_dark</item>
+        <item name="colorOnSurface">#172033</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="selectableItemBackground">@drawable/bg_playlist_dialog_list_item</item>
+    </style>
+</resources>

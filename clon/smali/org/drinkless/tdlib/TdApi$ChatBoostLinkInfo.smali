@@ -1,0 +1,60 @@
+.class public Lorg/drinkless/tdlib/TdApi$ChatBoostLinkInfo;
+.super Lorg/drinkless/tdlib/TdApi$Object;
+.source "SourceFile"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lorg/drinkless/tdlib/TdApi;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x9
+    name = "ChatBoostLinkInfo"
+.end annotation
+
+
+# static fields
+.field public static final CONSTRUCTOR:I = -0x23edc77c
+
+
+# instance fields
+.field public chatId:J
+
+.field public isPublic:Z
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    .line 1
+    invoke-direct {p0}, Lorg/drinkless/tdlib/TdApi$Object;-><init>()V
+
+    return-void
+.end method
+
+.method public constructor <init>(ZJ)V
+    .locals 0
+
+    .line 2
+    invoke-direct {p0}, Lorg/drinkless/tdlib/TdApi$Object;-><init>()V
+
+    .line 3
+    iput-boolean p1, p0, Lorg/drinkless/tdlib/TdApi$ChatBoostLinkInfo;->isPublic:Z
+
+    .line 4
+    iput-wide p2, p0, Lorg/drinkless/tdlib/TdApi$ChatBoostLinkInfo;->chatId:J
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public getConstructor()I
+    .locals 1
+
+    const v0, -0x23edc77c
+
+    return v0
+.end method

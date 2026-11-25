@@ -1,0 +1,74 @@
+.class public Lorg/drinkless/tdlib/TdApi$EditMessageLiveLocation;
+.super Lorg/drinkless/tdlib/TdApi$Function;
+.source "SourceFile"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lorg/drinkless/tdlib/TdApi;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x9
+    name = "EditMessageLiveLocation"
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lorg/drinkless/tdlib/TdApi$Function<",
+        "Lorg/drinkless/tdlib/TdApi$Message;",
+        ">;"
+    }
+.end annotation
+
+
+# static fields
+.field public static final CONSTRUCTOR:I = 0x1900aab2
+
+
+# instance fields
+.field public chatId:J
+
+.field public location:Lorg/drinkless/tdlib/TdApi$LiveLocation;
+
+.field public messageId:J
+
+.field public replyMarkup:Lorg/drinkless/tdlib/TdApi$ReplyMarkup;
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    .line 1
+    invoke-direct {p0}, Lorg/drinkless/tdlib/TdApi$Function;-><init>()V
+
+    return-void
+.end method
+
+.method public constructor <init>(JJLorg/drinkless/tdlib/TdApi$ReplyMarkup;Lorg/drinkless/tdlib/TdApi$LiveLocation;)V
+    .locals 0
+
+    .line 2
+    invoke-direct {p0}, Lorg/drinkless/tdlib/TdApi$Function;-><init>()V
+
+    iput-wide p1, p0, Lorg/drinkless/tdlib/TdApi$EditMessageLiveLocation;->chatId:J
+
+    iput-wide p3, p0, Lorg/drinkless/tdlib/TdApi$EditMessageLiveLocation;->messageId:J
+
+    iput-object p5, p0, Lorg/drinkless/tdlib/TdApi$EditMessageLiveLocation;->replyMarkup:Lorg/drinkless/tdlib/TdApi$ReplyMarkup;
+
+    iput-object p6, p0, Lorg/drinkless/tdlib/TdApi$EditMessageLiveLocation;->location:Lorg/drinkless/tdlib/TdApi$LiveLocation;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public getConstructor()I
+    .locals 1
+
+    const v0, 0x1900aab2
+
+    return v0
+.end method
