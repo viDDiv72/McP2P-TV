@@ -28,7 +28,7 @@
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda0;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-virtual {v0}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$removeFav$24$com-mcp2p-tv-HomeScreen$Home()V
+    invoke-virtual {v0}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$favOptions$36$com-mcp2p-tv-HomeScreen$Home()V
 
     return-void
 .end method

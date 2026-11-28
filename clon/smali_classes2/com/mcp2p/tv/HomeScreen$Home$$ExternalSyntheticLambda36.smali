@@ -3,44 +3,34 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/widget/TextView$OnEditorActionListener;
 
 
 # instance fields
-.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
-
-.field public final synthetic f$1:I
-
-.field public final synthetic f$2:Lcom/mcp2p/tv/HomeScreen$Data;
+.field public final synthetic f$0:Ljava/lang/Runnable;
 
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;ILcom/mcp2p/tv/HomeScreen$Data;)V
+.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
-
-    iput p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$1:I
-
-    iput-object p3, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$2:Lcom/mcp2p/tv/HomeScreen$Data;
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$0:Ljava/lang/Runnable;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final run()V
-    .locals 3
+.method public final onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+    .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
+    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$0:Ljava/lang/Runnable;
 
-    iget v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$1:I
+    invoke-static {v0, p1, p2, p3}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$showIdDialog$42(Ljava/lang/Runnable;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
 
-    iget-object v2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda36;->f$2:Lcom/mcp2p/tv/HomeScreen$Data;
+    move-result p1
 
-    invoke-virtual {v0, v1, v2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$reload$35$com-mcp2p-tv-HomeScreen$Home(ILcom/mcp2p/tv/HomeScreen$Data;)V
-
-    return-void
+    return p1
 .end method

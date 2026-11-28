@@ -30,6 +30,8 @@ public final class Sources {
         public String file;         // archivo dentro del torrent (si se conoce)
         public boolean pack;        // el torrent trae varias películas: se reproduce `file`
         public boolean dualEnglish; // además del castellano trae inglés
+        public String acestream;    // enlace acestream (lista de Telegram): si existe, no es un torrent
+        public boolean english;     // solo inglés (sin doblar), si el usuario lo permite
         public boolean recommended; // la que más probabilidades tiene de verse sin cortes
         /** Prueba real al abrir la ficha: personas que han contestado (≥1), 0 nadie contestó, -1 sin comprobar. */
         public int reachable = -1;
@@ -119,6 +121,9 @@ public final class Sources {
 
     // ------------------------------------------------------------ lectura
 
+    /** Si el usuario acepta también versiones en inglés (sin doblar). Lo fija la Mediateca. */
+    public static volatile boolean withEnglish;
+
     /** Fuentes en castellano de una respuesta /stream/movie/tt….json de un addon. */
     public static List<Stream> parse(String addon, String json, int year) {
         List<Stream> out = new ArrayList<>();
@@ -138,7 +143,9 @@ public final class Sources {
             text = text.replace("\r", "");
             String[] lines = text.split("\n");
             String title = lines[0].trim();
-            if (!isCastilian(addon, x, title) || !yearMatches(title, year)) continue;
+            boolean cast = isCastilian(addon, x, title);
+            boolean eng = !cast && withEnglish && ENGLISH.matcher(title).find() && !LATINO.matcher(title).find();
+            if (!(cast || eng) || !yearMatches(title, year)) continue;
 
             Stream s = new Stream();
             s.addon = addon;
@@ -151,6 +158,7 @@ public final class Sources {
             s.size = Json.lng(x, "sizebytes", sizeFrom(text));
             s.provider = providerFrom(text, addon);
             s.dualEnglish = ENGLISH.matcher(title).find();
+            s.english = eng;
             Map<String, Object> hints = Json.obj(x.get("behaviorHints"));
             String fn = Json.str(hints, "filename");
             if (fn == null && lines.length > 1 && !lines[1].contains("👤")) fn = lines[1].trim();
@@ -189,9 +197,10 @@ public final class Sources {
         Map<String, Stream> by = new LinkedHashMap<>();
         for (List<Stream> l : lists) {
             for (Stream s : l) {
-                Stream o = by.get(s.infoHash);
+                String key = s.infoHash + "#" + s.fileIdx; // mismo torrent, distinto archivo = fuente distinta
+                Stream o = by.get(key);
                 if (o == null) {
-                    by.put(s.infoHash, s);
+                    by.put(key, s);
                     continue;
                 }
                 if (!o.addon.contains(s.addon)) o.addon = o.addon + " + " + s.addon;
@@ -208,11 +217,28 @@ public final class Sources {
     }
 
     /** Primero las que tienen semillas; después mejor calidad; después más semillas. */
+    /** Codecs que cuestan mucha CPU en software (x265/HEVC): en aparatos justos se prefieren x264. */
+    private static final Pattern HEVC = Pattern.compile("x265|h\\.?265|hevc", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Orden de preferencia de una fuente. En aparatos con poca memoria (Mi Box 3, 2 GB, 4 núcleos lentos):
+     * 1080p antes que 4K, x264 antes que x265 y, si pesa más de 8 GB, al final. El 4K sigue visible.
+     */
+    static int preference(Stream s) {
+        int r = rank(s.quality) * 10;
+        if (lowMemory) {
+            if ("4K".equals(s.quality)) r -= 35;
+            if (s.title != null && HEVC.matcher(s.title).find()) r -= 5;
+            if (s.size > 8L * 1073741824L) r -= 20;
+        }
+        return r;
+    }
+
     public static void sort(List<Stream> l) {
         Collections.sort(l, (a, b) -> {
             int c = Double.compare(fluency(b), fluency(a));
             if (c != 0) return c;
-            c = Integer.compare(rank(b.quality), rank(a.quality));
+            c = Integer.compare(preference(b), preference(a));
             if (c != 0) return c;
             return Integer.compare(b.seeds, a.seeds);
         });

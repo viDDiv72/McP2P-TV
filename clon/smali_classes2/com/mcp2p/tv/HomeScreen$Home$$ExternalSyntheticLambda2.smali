@@ -34,7 +34,7 @@
 
     iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda2;->f$1:Lcom/mcp2p/tv/HomeScreen$Data;
 
-    invoke-virtual {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$render$12$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$Data;Landroid/view/View;)V
+    invoke-virtual {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$render$17$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$Data;Landroid/view/View;)V
 
     return-void
 .end method

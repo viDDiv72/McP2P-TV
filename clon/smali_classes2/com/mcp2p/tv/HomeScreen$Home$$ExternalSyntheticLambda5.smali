@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/content/DialogInterface$OnClickListener;
 
 
 # instance fields
@@ -27,14 +27,14 @@
 
 
 # virtual methods
-.method public final run()V
+.method public final onClick(Landroid/content/DialogInterface;I)V
     .locals 2
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda5;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda5;->f$1:Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
 
-    invoke-virtual {v0, v1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$confirmDelete$22$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$PlaylistItem;)V
+    invoke-virtual {v0, v1, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$confirmDelete$33$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$PlaylistItem;Landroid/content/DialogInterface;I)V
 
     return-void
 .end method

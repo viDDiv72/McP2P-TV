@@ -34,7 +34,7 @@
 
     iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda3;->f$1:Ljava/lang/String;
 
-    invoke-virtual {v0, v1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$render$13$com-mcp2p-tv-HomeScreen$Home(Ljava/lang/String;)V
+    invoke-virtual {v0, v1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$render$18$com-mcp2p-tv-HomeScreen$Home(Ljava/lang/String;)V
 
     return-void
 .end method

@@ -492,6 +492,9 @@
 
 .method public static b(Landroid/content/Context;Landroid/content/Intent;Lk0/d;Landroid/media/AudioDeviceInfo;)Lu0/b;
     .locals 15
+    # McP2P-TV: sin salida directa (passthrough) de AC3/DTS al HDMI: el audio se decodifica a PCM y siempre suena
+    sget-object v0, Lu0/b;->c:Lu0/b;
+    return-object v0
 
     .line 1
     move-object/from16 v0, p1
@@ -1848,6 +1851,9 @@
 
 .method public static c(Landroid/content/Context;Lk0/d;Landroid/media/AudioDeviceInfo;)Lu0/b;
     .locals 2
+    # McP2P-TV: sin salida directa (passthrough) de AC3/DTS al HDMI: el audio se decodifica a PCM y siempre suena
+    sget-object v0, Lu0/b;->c:Lu0/b;
+    return-object v0
 
     .line 1
     new-instance v0, Landroid/content/IntentFilter;

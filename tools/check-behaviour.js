@@ -6,7 +6,7 @@ const root = path.join(__dirname, '..');
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 const checks = [
   ['Inicio: tocar una lista abre sus carpetas (no todos los enlaces)', 'dlna/src/com/mcp2p/tv/HomeScreen.java',
-    'openPlaylistFromHome(a, p.id, false), v -> {'],
+    'else openPlaylistFromHome(a, p.id, false);'],
   ['Inicio: colores por lista', 'dlna/src/com/mcp2p/tv/HomeScreen.java', 'LIST_COLORS[(int) (Math.abs(p.id)'],
   ['Inicio: pulsación larga quita el favorito al instante', 'dlna/src/com/mcp2p/tv/HomeScreen.java', 'removeFav(f); // pulsación larga'],
   ['Mediateca: vigilante espera a que se lea la primera imagen', 'dlna/src/com/mcp2p/media/MediaScreen.java',
@@ -15,7 +15,8 @@ const checks = [
   ['Mediateca: pestañas Recientes y Favoritas', 'dlna/src/com/mcp2p/media/MediaScreen.java', '{"fav", "Favoritas"}'],
   ['Mediateca: Recientes usa estrenos ya salidos', 'dlna/src/com/mcp2p/media/Catalog.java', 'primary_release_date.lte='],
   ['Mediateca: fuentes visibles antes de comprobar', 'dlna/src/com/mcp2p/media/MediaScreen.java', 'if (first == null) sourceAdapter.set(null, e);'],
-  ['Carátulas: 6 descargas y reintento', 'dlna/src/com/mcp2p/media/Images.java', 'newFixedThreadPool(6)'],
+  ['Carátulas: 2 descargas para limitar memoria', 'dlna/src/com/mcp2p/media/Images.java', 'newFixedThreadPool(2)'],
+  ['Carátulas: caché medida en bytes', 'dlna/src/com/mcp2p/media/Images.java', 'value.getByteCount() / 1024'],
   ['Carátulas: caché en disco', 'dlna/src/com/mcp2p/media/Images.java', 'new File(iv.getContext().getCacheDir(), "carateulas")'],
   ['Vigilante: registro con motivo', 'dlna/src/com/mcp2p/media/MediaScreen.java', 'Log.w(TAG, "Vigilante: "'],
 ];

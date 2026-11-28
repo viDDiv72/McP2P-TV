@@ -3,34 +3,44 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/widget/TextView$OnEditorActionListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
-.field public final synthetic f$0:Ljava/lang/Runnable;
+.field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
+
+.field public final synthetic f$1:Landroid/widget/EditText;
+
+.field public final synthetic f$2:Landroid/app/AlertDialog;
 
 
 # direct methods
-.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/widget/EditText;Landroid/app/AlertDialog;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$0:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
+
+    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$1:Landroid/widget/EditText;
+
+    iput-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$2:Landroid/app/AlertDialog;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-    .locals 1
+.method public final run()V
+    .locals 3
 
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$0:Ljava/lang/Runnable;
+    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-static {v0, p1, p2, p3}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$12(Ljava/lang/Runnable;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$1:Landroid/widget/EditText;
 
-    move-result p1
+    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda24;->f$2:Landroid/app/AlertDialog;
 
-    return p1
+    invoke-virtual {v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$10$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/EditText;Landroid/app/AlertDialog;)V
+
+    return-void
 .end method

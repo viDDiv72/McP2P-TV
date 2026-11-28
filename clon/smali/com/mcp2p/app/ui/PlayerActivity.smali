@@ -5139,6 +5139,11 @@
     .line 313
     move-result v3
 
+    # McP2P-TV: en AceStream/P2P se usa un suelo de 20/30 s; los streams normales conservan el ajuste elegido
+    invoke-static {v1, v3}, Lcom/mcp2p/media/StreamTuner;->media3CachingSeconds(Landroid/app/Activity;I)I
+
+    move-result v3
+
     .line 314
     mul-int/lit16 v12, v3, 0x3e8
 
@@ -5194,7 +5199,10 @@
     move-result v14
 
     .line 342
-    const/16 v3, 0x5dc
+    # McP2P-TV: P2P espera 5/8 s antes de iniciar; reproducción normal conserva 1,5 s
+    invoke-static {v1}, Lcom/mcp2p/media/StreamTuner;->media3StartMs(Landroid/app/Activity;)I
+
+    move-result v3
 
     .line 343
     .line 344
@@ -5211,7 +5219,10 @@
     .line 349
     .line 350
     .line 351
-    const/16 v15, 0xbb8
+    # McP2P-TV: tras un corte P2P acumula 10/15 s antes de reanudar para no entrar en bucle de carga
+    invoke-static {v1}, Lcom/mcp2p/media/StreamTuner;->media3RebufferMs(Landroid/app/Activity;)I
+
+    move-result v15
 
     .line 352
     .line 353
@@ -5665,6 +5676,25 @@
     .line 570
     .line 571
     move-result v6
+
+    # McP2P-TV: el decodificador Amlogic acepta AC3 de Telegram pero puede dejar
+    # AudioTrack bloqueado sin sonido. En AceStream/P2P se prioriza FFmpeg para
+    # decodificar siempre a PCM; el resto respeta el ajuste elegido por el usuario.
+    invoke-virtual {v1}, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
+
+    move-result-object v9
+
+    const-string v11, "com.mcp2p.app.extra.P2P_INPUT"
+
+    invoke-virtual {v9, v11}, Landroid/content/Intent;->hasExtra(Ljava/lang/String;)Z
+
+    move-result v9
+
+    if-eqz v9, :mcp2p_audio_mode_ready
+
+    const/4 v6, 0x1
+
+    :mcp2p_audio_mode_ready
 
     .line 572
     const/4 v9, 0x0
@@ -8440,6 +8470,9 @@
     .line 11
     .line 12
     invoke-virtual {p0, p1}, Lh/i;->setContentView(I)V
+
+    # McP2P-TV: nombre de la película arriba a la izquierda
+    invoke-static {p0}, Lcom/mcp2p/media/PlayerTitle;->attach(Landroid/app/Activity;)V
 
     # McP2P-TV: botón «Enviar a TV» (emisor DLNA)
     invoke-static {p0}, Lcom/mcp2p/dlna/DlnaUi;->attach(Landroid/app/Activity;)V

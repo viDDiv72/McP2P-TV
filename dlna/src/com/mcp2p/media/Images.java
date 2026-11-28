@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.util.LruCache;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -18,52 +17,101 @@ import java.util.concurrent.Executors;
 
 /**
  * Carátulas y fondos de TMDB con poca memoria (pensado para TVBox): RGB_565, reducidas al ancho que se pinta.
- * Dos niveles: memoria (120 imágenes) y disco (carpeta de caché de la app, sobrevive a cerrar la app).
+ * Dos niveles: memoria acotada por bytes y disco (carpeta de caché de la app, sobrevive a cerrar la app).
  * Si el archivo de disco está, no se descarga de nuevo; los archivos viejos (más de 14 días) se borran al arrancar.
  */
 final class Images {
-    private static final LruCache<String, Bitmap> CACHE = new LruCache<>(120);
-    // 6 descargas a la vez (antes 3): la parrilla carga antes todas las carátulas
-    private static final ExecutorService POOL = Executors.newFixedThreadPool(6);
+    /**
+     * LruCache interpreta maxSize como unidades, no como bytes. Contabilizar cada bitmap como una sola entrada hacía
+     * que 60 fondos grandes pudieran ocupar decenas de MiB. Se reserva como máximo 1/32 del heap (4–12 MiB).
+     */
+    /** Caché de carátulas por bytes: sin clases anónimas ni subclases de LruCache (el compilador D8 falla con ellas). */
+    private static final ByteLru CACHE = new ByteLru(cacheKb());
+
+    static final class ByteLru {
+        private final java.util.LinkedHashMap<String, Bitmap> map = new java.util.LinkedHashMap<String, Bitmap>(16, 0.75f, true);
+        private final int maxKb;
+        private int sizeKb;
+
+        ByteLru(int maxKb) {
+            this.maxKb = maxKb;
+        }
+
+        synchronized Bitmap get(String key) {
+            return map.get(key);
+        }
+
+        synchronized void clear() {
+            map.clear();
+            sizeKb = 0;
+        }
+
+        synchronized void put(String key, Bitmap value) {
+            Bitmap old = map.put(key, value);
+            if (old != null) sizeKb -= Math.max(1, old.getByteCount() / 1024);
+            sizeKb += Math.max(1, value.getByteCount() / 1024);
+            java.util.Iterator<Bitmap> it = map.values().iterator();
+            while (sizeKb > maxKb && it.hasNext()) {
+                Bitmap b = it.next();
+                sizeKb -= Math.max(1, b.getByteCount() / 1024);
+                it.remove();
+            }
+        }
+    }
+    /** Dos descargas simultáneas evitan picos de buffers y sockets al abrir el reproductor. */
+    private static final ExecutorService POOL = Executors.newFixedThreadPool(2);
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final long MAX_AGE_MS = 14L * 24 * 3600 * 1000;
     private static volatile boolean pruned;
 
     private Images() {}
 
+    private static int cacheKb() {
+        long kb = Runtime.getRuntime().maxMemory() / 32 / 1024;
+        return (int) Math.max(4 * 1024, Math.min(12 * 1024, kb));
+    }
+
+    /** Libera las imágenes no visibles antes de ceder la memoria al reproductor 4K. */
+    static void clearMemory() {
+        CACHE.clear();
+    }
+
     static void load(final ImageView iv, final String url, final int targetWidth) {
-        iv.setTag(url);
+        final String key = url == null ? null : cacheKey(url, targetWidth);
+        iv.setTag(key);
         if (url == null) {
             iv.setImageDrawable(null);
             return;
         }
-        Bitmap b = CACHE.get(url);
+        Bitmap b = CACHE.get(key);
         if (b != null) {
             iv.setImageBitmap(b);
             return;
         }
         iv.setImageDrawable(null);
-        final File dir = dir(iv);
+        iv.setBackgroundColor(0xFF1B1E31); // hueco visible mientras llega la carátula
         POOL.execute(() -> {
-            Bitmap bm = null;
-            File f = dir == null ? null : new File(dir, name(url));
-            if (f != null && f.isFile()) {
-                bm = decode(readFile(f), targetWidth);
-                if (bm == null) f.delete(); // archivo dañado: se vuelve a bajar
-            }
-            if (bm == null) {
-                byte[] data = download(url);
-                if (data == null) data = download(url); // un reintento: un fallo puntual dejaba el hueco vacío
-                if (data == null) return;
-                bm = decode(data, targetWidth);
+            try {
+                File dir = dir(iv);
+                if (dir == null) return;
+                File f = new File(dir, name(url));
+                Bitmap bm = f.isFile() ? decode(f, targetWidth) : null;
+                if (bm == null && f.isFile()) f.delete(); // archivo dañado: se vuelve a bajar
+                if (bm == null) {
+                    boolean ok = download(f, url);
+                    if (!ok) ok = download(f, url); // un reintento ante un fallo puntual
+                    if (!ok) return;
+                    bm = decode(f, targetWidth);
+                }
                 if (bm == null) return;
-                if (f != null) save(f, data);
+                CACHE.put(key, bm);
+                final Bitmap ready = bm;
+                MAIN.post(() -> {
+                    if (key.equals(iv.getTag())) iv.setImageBitmap(ready);
+                });
+            } catch (Throwable ignored) {
+                // Una carátula nunca debe tumbar el pool ni competir con VLC por memoria.
             }
-            CACHE.put(url, bm);
-            final Bitmap ok = bm;
-            MAIN.post(() -> {
-                if (url.equals(iv.getTag())) iv.setImageBitmap(ok);
-            });
         });
     }
 
@@ -92,61 +140,55 @@ final class Images {
         return Integer.toHexString(url.hashCode()) + "_" + url.length() + ".jpg";
     }
 
-    private static void save(File f, byte[] data) {
-        try (FileOutputStream out = new FileOutputStream(f)) {
-            out.write(data);
-        } catch (Throwable ignored) {
-            f.delete();
-        }
+    private static String cacheKey(String url, int targetWidth) {
+        int bucket = Math.max(64, Math.min(1024, ((Math.max(1, targetWidth) + 63) / 64) * 64));
+        return url + "#" + bucket;
     }
 
-    private static byte[] readFile(File f) {
-        try (java.io.FileInputStream in = new java.io.FileInputStream(f)) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buf = new byte[16384];
-            int n;
-            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-            return out.toByteArray();
-        } catch (Throwable t) {
-            return null;
-        }
-    }
-
-    private static byte[] download(String url) {
+    /** Descarga a disco por streaming: nunca retiene una imagen comprimida completa en el heap. */
+    private static boolean download(File f, String url) {
         HttpURLConnection c = null;
+        File tmp = new File(f.getParentFile(), f.getName() + "." + Thread.currentThread().getId() + ".part");
         try {
+            tmp.delete();
             c = (HttpURLConnection) new URL(url).openConnection();
             c.setConnectTimeout(6000);
             c.setReadTimeout(8000);
-            if (c.getResponseCode() != 200) return null;
-            try (InputStream in = c.getInputStream()) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
+            if (c.getResponseCode() != 200 || c.getContentLength() > 3 * 1024 * 1024) return false;
+            try (InputStream in = c.getInputStream(); FileOutputStream out = new FileOutputStream(tmp)) {
                 byte[] buf = new byte[16384];
+                long total = 0;
                 int n;
                 while ((n = in.read(buf)) > 0) {
+                    total += n;
+                    if (total > 3L * 1024 * 1024) return false;
                     out.write(buf, 0, n);
-                    if (out.size() > 3 * 1024 * 1024) return null;
                 }
-                return out.toByteArray();
             }
+            if (f.isFile()) {
+                tmp.delete();
+                return true;
+            }
+            return tmp.renameTo(f);
         } catch (Throwable t) {
-            return null;
+            return false;
         } finally {
+            if (tmp.isFile()) tmp.delete();
             if (c != null) c.disconnect();
         }
     }
 
-    private static Bitmap decode(byte[] data, int target) {
+    private static Bitmap decode(File file, int target) {
         try {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            BitmapFactory.decodeByteArray(data, 0, data.length, o);
+            BitmapFactory.decodeFile(file.getAbsolutePath(), o);
             int s = 1;
             while (target > 0 && o.outWidth / (s * 2) >= target) s *= 2;
             o = new BitmapFactory.Options();
             o.inSampleSize = s;
             o.inPreferredConfig = Bitmap.Config.RGB_565;
-            return BitmapFactory.decodeByteArray(data, 0, data.length, o);
+            return BitmapFactory.decodeFile(file.getAbsolutePath(), o);
         } catch (Throwable t) {
             return null;
         }

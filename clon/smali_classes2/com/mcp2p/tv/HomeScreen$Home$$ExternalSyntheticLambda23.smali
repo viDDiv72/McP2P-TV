@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/View$OnClickListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
@@ -23,12 +23,12 @@
 
 
 # virtual methods
-.method public final onClick(Landroid/view/View;)V
+.method public final run()V
     .locals 1
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda23;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$buildRail$5$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
+    invoke-virtual {v0}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$show$1$com-mcp2p-tv-HomeScreen$Home()V
 
     return-void
 .end method

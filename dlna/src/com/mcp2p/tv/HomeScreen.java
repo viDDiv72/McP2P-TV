@@ -47,7 +47,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +71,7 @@ public final class HomeScreen {
     public static final int MAX_FAVS = 12;
     public static final String EXTRA_ALL_LINKS = "com.mcp2p.tv.ALL_LINKS";
     /** Colores de las tarjetas de lista en el Inicio (uno por lista, según su id). */
-    static final int[] LIST_COLORS = {0xFF7D6BFF, 0xFF3DDC97, 0xFFFFB547, 0xFF4FC3F7, 0xFFFF6B8B, 0xFFE0E05A};
+    static final int[] LIST_COLORS = {0xFF6C7BB8, 0xFF4FA88A, 0xFFC49A4A, 0xFF5E9DBF, 0xFFB86B7E, 0xFF9AA55A};
 
     static final String FULL_LISTS = "Ya tienes " + MAX_LISTS + " listas en el Inicio: quita una (MENÚ sobre la lista) para añadir otra";
     static final String FULL_FAVS = "Máximo " + MAX_FAVS + " favoritos: quita uno para añadir otro";
@@ -78,7 +80,7 @@ public final class HomeScreen {
 
     // Colores de la nueva interfaz (los mismos del prototipo)
     static final int BG = 0xFF0B0C14, SURFACE = 0xFF141625, SURFACE2 = 0xFF1B1E31,
-            OUTLINE = 0xFF24283F, TEXT = 0xFFEEF0F8, MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF;
+            OUTLINE = 0xFF24283F, TEXT = 0xFFEEF0F8, MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF6F8FD6, ACCENT2 = 0xFFA9BCE6;
 
     private static volatile boolean favBlocked;
 
@@ -227,6 +229,329 @@ public final class HomeScreen {
         }
     }
 
+    /** Lista «tvonline» siempre en Mis listas: se actualiza cada 6 h y con el botón ⟳ Actualizar. */
+    static final class TvOnline {
+        static final String NAME = "tvonline";
+        static final String URL = "https://archive.org/download/tvonline_202311/tvonline.txt";
+        static final long EVERY_MS = 6L * 60 * 60 * 1000;
+        static final java.util.concurrent.atomic.AtomicBoolean BUSY = new java.util.concurrent.atomic.AtomicBoolean();
+
+        /** force: ignora el intervalo (botón). done: en el hilo principal, solo si la lista se actualizó. */
+        static void ensure(final Context c, final boolean force, final Runnable done) {
+            if (!BUSY.compareAndSet(false, true)) return;
+            new Thread(() -> {
+                boolean ok = false;
+                try {
+                    Long id = findId(c);
+                    long now = System.currentTimeMillis();
+                    long last = prefs(c).getLong("tvonline_at", 0);
+                    if (force || id == null || now - last >= EVERY_MS) {
+                        String text = download(URL);
+                        if (text != null) {
+                            java.util.ArrayList<Object> entries = parse(text);
+                            if (!entries.isEmpty()) {
+                                if (id != null) deletePlaylist(c, id);
+                                Class<?> s3 = Class.forName("S3.a");
+                                long nid = (Long) s3.getMethod("e", Context.class, String.class, String.class, long.class)
+                                        .invoke(null, c, NAME, URL, 0L);
+                                s3.getMethod("a", Context.class, long.class, java.util.ArrayList.class)
+                                        .invoke(null, c, nid, entries);
+                                prefs(c).edit().putLong("tvonline_at", now).apply();
+                                ok = true;
+                            }
+                        }
+                    }
+                    if (AgendaSync.check(c, force)) ok = true;
+                    if (UrlLists.run(c, force)) ok = true;
+                } catch (Throwable t) {
+                    Log.w(TAG, "No se pudo actualizar tvonline", t);
+                } finally {
+                    BUSY.set(false);
+                }
+                final boolean updated = ok;
+                MAIN.post(() -> {
+                    if (updated && done != null) done.run();
+                    if (force && !updated) Toast.makeText(c, "No se ha podido actualizar tvonline", Toast.LENGTH_LONG).show();
+                });
+            }, "mcp2p-tvonline").start();
+        }
+
+        static Long findId(Context c) throws ReflectiveOperationException {
+            Cursor cu = db(c).rawQuery("SELECT _id FROM playlists WHERE name=? AND parent_playlist_id IS NULL ORDER BY _id DESC LIMIT 1",
+                    new String[]{NAME});
+            try {
+                if (!cu.moveToFirst()) return null;
+                return cu.getLong(0);
+            } finally {
+                cu.close();
+            }
+        }
+
+        static String download(String url) {
+            HttpURLConnection con = null;
+            try {
+                con = (HttpURLConnection) new URL(url).openConnection();
+                con.setConnectTimeout(15000);
+                con.setReadTimeout(20000);
+                con.setRequestProperty("User-Agent", "Mcp2p");
+                if (con.getResponseCode() != 200) return null;
+                java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+                try (InputStream in = con.getInputStream()) {
+                    byte[] b = new byte[16384];
+                    int n;
+                    while ((n = in.read(b)) != -1) {
+                        bo.write(b, 0, n);
+                        if (bo.size() > 20 * 1024 * 1024) return null;
+                    }
+                }
+                return bo.toString("UTF-8");
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudo descargar tvonline", t);
+                return null;
+            } finally {
+                if (con != null) con.disconnect();
+            }
+        }
+
+        /** M3U tolerante: #EXTINF con sus atributos y, después, la primera línea que no sea comentario (http, acestream…). */
+        static java.util.ArrayList<Object> parse(String text) throws ReflectiveOperationException {
+            java.util.ArrayList<Object> out = new java.util.ArrayList<>();
+            java.lang.reflect.Constructor<?> k = Class.forName("W3.c").getConstructor(
+                    String.class, String.class, boolean.class, String.class, String.class, String.class, boolean.class);
+            String title = null, tvg = "", logo = "", group = "";
+            for (String raw : text.split("\n")) {
+                String line = raw.trim();
+                if (line.startsWith("#EXTINF")) {
+                    title = line.substring(line.lastIndexOf(',') + 1).trim();
+                    if (title.isEmpty()) title = "Canal";
+                    tvg = attr(line, "tvg-id");
+                    logo = attr(line, "tvg-logo");
+                    group = attr(line, "group-title");
+                } else if (!line.isEmpty() && !line.startsWith("#") && title != null) {
+                    out.add(k.newInstance(title, line, false, tvg, logo, group, false));
+                    title = null;
+                }
+            }
+            return out;
+        }
+
+        static String attr(String line, String name) {
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile(name + "=\"([^\"]*)\"").matcher(line);
+            return m.find() ? m.group(1) : "";
+        }
+    }
+
+    /** Agenda deportiva (telegra.ph «la flotilla»): una lista por fecha, p. ej. «11-25». Se comprueba cada 6 h. */
+    static final class AgendaSync {
+        static final String PREFIX = "https://telegra.ph/Agenda-deportiva-la-flotilla-";
+
+        /** Mira ayer, hoy y dos días más. Devuelve true si creó o actualizó alguna lista. */
+        static boolean check(Context c, boolean force) {
+            try {
+                long now = System.currentTimeMillis();
+                if (!force && now - prefs(c).getLong("agenda_at", 0) < TvOnline.EVERY_MS) return false;
+                boolean any = false;
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DAY_OF_MONTH, -1);
+                for (int i = 0; i < 4; i++) {
+                    String md = String.format(Locale.US, "%02d-%02d", cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+                    String name = String.format(Locale.US, "Lista %02d/%02d/%d", cal.get(Calendar.DAY_OF_MONTH),
+                            cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
+                    String html = TvOnline.download(PREFIX + md);
+                    if (html != null && html.contains("acestream://")) {
+                        java.util.ArrayList<Object> entries = parse(html);
+                        if (!entries.isEmpty()) {
+                            Long id = findBySource(c, PREFIX + md);
+                            if (id != null) deletePlaylist(c, id);
+                            Class<?> s3 = Class.forName("S3.a");
+                            long nid = (Long) s3.getMethod("e", Context.class, String.class, String.class, long.class)
+                                    .invoke(null, c, name, PREFIX + md, 0L);
+                            s3.getMethod("a", Context.class, long.class, java.util.ArrayList.class).invoke(null, c, nid, entries);
+                            any = true;
+                        }
+                    }
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                pruneOld(c);
+                prefs(c).edit().putLong("agenda_at", now).apply();
+                return any;
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudo sincronizar la agenda", t);
+                return false;
+            }
+        }
+
+        /** Borra las agendas de hace más de 3 días (solo las de esta fuente, identificadas por su dirección). */
+        static void pruneOld(Context c) throws ReflectiveOperationException {
+            Calendar limit = Calendar.getInstance();
+            limit.set(Calendar.HOUR_OF_DAY, 0);
+            limit.set(Calendar.MINUTE, 0);
+            limit.set(Calendar.SECOND, 0);
+            limit.set(Calendar.MILLISECOND, 0);
+            limit.add(Calendar.DAY_OF_MONTH, -3);
+            java.util.ArrayList<Long> old = new java.util.ArrayList<>();
+            Cursor cu = db(c).rawQuery("SELECT _id, source FROM playlists WHERE source LIKE ? AND parent_playlist_id IS NULL",
+                    new String[]{PREFIX + "%"});
+            try {
+                while (cu.moveToNext()) {
+                    String[] p = cu.getString(1).substring(PREFIX.length()).split("-");
+                    Calendar d = Calendar.getInstance();
+                    d.clear();
+                    d.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+                    d.set(Calendar.MONTH, Integer.parseInt(p[0]) - 1);
+                    d.set(Calendar.DAY_OF_MONTH, Integer.parseInt(p[1]));
+                    if (d.before(limit)) old.add(cu.getLong(0));
+                }
+            } finally {
+                cu.close();
+            }
+            for (long id : old) deletePlaylist(c, id);
+        }
+
+        /** Busca la agenda por su dirección (así también encuentra las que tenían el nombre antiguo «MM-DD»). */
+        static Long findBySource(Context c, String source) throws ReflectiveOperationException {
+            Cursor cu = db(c).rawQuery("SELECT _id FROM playlists WHERE source=? AND parent_playlist_id IS NULL ORDER BY _id DESC LIMIT 1",
+                    new String[]{source});
+            try {
+                if (!cu.moveToFirst()) return null;
+                return cu.getLong(0);
+            } finally {
+                cu.close();
+            }
+        }
+
+        /** Cada <p>: cabecera «🏀 01:00 | NBA», partido «A 🆚 B», «📺 canal» y el enlace acestream. */
+        static java.util.ArrayList<Object> parse(String html) throws ReflectiveOperationException {
+            java.util.ArrayList<Object> out = new java.util.ArrayList<>();
+            java.lang.reflect.Constructor<?> k = Class.forName("W3.c").getConstructor(
+                    String.class, String.class, boolean.class, String.class, String.class, String.class, boolean.class);
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("(?s)<p>(.*?)</p>").matcher(html);
+            String head = "", teams = "", chan = "";
+            while (m.find()) {
+                String t = unescape(m.group(1).replaceAll("<[^>]+>", "")).trim();
+                if (t.startsWith("acestream://")) {
+                    String title = head + (teams.isEmpty() ? "" : " " + teams) + (chan.isEmpty() ? "" : " · " + chan);
+                    title = title.trim();
+                    if (title.isEmpty()) title = "Evento";
+                    out.add(k.newInstance(title, t, false, "", "", "Agenda", false));
+                } else if (t.matches("(?s).*\\d{2}:\\d{2}\\s*\\|.*")) {
+                    head = t; teams = ""; chan = "";
+                } else if (t.startsWith("📺")) {
+                    chan = t.replace("📺", "").replace("*", "").trim();
+                } else if (t.contains("🆚")) {
+                    teams = t;
+                }
+            }
+            return out;
+        }
+
+        static String unescape(String s) {
+            return s.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
+                    .replace("&quot;", "\"").replace("&#39;", "'").replace("&nbsp;", " ");
+        }
+    }
+
+    /**
+     * Listas importadas por URL: se vuelven a bajar cada 6 h (tvonline y agendas tienen su propio proceso).
+     * Si la descarga falla o el archivo no tiene canales, se conserva la lista y se avisa.
+     * Al actualizar se sustituyen los canales (los favoritos de esa lista se pierden).
+     */
+    static final class UrlLists {
+        static final long EVERY_MS = 6L * 60 * 60 * 1000;
+
+        static final String CAJAB_NAME = "PELICULAS";
+        static final String CAJAB_URL = "https://archive.org/download/cajab/cajab.txt";
+
+        /** Crea la lista de películas cajab la primera vez (después la refresca run()). */
+        static void addCajabIfMissing(Context c) throws ReflectiveOperationException {
+            Cursor cu = db(c).rawQuery("SELECT _id FROM playlists WHERE source=? AND parent_playlist_id IS NULL",
+                    new String[]{CAJAB_URL});
+            boolean has;
+            try {
+                has = cu.moveToFirst();
+            } finally {
+                cu.close();
+            }
+            if (has) return;
+            String text = TvOnline.download(CAJAB_URL);
+            if (text == null) return;
+            java.util.ArrayList<Object> entries = TvOnline.parse(text);
+            if (entries.isEmpty()) return;
+            Class<?> s3 = Class.forName("S3.a");
+            long nid = (Long) s3.getMethod("e", Context.class, String.class, String.class, long.class)
+                    .invoke(null, c, CAJAB_NAME, CAJAB_URL, 0L);
+            s3.getMethod("a", Context.class, long.class, ArrayList.class).invoke(null, c, nid, entries);
+            prefs(c).edit().putLong("url_at_" + nid, System.currentTimeMillis()).apply();
+        }
+
+        /** true si se actualizó alguna lista. */
+        static boolean run(Context c, boolean force) {
+            boolean any = false;
+            try {
+                addCajabIfMissing(c);
+                java.util.List<Object[]> lists = new ArrayList<>();
+                Cursor cu = db(c).rawQuery("SELECT _id, name, source FROM playlists WHERE parent_playlist_id IS NULL"
+                        + " AND (source LIKE 'http://%' OR source LIKE 'https://%')", null);
+                try {
+                    while (cu.moveToNext()) lists.add(new Object[]{cu.getLong(0), cu.getString(1), cu.getString(2)});
+                } finally {
+                    cu.close();
+                }
+                android.content.SharedPreferences p = prefs(c);
+                long now = System.currentTimeMillis();
+                for (Object[] l : lists) {
+                    long id = (Long) l[0];
+                    String name = (String) l[1], url = (String) l[2];
+                    if (url.startsWith(AgendaSync.PREFIX) || TvOnline.NAME.equals(name)) continue;
+                    if (!force && now - p.getLong("url_at_" + id, 0) < EVERY_MS) continue;
+                    String text = TvOnline.download(url);
+                    java.util.ArrayList<Object> entries = text == null ? new java.util.ArrayList<Object>() : TvOnline.parse(text);
+                    p.edit().putLong("url_at_" + id, now).apply();
+                    if (entries.isEmpty()) {
+                        final String n = name;
+                        MAIN.post(() -> Toast.makeText(c, "La lista «" + n + "» no responde o está vacía: se conserva la anterior", Toast.LENGTH_LONG).show());
+                        continue;
+                    }
+                    if (CAJAB_URL.equals(url)) {
+                        // Incremental: solo se añaden las películas que no estaban (no se borra la lista)
+                        java.util.Set<String> have = new java.util.HashSet<>();
+                        Cursor ic = db(c).rawQuery("SELECT input FROM playlist_entries WHERE playlist_id=?", new String[]{String.valueOf(id)});
+                        try {
+                            while (ic.moveToNext()) have.add(ic.getString(0));
+                        } finally {
+                            ic.close();
+                        }
+                        java.util.ArrayList<Object> fresh = new java.util.ArrayList<>();
+                        for (Object o : entries) {
+                            if (!have.contains(String.valueOf(o.getClass().getField("b").get(o)))) fresh.add(o);
+                        }
+                        if (!fresh.isEmpty()) {
+                            Class<?> s3i = Class.forName("S3.a");
+                            s3i.getMethod("a", Context.class, long.class, ArrayList.class).invoke(null, c, id, fresh);
+                            any = true;
+                        }
+                        continue;
+                    }
+                    db(c).execSQL("DELETE FROM playlist_entries WHERE playlist_id=?", new Object[]{id});
+                    Class<?> s3 = Class.forName("S3.a");
+                    s3.getMethod("a", Context.class, long.class, ArrayList.class).invoke(null, c, id, entries);
+                    any = true;
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudieron actualizar las listas por URL", t);
+            }
+            return any;
+        }
+    }
+
+    /** Telegram: la Mediateca en modo Telegram (lista PELICULAS). */
+    static void openTelegram(Activity a) {
+        Intent i = new Intent();
+        i.setClassName(a, "com.mcp2p.app.ui.MediaLibraryActivity");
+        i.putExtra("telegram", true);
+        a.startActivity(i);
+    }
+
     static void openActivity(Activity a, String simpleName) {
         try {
             Intent i = new Intent();
@@ -291,6 +616,7 @@ public final class HomeScreen {
 
     static final class Data {
         final List<PlaylistItem> lists = new ArrayList<>();
+        final List<PlaylistItem> all = new ArrayList<>();
         int totalLists;
         final List<FavItem> favs = new ArrayList<>();
         int totalFavs;
@@ -299,18 +625,22 @@ public final class HomeScreen {
     static Data load(Context c) throws ReflectiveOperationException {
         SQLiteDatabase db = db(c);
         Data d = new Data();
+        Set<Long> hidden = hiddenLists(c);
         Cursor cu = db.rawQuery("SELECT p._id, p.name, p.source, (SELECT COUNT(*) FROM playlist_entries e WHERE e.playlist_id=p._id) "
                 + "FROM playlists p WHERE p.parent_playlist_id IS NULL "
                 + "ORDER BY p.sort_position ASC, p.created_at DESC, p._id DESC", null);
         try {
             while (cu.moveToNext()) {
-                d.totalLists++;
-                if (d.lists.size() >= MAX_LISTS) continue;
                 PlaylistItem p = new PlaylistItem();
                 p.id = cu.getLong(0);
                 p.name = cu.isNull(1) ? "Lista" : cu.getString(1);
                 p.source = cu.isNull(2) ? "" : cu.getString(2);
                 p.count = cu.getInt(3);
+                if (UrlLists.CAJAB_URL.equals(p.source)) continue; // PELICULAS: solo en Telegram, no en el Inicio
+                d.all.add(p);
+                if (hidden.contains(p.id)) continue; // oculta en el Inicio (sigue en Listas)
+                d.totalLists++;
+                if (d.lists.size() >= MAX_LISTS) continue;
                 d.lists.add(p);
             }
         } finally {
@@ -367,6 +697,24 @@ public final class HomeScreen {
 
     static SharedPreferences prefs(Context c) {
         return c.getSharedPreferences("mcp2p_home", Context.MODE_PRIVATE);
+    }
+
+    /** Listas que no se muestran en el Inicio (siguen en la pantalla Listas). */
+    static Set<Long> hiddenLists(Context c) {
+        Set<Long> s = new HashSet<>();
+        try {
+            JSONArray arr = new JSONArray(prefs(c).getString("hidden_lists", "[]"));
+            for (int i = 0; i < arr.length(); i++) s.add(arr.getLong(i));
+        } catch (Throwable t) {
+            Log.w(TAG, "hidden_lists ilegible", t);
+        }
+        return s;
+    }
+
+    static void saveHidden(Context c, Set<Long> ids) {
+        JSONArray arr = new JSONArray();
+        for (Long id : ids) arr.put(id.longValue());
+        prefs(c).edit().putString("hidden_lists", arr.toString()).apply();
     }
 
     // ================================================================== logos (caché pequeña)
@@ -459,13 +807,30 @@ public final class HomeScreen {
             return root != null && root.isAttachedToWindow();
         }
 
+        boolean tvLoop;
+
+        /** Comprueba tvonline al entrar y cada 30 min mientras la pantalla de inicio esté abierta (intervalo real: 6 h). */
+        void scheduleTvOnline() {
+            if (tvLoop) return;
+            tvLoop = true;
+            MAIN.postDelayed(this::tvTick, 30L * 60 * 1000);
+        }
+
+        void tvTick() {
+            if (!isShown()) { tvLoop = false; return; }
+            TvOnline.ensure(a, false, () -> { if (isShown()) reload(); });
+            MAIN.postDelayed(this::tvTick, 30L * 60 * 1000);
+        }
+
         void show() {
+            TvOnline.ensure(a, false, () -> { if (isShown()) reload(); });
+            scheduleTvOnline();
             root = new FrameLayout(a);
             root.setBackgroundColor(BG);
             LinearLayout h = new LinearLayout(a);
             h.setOrientation(LinearLayout.HORIZONTAL);
             root.addView(h, new FrameLayout.LayoutParams(-1, -1));
-            h.addView(buildRail(), new LinearLayout.LayoutParams(dp(78), -1));
+            h.addView(buildRail(), new LinearLayout.LayoutParams(dp(54), -1));
 
             LinearLayout main = new LinearLayout(a);
             main.setOrientation(LinearLayout.VERTICAL);
@@ -479,7 +844,7 @@ public final class HomeScreen {
             content = new LinearLayout(a);
             content.setOrientation(LinearLayout.VERTICAL);
             // margen para que la tarjeta enfocada (que crece un poco) no se corte por los lados
-            content.setPadding(dp(18), dp(6), dp(30), dp(22));
+            content.setPadding(dp(30), dp(6), dp(24), dp(22));
             content.setClipChildren(false);
             sv.addView(content, new FrameLayout.LayoutParams(-1, -2));
             main.addView(sv, new LinearLayout.LayoutParams(-1, 0, 1f));
@@ -491,7 +856,36 @@ public final class HomeScreen {
             fillOpenRow();
 
             listsHeader = new TextView(a);
-            content.addView(header("Mis listas", listsHeader));
+            LinearLayout listsTop = (LinearLayout) header("Mis listas", listsHeader);
+            TextView pick = text("⚙ Elegir", 11.5f, TEXT, false);
+            pick.setTag("pick");
+            pick.setFocusable(true);
+            pick.setClickable(true);
+            pick.setPadding(dp(12), dp(5), dp(12), dp(5));
+            pick.setBackground(states(SURFACE, SURFACE2, 10, false));
+            pick.setContentDescription("Elegir qué listas ver en el Inicio");
+            pick.setOnClickListener(v -> showPickDialog());
+            LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-2, -2);
+            pl.leftMargin = dp(12);
+            listsTop.addView(pick, pl);
+            TextView upd = text("⟳ Actualizar", 11.5f, TEXT, false);
+            upd.setTag("upd");
+            upd.setFocusable(true);
+            upd.setClickable(true);
+            upd.setPadding(dp(12), dp(5), dp(12), dp(5));
+            upd.setBackground(states(SURFACE, SURFACE2, 10, false));
+            upd.setContentDescription("Actualizar la lista tvonline");
+            upd.setOnClickListener(v -> {
+                Toast.makeText(a, "Actualizando tvonline…", Toast.LENGTH_SHORT).show();
+                TvOnline.ensure(a, true, () -> {
+                    Toast.makeText(a, "tvonline actualizada", Toast.LENGTH_SHORT).show();
+                    if (isShown()) reload();
+                });
+            });
+            LinearLayout.LayoutParams ul = new LinearLayout.LayoutParams(-2, -2);
+            ul.leftMargin = dp(8);
+            listsTop.addView(upd, ul);
+            content.addView(listsTop);
             listsRow = row();
             content.addView(listsRow);
 
@@ -532,7 +926,7 @@ public final class HomeScreen {
             r.addView(nav("☰", "Listas", false, v -> openListManager(a)));
             r.addView(nav("♡", "Favoritos", false, v -> openActivity(a, "FavoritesActivity")));
             r.addView(nav("▶", "Mediateca", false, v -> openActivity(a, "MediaLibraryActivity")));
-            r.addView(nav("⌕", "Buscar", false, v -> openActivity(a, "AceSearchActivity")));
+            r.addView(nav("✈", "Telegram", false, v -> openTelegram(a)));
             View sp = new View(a);
             r.addView(sp, new LinearLayout.LayoutParams(1, 0, 1f));
             r.addView(nav("⚙", "Ajustes", false, v -> openActivity(a, "SettingsActivity")));
@@ -557,18 +951,21 @@ public final class HomeScreen {
             n.setBackground(s);
             n.setOnClickListener(click);
             TvFocus.markOwnStyle(n);
-            TextView ic = text(icon, 19, current ? TEXT : DIM, false);
-            ic.setGravity(Gravity.CENTER);
-            n.addView(ic);
+            String rn = icon.equals("⌂") ? "ic_nav_home" : icon.equals("☰") ? "ic_nav_list"
+                    : icon.equals("♡") ? "ic_nav_heart" : icon.equals("▶") ? "ic_nav_play" : icon.equals("✈") ? "ic_nav_telegram" : "ic_nav_settings";
+            ImageView ic = new ImageView(a);
+            ic.setImageResource(a.getResources().getIdentifier(rn, "drawable", a.getPackageName()));
+            ic.setColorFilter(current ? TEXT : DIM);
+            n.addView(ic, new LinearLayout.LayoutParams(dp(22), dp(22)));
             TextView tl = text(label, 10, current ? TEXT : DIM, current);
             tl.setGravity(Gravity.CENTER);
             tl.setPadding(0, dp(3), 0, 0);
             n.addView(tl);
             n.setOnFocusChangeListener((v, has) -> {
-                ic.setTextColor(has || current ? TEXT : DIM);
+                ic.setColorFilter(has || current ? TEXT : DIM);
                 tl.setTextColor(has || current ? TEXT : DIM);
             });
-            f.addView(n, new FrameLayout.LayoutParams(dp(58), dp(52), Gravity.CENTER));
+            f.addView(n, new FrameLayout.LayoutParams(dp(48), dp(52), Gravity.CENTER));
             if (current) {
                 View bar = new View(a);
                 GradientDrawable g = new GradientDrawable();
@@ -824,7 +1221,10 @@ public final class HomeScreen {
 
         View listCard(final PlaylistItem p) {
             // Al entrar se ven todas las carpetas de la lista (no se salta a la primera)
-            LinearLayout c = card("list:" + p.id, 0, 88, v -> openPlaylistFromHome(a, p.id, false), v -> {
+            LinearLayout c = card("list:" + p.id, 0, 88, v -> {
+                if (UrlLists.CAJAB_NAME.equals(p.name)) openTelegram(a);
+                else openPlaylistFromHome(a, p.id, false);
+            }, v -> {
                 listOptions(p);
                 return true;
             });
@@ -909,7 +1309,7 @@ public final class HomeScreen {
         int colorFor(String s) {
             int[] c = {0xFF5B4BD6, 0xFFC2410C, 0xFF0F766E, 0xFF1D4ED8, 0xFF9D174D, 0xFF4D7C0F,
                     0xFF7C3AED, 0xFFB45309, 0xFF0369A1, 0xFFBE123C, 0xFF15803D, 0xFF6D28D9};
-            return c[Math.abs((s == null ? "" : s).hashCode()) % c.length];
+            return c[Math.floorMod((s == null ? "" : s).hashCode(), c.length)];
         }
 
         // ---------------------------------------------------------------- acciones
@@ -938,12 +1338,98 @@ public final class HomeScreen {
         void listOptions(final PlaylistItem p) {
             new AlertDialog.Builder(a, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
                     .setTitle(p.name)
-                    .setItems(new String[]{"Ver todos los enlaces", "Ver por categorías", "Quitar lista"}, (dlg, i) -> {
+                    .setItems(new String[]{"Ver todos los enlaces", "Ver por categorías", "Renombrar",
+                            hiddenLists(a).contains(p.id) ? "Mostrar en el Inicio" : "Ocultar del Inicio",
+                            "Quitar lista"}, (dlg, i) -> {
                         if (i == 0) openPlaylistFromHome(a, p.id, true);
                         else if (i == 1) openPlaylistFromHome(a, p.id, false);
+                        else if (i == 2) renameList(p);
+                        else if (i == 3) toggleHome(p);
                         else confirmDelete(p);
                     })
                     .setNegativeButton("Cancelar", null)
+                    .show();
+        }
+
+        void renameList(final PlaylistItem p) {
+            final EditText in = new EditText(a);
+            in.setSingleLine(true);
+            in.setText(p.name);
+            in.setSelectAllOnFocus(true);
+            in.setHint("Nombre de la lista");
+            LinearLayout box = new LinearLayout(a);
+            box.setOrientation(LinearLayout.VERTICAL);
+            box.setPadding(dp(22), dp(8), dp(22), 0);
+            box.addView(in);
+            new AlertDialog.Builder(a, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+                    .setTitle("Renombrar lista")
+                    .setView(box)
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Guardar", (dlg, i) -> {
+                        String name = in.getText().toString().trim();
+                        if (name.isEmpty()) {
+                            Toast.makeText(a, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        final String n = name.length() > 60 ? name.substring(0, 60) : name;
+                        io.execute(() -> {
+                            boolean ok = true;
+                            try {
+                                db(a).execSQL("UPDATE playlists SET name=? WHERE _id=?", new Object[]{n, p.id});
+                            } catch (Throwable t) {
+                                ok = false;
+                                Log.w(TAG, "No se pudo renombrar la lista", t);
+                            }
+                            final boolean done = ok;
+                            MAIN.post(() -> {
+                                Toast.makeText(a, done ? "Lista renombrada" : "No se ha podido renombrar",
+                                        Toast.LENGTH_SHORT).show();
+                                pendingFocus = "pick";
+                                reload();
+                            });
+                        });
+                    })
+                    .show();
+        }
+
+        /** Muestra u oculta la lista en el Inicio (la lista sigue existiendo en Listas). */
+        void toggleHome(final PlaylistItem p) {
+            Set<Long> h = hiddenLists(a);
+            boolean nowHidden = !h.contains(p.id);
+            if (nowHidden) h.add(p.id);
+            else h.remove(p.id);
+            saveHidden(a, h);
+            Toast.makeText(a, nowHidden ? "Oculta del Inicio (sigue en Listas)" : "Visible en el Inicio",
+                    Toast.LENGTH_SHORT).show();
+            pendingFocus = "pick";
+            reload();
+        }
+
+        /** Elige qué listas aparecen en el Inicio (las cuatro primeras marcadas se ven). */
+        void showPickDialog() {
+            if (data == null || data.all.isEmpty()) {
+                Toast.makeText(a, "Aún no tienes listas", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            final List<PlaylistItem> all = new ArrayList<>(data.all);
+            final Set<Long> hidden = hiddenLists(a);
+            String[] names = new String[all.size()];
+            final boolean[] on = new boolean[all.size()];
+            for (int i = 0; i < all.size(); i++) {
+                names[i] = all.get(i).name;
+                on[i] = !hidden.contains(all.get(i).id);
+            }
+            new AlertDialog.Builder(a, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+                    .setTitle("Listas en el Inicio (se ven 4)")
+                    .setMultiChoiceItems(names, on, (dlg, which, isChecked) -> on[which] = isChecked)
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Guardar", (dlg, i) -> {
+                        Set<Long> h = new HashSet<>();
+                        for (int k = 0; k < all.size(); k++) if (!on[k]) h.add(all.get(k).id);
+                        saveHidden(a, h);
+                        pendingFocus = "pick";
+                        reload();
+                    })
                     .show();
         }
 
@@ -1171,6 +1657,7 @@ public final class HomeScreen {
 
         void ownFocus(View v, float scale) {
             TvFocus.markOwnStyle(v);
+            if (AppInfo.isLowMemory()) return; // Mi Box 3 y similares: sin animación de foco (GPU modesta)
             v.setOnFocusChangeListener((view, has) ->
                     view.animate().scaleX(has ? scale : 1f).scaleY(has ? scale : 1f).setDuration(120).start());
         }

@@ -28,7 +28,7 @@
 
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda5;->f$0:Lcom/mcp2p/tv/TvFocus$State;
 
-    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$scheduleRecovery$9(Lcom/mcp2p/tv/TvFocus$State;)V
+    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$attach$2(Lcom/mcp2p/tv/TvFocus$State;)V
 
     return-void
 .end method

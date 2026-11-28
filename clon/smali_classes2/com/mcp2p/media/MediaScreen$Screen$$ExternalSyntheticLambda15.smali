@@ -3,44 +3,32 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
-.field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
-
-.field public final synthetic f$1:I
-
-.field public final synthetic f$2:Lcom/mcp2p/media/Catalog$Movie;
+.field public final synthetic f$0:Ljava/lang/Runnable;
 
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;ILcom/mcp2p/media/Catalog$Movie;)V
+.method public synthetic constructor <init>(Ljava/lang/Runnable;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
-
-    iput p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$1:I
-
-    iput-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$2:Lcom/mcp2p/media/Catalog$Movie;
+    iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Ljava/lang/Runnable;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final run()V
-    .locals 3
+.method public final onClick(Landroid/view/View;)V
+    .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
+    iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$0:Ljava/lang/Runnable;
 
-    iget v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$1:I
-
-    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda15;->f$2:Lcom/mcp2p/media/Catalog$Movie;
-
-    invoke-virtual {v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$verify$7$com-mcp2p-media-MediaScreen$Screen(ILcom/mcp2p/media/Catalog$Movie;)V
+    invoke-static {v0, p1}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$12(Ljava/lang/Runnable;Landroid/view/View;)V
 
     return-void
 .end method

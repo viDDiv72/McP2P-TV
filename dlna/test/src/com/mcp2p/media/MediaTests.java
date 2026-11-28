@@ -127,6 +127,23 @@ public final class MediaTests {
         eq("nunca menos de 16 MB", 16 * MBy, TorrentFiles.startBytes(1073741824L, 7200, 10.0 * MBy));
         eq("sin duración se supone 2 h", TorrentFiles.startBytes(g11, 7200, 3.0 * MBy), TorrentFiles.startBytes(g11, 0, 3.0 * MBy));
 
+        // ---- política de búfer adaptativa (P2P 1080p/4K)
+        eq("P2P modo ligero: mínimo 20 s", 20, TorrentFiles.p2pBufferSeconds(8, true));
+        eq("P2P normal: mínimo 30 s", 30, TorrentFiles.p2pBufferSeconds(8, false));
+        eq("P2P conserva un ajuste mayor del usuario", 35, TorrentFiles.p2pBufferSeconds(35, true));
+        eq("stream normal: arranque original", 1500, TorrentFiles.playbackStartMs(false, true));
+        eq("P2P ligero: arranque con 5 s", 5000, TorrentFiles.playbackStartMs(true, true));
+        eq("P2P normal: arranque con 8 s", 8000, TorrentFiles.playbackStartMs(true, false));
+        eq("stream normal: rebuffer original", 3000, TorrentFiles.playbackAfterRebufferMs(false, true));
+        eq("P2P ligero: reanuda con 10 s", 10000, TorrentFiles.playbackAfterRebufferMs(true, true));
+        eq("P2P normal: reanuda con 15 s", 15000, TorrentFiles.playbackAfterRebufferMs(true, false));
+
+        // ---- estado de reproducción acotado (LRU)
+        java.util.Map<Integer, Integer> bounded = TorrentFiles.bounded(2);
+        bounded.put(1, 1); bounded.put(2, 2); bounded.get(1); bounded.put(3, 3);
+        ok("mapa acotado: conserva solo dos entradas y expulsa la menos usada",
+                bounded.size() == 2 && bounded.containsKey(1) && bounded.containsKey(3) && !bounded.containsKey(2));
+
         // ---- trackers (semillas reales)
         byte[] hb = Trackers.hex("46826e610ae3b81757d3ce57cdce130f2628e29f");
         ok("infohash a 20 bytes", hb.length == 20 && (hb[0] & 0xff) == 0x46 && (hb[19] & 0xff) == 0x9f);
@@ -141,7 +158,7 @@ public final class MediaTests {
         // ---- precarga
         eq("precarga mínima 32 MB", 32L * 1048576L, TorrentFiles.bufferBytes(2L * 1073741824L));
         eq("precarga 1 % (80 MB en 8 GB)", 8L * 1073741824L / 100, TorrentFiles.bufferBytes(8L * 1073741824L));
-        eq("precarga máxima 128 MB", 128L * 1048576L, TorrentFiles.bufferBytes(60L * 1073741824L));
+        eq("precarga máxima 256 MB", 256L * 1048576L, TorrentFiles.bufferBytes(60L * 1073741824L));
         eq("precarga de un archivo pequeño = el archivo", 10L * 1048576L, TorrentFiles.bufferBytes(10L * 1048576L));
         java.util.List<Integer> pl = TorrentFiles.plan(0, 2L * 1073741824L, 4 * 1048576, 512);
         eq("plan: 8 piezas de comienzo + 2 finales", 10, pl.size());

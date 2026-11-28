@@ -9,22 +9,26 @@
 # instance fields
 .field public final synthetic f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-.field public final synthetic f$1:Landroid/widget/EditText;
+.field public final synthetic f$1:I
 
-.field public final synthetic f$2:Landroid/app/AlertDialog;
+.field public final synthetic f$2:Ljava/util/List;
+
+.field public final synthetic f$3:I
 
 
 # direct methods
-.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;Landroid/widget/EditText;Landroid/app/AlertDialog;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/media/MediaScreen$Screen;ILjava/util/List;I)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     iput-object p1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$1:Landroid/widget/EditText;
+    iput p2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$1:I
 
-    iput-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$2:Landroid/app/AlertDialog;
+    iput-object p3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$2:Ljava/util/List;
+
+    iput p4, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$3:I
 
     return-void
 .end method
@@ -32,15 +36,17 @@
 
 # virtual methods
 .method public final run()V
-    .locals 3
+    .locals 4
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    iget-object v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$1:Landroid/widget/EditText;
+    iget v1, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$1:I
 
-    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$2:Landroid/app/AlertDialog;
+    iget-object v2, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$2:Ljava/util/List;
 
-    invoke-virtual {v0, v1, v2}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$askSearch$11$com-mcp2p-media-MediaScreen$Screen(Landroid/widget/EditText;Landroid/app/AlertDialog;)V
+    iget v3, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda23;->f$3:I
+
+    invoke-virtual {v0, v1, v2, v3}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$loadMore$3$com-mcp2p-media-MediaScreen$Screen(ILjava/util/List;I)V
 
     return-void
 .end method

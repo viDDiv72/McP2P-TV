@@ -241,7 +241,8 @@
 
     .line 100
     .line 101
-    const/16 v5, 0x14
+    invoke-static {v2}, Lcom/mcp2p/tv/AppInfo;->installedVersionCode(Landroid/content/Context;)I
+    move-result v5
 
     .line 102
     .line 103

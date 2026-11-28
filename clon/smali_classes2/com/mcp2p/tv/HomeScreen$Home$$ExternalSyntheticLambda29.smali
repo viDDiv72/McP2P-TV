@@ -3,38 +3,32 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/content/DialogInterface$OnShowListener;
+.implements Landroid/view/View$OnClickListener;
 
 
 # instance fields
-.field public final synthetic f$0:Landroid/app/AlertDialog;
-
-.field public final synthetic f$1:Ljava/lang/Runnable;
+.field public final synthetic f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
 
 # direct methods
-.method public synthetic constructor <init>(Landroid/app/AlertDialog;Ljava/lang/Runnable;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/HomeScreen$Home;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$0:Landroid/app/AlertDialog;
-
-    iput-object p2, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$1:Ljava/lang/Runnable;
+    iput-object p1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onShow(Landroid/content/DialogInterface;)V
-    .locals 2
+.method public final onClick(Landroid/view/View;)V
+    .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$0:Landroid/app/AlertDialog;
+    iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
-    iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda29;->f$1:Ljava/lang/Runnable;
-
-    invoke-static {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$showIdDialog$34(Landroid/app/AlertDialog;Ljava/lang/Runnable;Landroid/content/DialogInterface;)V
+    invoke-virtual {v0, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$buildRail$8$com-mcp2p-tv-HomeScreen$Home(Landroid/view/View;)V
 
     return-void
 .end method

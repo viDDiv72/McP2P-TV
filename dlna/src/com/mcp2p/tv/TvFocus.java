@@ -59,6 +59,8 @@ public final class TvFocus {
         float accX, accY;
         DeviceWatcher deviceWatcher;
         long lastMotion, quietUntil;
+        long hoverAt, captureAt;
+        int hoverX = -9999, hoverY = -9999;
 
         State(Activity a) {
             activity = a;
@@ -103,9 +105,8 @@ public final class TvFocus {
                 }
             });
             decor.getViewTreeObserver().addOnWindowFocusChangeListener(has -> {
-                if (has) decor.post(() -> requestCapture(decor));
+                // sin captura forzada: solo se pide cuando llega un movimiento de ratón (dispatchGenericMotionEvent)
             });
-            decor.post(() -> requestCapture(decor));
             // Mando que cambia a modo ratón / touchpad que se conecta: Android suelta la captura; se recupera.
             android.hardware.input.InputManager im =
                     (android.hardware.input.InputManager) s.activity.getSystemService(android.content.Context.INPUT_SERVICE);
@@ -191,6 +192,13 @@ public final class TvFocus {
         int act = e.getActionMasked();
         if (act != android.view.MotionEvent.ACTION_HOVER_MOVE && act != android.view.MotionEvent.ACTION_HOVER_ENTER) return false;
         if (s.activity.getClass().getName().endsWith("PlayerActivity")) return false;
+        // Sin esto cada milímetro recorre toda la pantalla: se ignoran movimientos casi nulos y ráfagas (ANR en Mediateca)
+        long nowH = android.os.SystemClock.uptimeMillis();
+        int hx = (int) e.getX(), hy = (int) e.getY();
+        if (nowH - s.hoverAt < 60 && Math.abs(hx - s.hoverX) < 8 && Math.abs(hy - s.hoverY) < 8) return false;
+        s.hoverAt = nowH;
+        s.hoverX = hx;
+        s.hoverY = hy;
         View decor = s.activity.getWindow().getDecorView();
         int x = (int) e.getX(), y = (int) e.getY();
         View target = focusableAt(decor, x, y);
@@ -286,7 +294,7 @@ public final class TvFocus {
         View root = newFocus.getRootView();
         boolean wide = root != null && newFocus.getWidth() > root.getWidth() * 0.6f;
         float scale = wide ? 1.015f : 1.06f;
-        newFocus.animate().scaleX(scale).scaleY(scale).setDuration(120).start();
+        if (!AppInfo.isLowMemory()) newFocus.animate().scaleX(scale).scaleY(scale).setDuration(120).start();
         if (!ownsFocusStyle(newFocus) && newFocus.getWidth() > 0 && newFocus.getHeight() > 0) {
             s.ring.setBounds(0, 0, newFocus.getWidth(), newFocus.getHeight());
             newFocus.getOverlay().add(s.ring);
@@ -476,7 +484,7 @@ public final class TvFocus {
 
         private void again() {
             View d = decor.get();
-            if (d != null) d.postDelayed(() -> requestCapture(d), 200);
+            // no se vuelve a pedir la captura al cambiar dispositivos: el puntero aparece solo con movimiento de ratón
         }
 
         @Override public void onInputDeviceAdded(int id) {
@@ -513,7 +521,9 @@ public final class TvFocus {
             try {
                 // Llega un movimiento de ratón sin capturar: la captura se ha perdido (p. ej., el mando ha cambiado
                 // a modo ratón y Android lo ha dado de alta como dispositivo nuevo). Se vuelve a pedir.
-                if (e.isFromSource(android.view.InputDevice.SOURCE_MOUSE)) {
+                long nowC = android.os.SystemClock.uptimeMillis();
+                if (e.isFromSource(android.view.InputDevice.SOURCE_MOUSE) && nowC - s.captureAt > 1000) {
+                    s.captureAt = nowC;
                     requestCapture(s.activity.getWindow().getDecorView());
                 }
                 onPointer(s, e);

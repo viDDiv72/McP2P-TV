@@ -33,10 +33,10 @@
 .method constructor <init>(Landroid/view/View;)V
     .locals 1
 
-    .line 473
+    .line 481
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 474
+    .line 482
     new-instance v0, Ljava/lang/ref/WeakReference;
 
     invoke-direct {v0, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -47,9 +47,9 @@
 .end method
 
 .method private again()V
-    .locals 4
+    .locals 1
 
-    .line 478
+    .line 486
     iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->decor:Ljava/lang/ref/WeakReference;
 
     invoke-virtual {v0}, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
@@ -57,27 +57,6 @@
     move-result-object v0
 
     check-cast v0, Landroid/view/View;
-
-    if-eqz v0, :cond_0
-
-    .line 479
-    new-instance v1, Lcom/mcp2p/tv/TvFocus$DeviceWatcher$$ExternalSyntheticLambda0;
-
-    invoke-direct {v1, v0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher$$ExternalSyntheticLambda0;-><init>(Landroid/view/View;)V
-
-    const-wide/16 v2, 0xc8
-
-    invoke-virtual {v0, v1, v2, v3}, Landroid/view/View;->postDelayed(Ljava/lang/Runnable;J)Z
-
-    :cond_0
-    return-void
-.end method
-
-.method static synthetic lambda$again$0(Landroid/view/View;)V
-    .locals 0
-
-    .line 479
-    invoke-static {p0}, Lcom/mcp2p/tv/TvFocus;->requestCapture(Landroid/view/View;)V
 
     return-void
 .end method
@@ -87,7 +66,7 @@
 .method public onInputDeviceAdded(I)V
     .locals 0
 
-    .line 483
+    .line 491
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void
@@ -96,7 +75,7 @@
 .method public onInputDeviceChanged(I)V
     .locals 0
 
-    .line 491
+    .line 499
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void
@@ -105,7 +84,7 @@
 .method public onInputDeviceRemoved(I)V
     .locals 0
 
-    .line 487
+    .line 495
     invoke-direct {p0}, Lcom/mcp2p/tv/TvFocus$DeviceWatcher;->again()V
 
     return-void

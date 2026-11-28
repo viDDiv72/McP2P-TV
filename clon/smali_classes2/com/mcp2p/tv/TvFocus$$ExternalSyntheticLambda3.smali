@@ -3,32 +3,32 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/view/ViewTreeObserver$OnWindowFocusChangeListener;
+.implements Ljava/lang/Runnable;
 
 
 # instance fields
-.field public final synthetic f$0:Landroid/view/View;
+.field public final synthetic f$0:Lcom/mcp2p/tv/TvFocus$State;
 
 
 # direct methods
-.method public synthetic constructor <init>(Landroid/view/View;)V
+.method public synthetic constructor <init>(Lcom/mcp2p/tv/TvFocus$State;)V
     .locals 0
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    iput-object p1, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;->f$0:Landroid/view/View;
+    iput-object p1, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;->f$0:Lcom/mcp2p/tv/TvFocus$State;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final onWindowFocusChanged(Z)V
+.method public final run()V
     .locals 1
 
-    iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;->f$0:Landroid/view/View;
+    iget-object v0, p0, Lcom/mcp2p/tv/TvFocus$$ExternalSyntheticLambda3;->f$0:Lcom/mcp2p/tv/TvFocus$State;
 
-    invoke-static {v0, p1}, Lcom/mcp2p/tv/TvFocus;->lambda$capturePointer$6(Landroid/view/View;Z)V
+    invoke-static {v0}, Lcom/mcp2p/tv/TvFocus;->lambda$scheduleRecovery$6(Lcom/mcp2p/tv/TvFocus$State;)V
 
     return-void
 .end method

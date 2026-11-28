@@ -21,7 +21,7 @@
 .method constructor <init>()V
     .locals 0
 
-    .line 438
+    .line 446
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -38,7 +38,7 @@
 .method public onActivityDestroyed(Landroid/app/Activity;)V
     .locals 2
 
-    .line 456
+    .line 464
     :try_start_0
     invoke-virtual {p1}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
@@ -54,7 +54,7 @@
 
     move-result-object v0
 
-    .line 457
+    .line 465
     instance-of v1, v0, Lcom/mcp2p/tv/TvFocus$State;
 
     if-eqz v1, :cond_1
@@ -69,7 +69,7 @@
 
     const-string v1, "input"
 
-    .line 459
+    .line 467
     invoke-virtual {p1, v1}, Landroid/app/Activity;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
 
     move-result-object p1
@@ -78,7 +78,7 @@
 
     if-eqz p1, :cond_0
 
-    .line 460
+    .line 468
     move-object v1, v0
 
     check-cast v1, Lcom/mcp2p/tv/TvFocus$State;
@@ -87,7 +87,7 @@
 
     invoke-virtual {p1, v1}, Landroid/hardware/input/InputManager;->unregisterInputDeviceListener(Landroid/hardware/input/InputManager$InputDeviceListener;)V
 
-    .line 461
+    .line 469
     :cond_0
     check-cast v0, Lcom/mcp2p/tv/TvFocus$State;
 
@@ -106,7 +106,7 @@
 
     const-string v1, "No se pudo dejar de vigilar el mando"
 
-    .line 464
+    .line 472
     invoke-static {v0, v1, p1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :cond_1
@@ -123,11 +123,11 @@
 .method public onActivityResumed(Landroid/app/Activity;)V
     .locals 3
 
-    .line 443
+    .line 451
     :try_start_0
     invoke-static {p1}, Lcom/mcp2p/tv/TvFocus;->attach(Landroid/app/Activity;)V
 
-    .line 444
+    .line 452
     invoke-virtual {p1}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
     move-result-object v0
@@ -142,7 +142,7 @@
 
     move-result-object v0
 
-    .line 445
+    .line 453
     instance-of v1, v0, Lcom/mcp2p/tv/TvFocus$State;
 
     if-eqz v1, :cond_0
@@ -158,7 +158,7 @@
     :catchall_0
     move-exception v0
 
-    .line 447
+    .line 455
     new-instance v1, Ljava/lang/StringBuilder;
 
     const-string v2, "No se pudo preparar la navegaci\u00f3n en "

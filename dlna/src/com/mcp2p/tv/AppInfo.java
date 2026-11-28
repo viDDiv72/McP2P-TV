@@ -18,6 +18,24 @@ public final class AppInfo {
     }
 
     /** Texto de «Acerca de McP2P» con la versión que hay instalada (antes ponía siempre 1.5.6). */
+    /** versionCode instalado; si no se puede leer, Integer.MAX_VALUE (no se ofrece ninguna actualización). */
+    public static int installedVersionCode(Context c) {
+        try {
+            return c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    /** Versión instalada de verdad (versionName del paquete). */
+    public static String installedVersion(Context c) {
+        try {
+            return c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName;
+        } catch (Exception e) {
+            return "?";
+        }
+    }
+
     public static String about(Context c) {
         String v = "?";
         try {
@@ -28,8 +46,8 @@ public final class AppInfo {
     }
 
     /**
-     * Aparato con poca memoria (menos de ~2,8 GB de RAM, p. ej. Xiaomi Mi Box S con 2 GB): se usan menos conexiones P2P y
-     * colas más cortas para que la reproducción no se bloquee (también se puede ver 4K).
+     * Aparato con poca memoria total o con un heap pequeño. Algunas TVBox anuncian 4 GB, pero limitan la app a
+     * 128–256 MB; mirar solo la RAM física las clasificaba erróneamente como potentes.
      */
     public static boolean lowMemory(Context c) {
         Boolean l = lowMemory;
@@ -39,8 +57,9 @@ public final class AppInfo {
             ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             am.getMemoryInfo(mi);
-            // Solo cuenta la RAM: muchas TVBox con 4 GB (Vontar X4) usan Android de 32 bits y van sobradas.
-            low = am.isLowRamDevice() || mi.totalMem < 2800L * 1024 * 1024;
+            long heap = Runtime.getRuntime().maxMemory();
+            low = am.isLowRamDevice() || mi.totalMem < 3L * 1024 * 1024 * 1024
+                    || am.getMemoryClass() <= 256 || heap <= 256L * 1024 * 1024;
         } catch (Throwable ignored) {}
         lowMemory = low;
         return low;

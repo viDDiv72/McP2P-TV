@@ -58,7 +58,12 @@ const checks = [
   ['Acerca de: versión instalada', () => read('smali/d4/I0.smali').includes('AppInfo;->about(')],
   ['Reproducción: lectura adelantada continua en T3/m', () =>
     read('smali/T3/m.smali').includes('StreamTuner;->ahead(Ljava/lang/Object;I)V')],
-  ['VLC: al menos 30 s de buffer con magnets', () => read('smali/X3/a.smali').includes('StreamTuner;->vlcCachingSeconds(I)I')],
+  ['VLC: búfer adaptativo de 20/30 s con magnets', () => read('smali/X3/a.smali').includes('StreamTuner;->vlcCachingSeconds(I)I')],
+  ['Media3: búfer adaptativo para AceStream/P2P', () => {
+    const s = method(read('smali/com/mcp2p/app/ui/PlayerActivity.smali'), 'public final U(');
+    return ['media3CachingSeconds(Landroid/app/Activity;I)I', 'media3StartMs(Landroid/app/Activity;)I',
+      'media3RebufferMs(Landroid/app/Activity;)I'].every((k) => s.includes(k));
+  }],
   // Seguridad (v1.6.1)
   ['Copias de seguridad desactivadas', () => read('AndroidManifest.xml').includes('android:allowBackup="false"')],
   ['Arranque: CrashLog, TvFocus y DLNA enganchados', () => {

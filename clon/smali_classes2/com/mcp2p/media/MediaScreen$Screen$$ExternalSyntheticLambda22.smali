@@ -28,7 +28,7 @@
 
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$Screen$$ExternalSyntheticLambda22;->f$0:Lcom/mcp2p/media/MediaScreen$Screen;
 
-    invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$addMovie$8$com-mcp2p-media-MediaScreen$Screen()V
+    invoke-virtual {v0}, Lcom/mcp2p/media/MediaScreen$Screen;->lambda$addMovie$7$com-mcp2p-media-MediaScreen$Screen()V
 
     return-void
 .end method

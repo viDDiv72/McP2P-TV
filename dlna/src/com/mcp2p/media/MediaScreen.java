@@ -38,6 +38,7 @@ import com.mcp2p.tv.WindowCallbackWrapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,10 +57,48 @@ import java.util.concurrent.Executors;
 public final class MediaScreen {
     static final String TAG = "Mcp2pMedia";
     static final int BG = 0xFF0B0C14, S1 = 0xFF141625, S2 = 0xFF1B1E31, LINE = 0xFF24283F, TEXT = 0xFFEEF0F8,
-            MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF, OK = 0xFF4FD08A, STAR = 0xFFF0B44C;
+            MUTED = 0xFF8D92AA, DIM = 0xFF5D627A, ACCENT = 0xFF7D6BFF, ACCENT2 = 0xFFA99DFF, OK = 0xFFA8DCC4, STAR = 0xFFF2D9A6;
     static final String[][] TABS = {{"popular", "Populares"}, {"recent", "Recientes"}, {"now_playing", "Estrenos"},
             {"top_rated", "Mejor valoradas"}, {"fav", "Favoritas"}};
     static final String PREFS = "mcp2p_media";
+
+    /** Borra los archivos de torrent más antiguos cuando la caché pasa de 2 GB (la Mi Box 3 tiene ~5 GB libres). */
+    static void trimTorrentCache(final android.content.Context c) {
+        new Thread(() -> {
+            try {
+                File root = new File(c.getCacheDir(), "magnet_streams");
+                if (!root.isDirectory()) return;
+                List<File> files = new ArrayList<>();
+                long total = collect(root, files);
+                long max = 2L * 1024 * 1024 * 1024;
+                if (total <= max) return;
+                files.sort((x, y) -> Long.compare(x.lastModified(), y.lastModified()));
+                for (File f : files) {
+                    if (total <= max) break;
+                    long len = f.length();
+                    if (f.delete()) total -= len;
+                }
+                Log.i(TAG, "Caché de torrents recortada a " + (total / 1048576) + " MB");
+            } catch (Throwable t) {
+                Log.w(TAG, "No se pudo recortar la caché de torrents", t);
+            }
+        }, "mcp2p-cache").start();
+    }
+
+    static long collect(File d, List<File> out) {
+        long sum = 0;
+        File[] fs = d.listFiles();
+        if (fs == null) return 0;
+        for (File f : fs) {
+            if (f.isDirectory()) sum += collect(f, out);
+            else { out.add(f); sum += f.length(); }
+        }
+        return sum;
+    }
+
+    static boolean englishOn(android.content.Context c) {
+        return c.getSharedPreferences(PREFS, android.content.Context.MODE_PRIVATE).getBoolean("con_ingles", false);
+    }
 
     private MediaScreen() {}
 
@@ -123,9 +162,69 @@ public final class MediaScreen {
         return false;
     }
 
+    /** Modo Telegram: la misma Mediateca, pero con las películas de la lista PELICULAS. */
+    static volatile boolean TELEGRAM;
+    /** Película de Telegram -> sus versiones {título, enlace acestream, póster}. */
+    static final java.util.Map<Long, List<String[]>> TG_VERSIONS = new java.util.concurrent.ConcurrentHashMap<>();
+    static final java.util.regex.Pattern TG_QUALITY = java.util.regex.Pattern.compile("(?i)2160p|4k|uhd|1080|720"); // solo 4K, 1080p y 720p
+    static final java.util.regex.Pattern TG_TAGS = java.util.regex.Pattern.compile(
+            "\\s*(\\(\\d{4}\\)|\\[[^\\]]*\\]|\\b(bluray|blu-ray|bdrip|web|hdrip|rip|dl|hd|4k|2160p|1080p|720p|1080|720|uhd)\\b.*)$",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+
+    /** Lee la lista PELICULAS de la base de datos y la agrupa por película (solo 4K, 1080p, 720p y BluRay). */
+    static List<Catalog.Movie> telegramMovies(Context c) {
+        java.util.LinkedHashMap<String, Catalog.Movie> out = new java.util.LinkedHashMap<>();
+        try {
+            android.database.sqlite.SQLiteDatabase db = (android.database.sqlite.SQLiteDatabase)
+                    Class.forName("S3.a").getMethod("I", Context.class).invoke(null, c);
+            long id = -1;
+            android.database.Cursor cu = db.rawQuery("SELECT _id FROM playlists WHERE source=? AND parent_playlist_id IS NULL ORDER BY _id DESC LIMIT 1",
+                    new String[]{"https://archive.org/download/cajab/cajab.txt"});
+            try {
+                if (cu.moveToFirst()) id = cu.getLong(0);
+            } finally {
+                cu.close();
+            }
+            if (id < 0) return new ArrayList<>();
+            cu = db.rawQuery("SELECT title, input, tvg_logo FROM playlist_entries WHERE playlist_id=? ORDER BY position",
+                    new String[]{String.valueOf(id)});
+            try {
+                while (cu.moveToNext()) {
+                    String t = cu.isNull(0) ? "Película" : cu.getString(0);
+                    if (!TG_QUALITY.matcher(t).find()) continue;
+                    String name = TG_TAGS.matcher(t).replaceAll("").trim();
+                    name = name.replaceAll("\\s*\\(\\d{4}\\).*$", "").trim(); // sin el año: TMDB lo busca por título
+                    if (name.isEmpty()) name = t;
+                    String key = name.toLowerCase(Locale.ROOT);
+                    Catalog.Movie m = out.get(key);
+                    if (m == null) {
+                        m = new Catalog.Movie();
+                        m.id = 1_000_000_000L + (key.hashCode() & 0x7fffffffL);
+                        m.title = name;
+                        m.poster = cu.isNull(2) ? null : cu.getString(2);
+                        m.detailed = true;
+                        m.overview = "Película de la lista Telegram (PELICULAS).";
+                        java.util.regex.Matcher ym = java.util.regex.Pattern.compile("\\((\\d{4})\\)").matcher(t);
+                        if (ym.find()) m.year = Integer.parseInt(ym.group(1));
+                        out.put(key, m);
+                        TG_VERSIONS.put(m.id, new ArrayList<String[]>());
+                    }
+                    if (m.poster == null && !cu.isNull(2)) m.poster = cu.getString(2);
+                    TG_VERSIONS.get(m.id).add(new String[]{t, cu.isNull(1) ? "" : cu.getString(1), cu.isNull(2) ? null : cu.getString(2)});
+                }
+            } finally {
+                cu.close();
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "No se pudo leer la lista de Telegram", t);
+        }
+        return new ArrayList<>(out.values());
+    }
+
     public static void install(Activity a) {
         try {
             PlayerTracker.install(a.getApplication());
+            TELEGRAM = a.getIntent() != null && a.getIntent().getBooleanExtra("telegram", false);
             Screen sc = new Screen(a);
             sc.show();
             a.getApplication().registerActivityLifecycleCallbacks(new Closer(a, sc));
@@ -142,8 +241,8 @@ public final class MediaScreen {
         final boolean tv;
         final int cols, colW;
         final Handler main = new Handler(Looper.getMainLooper());
-        final ExecutorService io = Executors.newFixedThreadPool(3);
-        final ExecutorService checks = Executors.newFixedThreadPool(5);
+        final ExecutorService io;
+        final ExecutorService checks;
         Catalog cat;
 
         // catálogo
@@ -175,8 +274,13 @@ public final class MediaScreen {
         Screen(Activity a) {
             this.a = a;
             this.d = a.getResources().getDisplayMetrics().density;
+            trimTorrentCache(a); // libera espacio en la caché de torrents (máx. 2 GB)
             this.tv = DlnaRenderer.isTv(a);
-            Sources.lowMemory = com.mcp2p.tv.AppInfo.lowMemory(a);
+            final boolean lowMemory = com.mcp2p.tv.AppInfo.lowMemory(a);
+            Sources.lowMemory = lowMemory;
+            // Las pools anteriores (4 + 8 hilos) multiplicaban peticiones, sockets y colas justo antes de abrir VLC.
+            this.io = Executors.newFixedThreadPool(lowMemory ? 1 : 2);
+            this.checks = Executors.newFixedThreadPool(lowMemory ? 2 : 4);
             int wdp = (int) (a.getResources().getDisplayMetrics().widthPixels / d);
             this.cols = Math.max(3, Math.min(8, wdp / (tv ? 132 : 112)));
             int pad = dp(tv ? 40 : 14) * 2, gap = dp(tv ? 18 : 10);
@@ -202,6 +306,7 @@ public final class MediaScreen {
             gen++;
             watchGen++;
             detailGen++;
+            main.removeCallbacksAndMessages(null); // también cancela el fallback diferido de una fuente antigua
             io.shutdownNow();
             checks.shutdownNow();
             if (cat != null) cat.close();
@@ -238,12 +343,9 @@ public final class MediaScreen {
 
             LinearLayout head = new LinearLayout(a);
             head.setGravity(Gravity.CENTER_VERTICAL);
-            TextView h = text("Mediateca", tv ? 26 : 21, TEXT, true);
+            TextView h = text(TELEGRAM ? "Telegram" : "Mediateca", tv ? 26 : 21, TEXT, true);
             head.addView(h, new LinearLayout.LayoutParams(0, -2, 1f));
             head.addView(pill(tv ? "⌕  Buscar película" : "⌕", v -> askSearch()));
-            View gap = new View(a);
-            head.addView(gap, new LinearLayout.LayoutParams(dp(8), 1));
-            head.addView(pill(tv ? "⚙  Fuentes" : "⚙", v -> askSources()));
             catalogView.addView(head);
 
             HorizontalScrollView hs = new HorizontalScrollView(a);
@@ -255,6 +357,7 @@ public final class MediaScreen {
                 tabsRow.addView(b);
             }
             hs.addView(tabsRow);
+            if (TELEGRAM) hs.setVisibility(View.GONE); // sin pestañas de catálogo: solo la lista de Telegram
             LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(-1, -2);
             tl.topMargin = dp(tv ? 16 : 12);
             catalogView.addView(hs, tl);
@@ -308,6 +411,12 @@ public final class MediaScreen {
          * fiables en castellano. Si quedan pocas, sigue con la página siguiente hasta llenar la pantalla.
          */
         void loadMore() {
+            if (TELEGRAM) { // Telegram: la lista entera, sin catálogo ni red
+                for (Catalog.Movie m : telegramMovies(a)) addMovie(m);
+                end = true;
+                status.setText(movies.isEmpty() ? "No hay películas de Telegram en 4K, 1080p, 720p o BluRay." : "");
+                return;
+            }
             if ("fav".equals(kind) && query == null) { // Favoritas: sale del aparato, sin red
                 for (Catalog.Movie m : readFavs(a)) addMovie(m);
                 end = true;
@@ -607,12 +716,13 @@ public final class MediaScreen {
             srcCount = text("", 13, DIM, false);
             srcCount.setPadding(dp(8), 0, 0, dp(1));
             t.addView(srcCount);
-            bar.addView(t, new LinearLayout.LayoutParams(-1, -2));
+            bar.addView(t, new LinearLayout.LayoutParams(0, -2, 1f));
             wrapAll.addView(bar);
             return wrapAll;
         }
 
         void openMovie(final Catalog.Movie m) {
+            Sources.withEnglish = false; // solo castellano
             cur = m;
             tried.clear();
             triedFor = null;
@@ -625,6 +735,11 @@ public final class MediaScreen {
             heroMeta.setText(meta(m));
             Images.load(heroBg, m.backdrop != null ? Catalog.IMG + "w780" + m.backdrop : poster(m), dp(640));
             Images.load(heroPoster, poster(m), dp(150));
+            if (TELEGRAM) { // ficha igual que la Mediateca, con las versiones de Telegram como fuentes
+                showSources(telegramFound(m));
+                enrichTelegram(m, g);
+                return;
+            }
             Long at = foundAt.get(m.id);
             Catalog.Found f = found.get(m.id);
             if (f != null && f.checked && at != null && System.currentTimeMillis() - at < 15 * 60 * 1000 && m.detailed) {
@@ -713,14 +828,93 @@ public final class MediaScreen {
             grid.requestFocus();
         }
 
+        /** Busca la película en TMDB por su título (como la Mediateca) y completa sinopsis, duración, géneros y fondo. */
+        void enrichTelegram(final Catalog.Movie m, final int g) {
+            exec(io, () -> {
+                try {
+                    // El póster de la lista es el de TMDB: se busca por título y se elige la película con ese mismo póster
+                    Catalog.Movie t = null;
+                    for (int page = 1; page <= 2 && t == null; page++) {
+                        for (Catalog.Movie c : cat.search(m.title, page)) {
+                            boolean samePoster = c.poster != null && m.poster != null && m.poster.endsWith(c.poster);
+                            boolean sameFilm = m.year > 0 && c.year == m.year && c.title != null && c.title.equalsIgnoreCase(m.title);
+                            if (samePoster || sameFilm) { t = c; break; }
+                        }
+                    }
+                    if (t == null) { // sin póster igual: el título exacto (mismo nombre en TMDB)
+                        for (Catalog.Movie c : cat.search(m.title, 1)) {
+                            if (c.title != null && c.title.equalsIgnoreCase(m.title)) { t = c; break; }
+                        }
+                    }
+                    if (t == null) Log.i(TAG, "TMDB: sin coincidencia para «" + m.title + "» (" + m.year + ")");
+                    if (t != null) {
+                        cat.details(t);
+                        m.overview = t.overview;
+                        m.runtime = t.runtime;
+                        m.genres.clear();
+                        m.genres.addAll(t.genres);
+                        m.backdrop = t.backdrop;
+                        m.vote = t.vote;
+                        if (m.year == 0) m.year = t.year;
+                    }
+                } catch (Throwable e) {
+                    Log.w(TAG, "Sin datos de TMDB para " + m.title, e);
+                }
+                main.post(() -> {
+                    if (g != detailGen || cur != m) return;
+                    heroOv.setText(m.overview.isEmpty() ? "Sin sinopsis disponible." : m.overview);
+                    heroMeta.setText(meta(m));
+                    if (m.backdrop != null) Images.load(heroBg, Catalog.IMG + "w780" + m.backdrop, dp(640));
+                });
+            });
+        }
+
+        /** Versiones de Telegram como fuentes (enlaces acestream, sin torrent ni comprobación). */
+        Catalog.Found telegramFound(Catalog.Movie m) {
+            List<Sources.Stream> list = new ArrayList<>();
+            List<String[]> vs = TG_VERSIONS.get(m.id);
+            if (vs != null) {
+                for (String[] v : vs) {
+                    Sources.Stream s = new Sources.Stream();
+                    s.addon = "Telegram";
+                    s.title = v[0];
+                    s.acestream = v[1];
+                    String key = v[1].replace("acestream://", "").trim().toLowerCase(Locale.ROOT);
+                    s.infoHash = key;
+                    String lower = v[0].toLowerCase(Locale.ROOT);
+                    s.quality = lower.contains("2160") || lower.contains("4k") || lower.contains("uhd") ? "4K"
+                            : lower.contains("1080") ? "1080p" : lower.contains("720") ? "720p" : "BluRay";
+                    list.add(s);
+                }
+            }
+            Catalog.Found f = new Catalog.Found(list, new ArrayList<String>());
+            f.checked = true;
+            return f;
+        }
+
         void play(Sources.Stream s) {
+            // La pantalla conserva la caché de carátulas mientras está en segundo plano; se libera antes de abrir VLC.
+            Images.clearMemory();
+            if (s.acestream != null) { // versión de Telegram: se abre directamente en el reproductor
+                Intent i = new Intent();
+                i.setClassName(a, "com.mcp2p.app.ui.PlayerActivity");
+                i.putExtra("com.mcp2p.app.extra.P2P_INPUT", s.acestream);
+                i.putExtra("com.mcp2p.app.extra.TITLE", (cur != null ? cur.title : "") + " · " + s.quality);
+                a.startActivity(i);
+                return;
+            }
             try {
                 TorrentFiles.hint(s.infoHash, s.fileIdx);
                 if (cur.runtime > 0) TorrentFiles.hintDuration(s.infoHash, cur.runtime * 60);
                 TorrentFiles.FILES.remove(s.infoHash);
                 StreamTuner.PROGRESS.remove(s.infoHash);
                 StreamTuner.READ_AT.remove(s.infoHash);
+                PlayerTracker.nowMovie = cur.id;
+                long at = startAt > 0 ? startAt
+                        : a.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("resume_" + cur.id, 0);
+                startAt = 0;
                 watch(s);
+                if (at > 10_000) PlayerTracker.seekWhenPlaying(at); // sigue donde lo dejaste
                 Intent i = new Intent();
                 i.setClassName(a, "com.mcp2p.app.ui.PlayerActivity");
                 i.putExtra("com.mcp2p.app.extra.P2P_INPUT", Sources.magnet(s, cur.title));
@@ -738,7 +932,11 @@ public final class MediaScreen {
         /** Fuentes ya intentadas para la película actual (no se vuelve a probar ninguna). */
         final java.util.Set<String> tried = new java.util.HashSet<>();
         Catalog.Movie triedFor;
+        TextView langPill;
+        long startAt;
         int watchGen;
+        /** Minuto donde se paró la fuente anterior (0 = empezar desde el principio). */
+        long resumeMs;
         static final long SLOW_MS = 60_000;
         static final long NO_METADATA_MS = 30_000, NO_PROGRESS_MS = 60_000, NO_START_MS = 60_000;
 
@@ -809,6 +1007,8 @@ public final class MediaScreen {
                 }
             }
             Log.i(TAG, "La fuente " + failed.infoHash + " no responde; " + (next == null ? "no quedan más" : "se prueba la siguiente"));
+            long pos = player == null ? -1 : PlayerTracker.vlcTime(player);
+            resumeMs = (next != null && pos > 5000) ? pos - 3000 : 0;
             if (player != null && !player.isFinishing()) player.finish();
             if (next == null) {
                 Toast.makeText(a, "Ninguna fuente ha respondido ahora mismo. Prueba más tarde u otra película.", Toast.LENGTH_LONG).show();
@@ -817,8 +1017,15 @@ public final class MediaScreen {
             Toast.makeText(a, tooSlow ? "Esa versión va demasiado lenta para tu conexión: probando una más ligera…"
                     : "Esa fuente no responde: probando la siguiente…", Toast.LENGTH_LONG).show();
             final Sources.Stream go = next;
+            final int wg = watchGen;
+            final long back = resumeMs;
+            resumeMs = 0;
             main.postDelayed(() -> {
-                if (m == cur) play(go);
+                // si el usuario eligió otra fuente durante el retraso, no la pisamos
+                if (m == cur && wg == watchGen) {
+                    startAt = back; // la siguiente fuente empieza donde se paró la anterior
+                    play(go);
+                }
             }, 800);
         }
 
@@ -843,10 +1050,13 @@ public final class MediaScreen {
             if (m.runtime > 0) b.append(b.length() > 0 ? "  ·  " : "").append(m.runtime / 60).append(" h ").append(m.runtime % 60).append(" min");
             if (!m.genres.isEmpty()) b.append(b.length() > 0 ? "  ·  " : "").append(TextUtils.join(", ", m.genres));
             if (m.vote > 0) b.append(b.length() > 0 ? "  ·  " : "").append("★ ").append(String.format(Locale.forLanguageTag("es-ES"), "%.1f", m.vote));
+            long r = a.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("resume_" + m.id, 0);
+            if (r > 10_000) b.append("  ·  ▶ Continuar en ").append(String.format(Locale.US, "%d:%02d", r / 60000, (r / 1000) % 60));
             return b.toString();
         }
 
         static String poster(Catalog.Movie m) {
+            if (m.poster != null && m.poster.startsWith("http")) return m.poster;
             return m.poster == null ? null : Catalog.IMG + "w342" + m.poster;
         }
 
@@ -1164,16 +1374,16 @@ public final class MediaScreen {
             q.setText(ql);
             int bg, fg;
             switch (st.quality) {
-                case "4K": bg = 0xFF3B2F8F; fg = 0xFFD9D3FF; break;
-                case "1080p": bg = 0xFF14465E; fg = 0xFFBFE7FF; break;
-                case "720p": bg = 0xFF1D3B2C; fg = 0xFFBDF2D3; break;
+                case "4K": bg = 0xFFD9D4F0; fg = 0xFF4A4670; break;
+                case "1080p": bg = 0xFFD2E8F0; fg = 0xFF3A5A66; break;
+                case "720p": bg = 0xFFD4F0E2; fg = 0xFF3D6650; break;
                 default: bg = S2; fg = MUTED;
             }
             q.setBackground(s.round(bg, 8));
             q.setTextColor(fg);
             title.setText(st.pack && st.file != null ? st.file : st.title);
-            StringBuilder b = new StringBuilder("🇪🇸 Castellano");
-            if (st.dualEnglish && s.tv) b.append(" + Inglés");
+            StringBuilder b = new StringBuilder(st.english ? "🇬🇧 Inglés (sin doblar)" : "🇪🇸 Castellano");
+            if (st.dualEnglish && s.tv && !st.english) b.append(" + Inglés");
             String size = Sources.size(st.size);
             if (!size.isEmpty()) b.append("   ").append(size);
             if (s.tv) b.append("   ").append(st.addon);
@@ -1182,6 +1392,7 @@ public final class MediaScreen {
             if (st.size > Sources.HEAVY) b.append(s.tv ? "   ·  Muy pesada: necesita mucha velocidad" : "   · Muy pesada");
             rec.setVisibility(st.recommended ? View.VISIBLE : View.GONE);
             sub.setText(b.toString());
+            if (st.acestream != null) ((View) seeds.getParent()).setVisibility(View.GONE); // Telegram: sin semillas
             seeds.setText("👤 " + st.seeds);
             seeds.setTextColor(st.seeds > 0 ? TEXT : DIM);
             seedsLbl.setText(st.seeds > 0 ? "semillas" : "sin semillas");
@@ -1250,15 +1461,117 @@ public final class MediaScreen {
             return r != null && lastAt >= t0 - 1000 ? r.get() : null;
         }
 
+        /** Minuto actual (ms) del reproductor VLC de esa PlayerActivity, o -1. Solo lee, por reflexión. */
+        static long vlcTime(Activity p) {
+            Object mp = vlcPlayer(p);
+            if (mp == null) return -1;
+            try {
+                return (Long) mp.getClass().getMethod("getTime").invoke(mp);
+            } catch (Throwable t) {
+                return -1;
+            }
+        }
+
+        /** Busca el MediaPlayer de VLC dentro de la actividad (hasta 2 niveles de campos de la app). */
+        static Object vlcPlayer(Object root) {
+            return findVlc(root, 0);
+        }
+
+        private static Object findVlc(Object o, int depth) {
+            if (o == null || depth > 2) return null;
+            String n = o.getClass().getName();
+            if ("org.videolan.libvlc.MediaPlayer".equals(n)) return o;
+            if (n.startsWith("android.") || n.startsWith("java.") || n.startsWith("androidx.")) return null;
+            for (Class<?> c = o.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                if (c.getName().startsWith("android.")) break;
+                for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                    if (f.getType().isPrimitive()) continue;
+                    try {
+                        f.setAccessible(true);
+                        Object v = findVlc(f.get(o), depth + 1);
+                        if (v != null) return v;
+                    } catch (Throwable ignored) {}
+                }
+            }
+            return null;
+        }
+
+        /** Tras abrir la siguiente fuente, salta al minuto donde se paró (cuando VLC ya está reproduciendo). */
+        static void seekWhenPlaying(final long ms) {
+            final long t0 = System.currentTimeMillis();
+            new Thread(() -> {
+                try {
+                    for (int i = 0; i < 120; i++) { // hasta 60 s
+                        Thread.sleep(500);
+                        Activity p = player(t0);
+                        if (p == null || p.isFinishing() || p.isDestroyed()) continue;
+                        Object mp = vlcPlayer(p);
+                        if (mp == null) continue;
+                        if (Boolean.TRUE.equals(mp.getClass().getMethod("isPlaying").invoke(mp))
+                                && (Long) mp.getClass().getMethod("getLength").invoke(mp) > 0) {
+                            final Activity player = p;
+                            final String at = String.format(Locale.US, "%d:%02d", ms / 60000, (ms / 1000) % 60);
+                            UI.post(() -> Toast.makeText(player, "Reanudando en " + at + "…", Toast.LENGTH_SHORT).show());
+                            mp.getClass().getMethod("setTime", long.class).invoke(mp, ms);
+                            Log.i(TAG, "Retomado en " + ms + " ms");
+                            // Si el minuto aún no está descargado, VLC no avanza: tras 40 s se empieza desde el principio
+                            for (int k = 0; k < 40; k++) {
+                                Thread.sleep(1000);
+                                if (p.isFinishing() || p.isDestroyed()) return;
+                                long now = (Long) mp.getClass().getMethod("getTime").invoke(mp);
+                                if (now >= ms - 5000) return;
+                            }
+                            Log.w(TAG, "El minuto " + ms + " ms no llegó a cargar: se empieza desde el principio");
+                            mp.getClass().getMethod("setTime", long.class).invoke(mp, 0L);
+                            UI.post(() -> Toast.makeText(player, "No se ha podido reanudar: empieza desde el principio", Toast.LENGTH_LONG).show());
+                            return;
+                        }
+                    }
+                    Log.w(TAG, "No se retomó el minuto: el reproductor no empezó a tiempo");
+                } catch (Throwable t) {
+                    Log.w(TAG, "No se pudo retomar el minuto", t);
+                }
+            }, "mcp2p-retomar").start();
+        }
+
         /** Hay una película en pantalla: la Mediateca deja en pausa su trabajo de fondo (poca memoria/CPU). */
         static volatile boolean playing;
+
+        /** Película que se está viendo (para recordar dónde se dejó). */
+        static volatile long nowMovie;
+
+        static final android.os.Handler UI = new android.os.Handler(android.os.Looper.getMainLooper());
+
+        static long vlcLength(Activity p) {
+            Object mp = vlcPlayer(p);
+            if (mp == null) return -1;
+            try {
+                return (Long) mp.getClass().getMethod("getLength").invoke(mp);
+            } catch (Throwable t) {
+                return -1;
+            }
+        }
+
+        /** Guarda el minuto donde se paró la película; si estaba casi terminada, borra el recuerdo. */
+        static void saveResume(Activity p) {
+            long id = nowMovie;
+            if (id == 0) return;
+            long pos = vlcTime(p), len = vlcLength(p);
+            android.content.SharedPreferences.Editor ed = p.getSharedPreferences(PREFS, android.content.Context.MODE_PRIVATE).edit();
+            if (pos > 10_000 && (len <= 0 || pos < len - 120_000)) ed.putLong("resume_" + id, pos);
+            else ed.remove("resume_" + id);
+            ed.apply();
+        }
 
         @Override public void onActivityResumed(Activity a) {
             if (a.getClass().getName().endsWith("PlayerActivity")) playing = true;
         }
 
         @Override public void onActivityPaused(Activity a) {
-            if (a.getClass().getName().endsWith("PlayerActivity")) playing = false;
+            if (a.getClass().getName().endsWith("PlayerActivity")) {
+                playing = false;
+                saveResume(a);
+            }
         }
 
         @Override public void onActivityCreated(Activity a, android.os.Bundle b) {

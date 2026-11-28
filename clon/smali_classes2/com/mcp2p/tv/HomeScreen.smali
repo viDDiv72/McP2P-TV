@@ -9,15 +9,18 @@
         Lcom/mcp2p/tv/HomeScreen$Home;,
         Lcom/mcp2p/tv/HomeScreen$Data;,
         Lcom/mcp2p/tv/HomeScreen$PlaylistItem;,
-        Lcom/mcp2p/tv/HomeScreen$FavItem;
+        Lcom/mcp2p/tv/HomeScreen$UrlLists;,
+        Lcom/mcp2p/tv/HomeScreen$FavItem;,
+        Lcom/mcp2p/tv/HomeScreen$AgendaSync;,
+        Lcom/mcp2p/tv/HomeScreen$TvOnline;
     }
 .end annotation
 
 
 # static fields
-.field static final ACCENT:I = -0x829401
+.field static final ACCENT:I = -0x90702a
 
-.field static final ACCENT2:I = -0x566201
+.field static final ACCENT2:I = -0x56431a
 
 .field static final BG:I = -0xf4f3ec
 
@@ -75,12 +78,12 @@
 
     new-array v0, v0, [I
 
-    .line 72
+    .line 74
     fill-array-data v0, :array_0
 
     sput-object v0, Lcom/mcp2p/tv/HomeScreen;->LIST_COLORS:[I
 
-    .line 376
+    .line 724
     new-instance v0, Landroid/util/LruCache;
 
     const/16 v1, 0x1e
@@ -91,14 +94,14 @@
 
     const/4 v0, 0x2
 
-    .line 377
+    .line 725
     invoke-static {v0}, Ljava/util/concurrent/Executors;->newFixedThreadPool(I)Ljava/util/concurrent/ExecutorService;
 
     move-result-object v0
 
     sput-object v0, Lcom/mcp2p/tv/HomeScreen;->LOGO_POOL:Ljava/util/concurrent/ExecutorService;
 
-    .line 378
+    .line 726
     new-instance v0, Landroid/os/Handler;
 
     invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -113,19 +116,19 @@
 
     :array_0
     .array-data 4
-        -0x829401
-        -0xc22369
-        -0x4ab9
-        -0xb03c09
-        -0x9475
-        -0x1f1fa6
+        -0x938448
+        -0xb05776
+        -0x3b65b6
+        -0xa16241
+        -0x479482
+        -0x655aa6
     .end array-data
 .end method
 
 .method private constructor <init>()V
     .locals 0
 
-    .line 85
+    .line 87
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -134,7 +137,7 @@
 .method static asRuntime(Ljava/lang/Throwable;)Ljava/lang/RuntimeException;
     .locals 1
 
-    .line 274
+    .line 599
     instance-of v0, p0, Ljava/lang/RuntimeException;
 
     if-eqz v0, :cond_0
@@ -143,20 +146,20 @@
 
     return-object p0
 
-    .line 275
+    .line 600
     :cond_0
     instance-of v0, p0, Ljava/lang/Error;
 
     if-nez v0, :cond_1
 
-    .line 276
+    .line 601
     new-instance v0, Ljava/lang/RuntimeException;
 
     invoke-direct {v0, p0}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/Throwable;)V
 
     return-object v0
 
-    .line 275
+    .line 600
     :cond_1
     check-cast p0, Ljava/lang/Error;
 
@@ -171,7 +174,7 @@
         }
     .end annotation
 
-    .line 267
+    .line 592
     :try_start_0
     invoke-virtual {p0, p1, p2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
@@ -184,7 +187,7 @@
     :catch_0
     move-exception p0
 
-    .line 269
+    .line 594
     invoke-virtual {p0}, Ljava/lang/reflect/InvocationTargetException;->getCause()Ljava/lang/Throwable;
 
     move-result-object p0
@@ -203,12 +206,12 @@
 
     const/4 v1, 0x0
 
-    .line 188
+    .line 190
     invoke-virtual {p0, v0, v1}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
 
     move-result-object p0
 
-    .line 190
+    .line 192
     :try_start_0
     invoke-interface {p0}, Landroid/database/Cursor;->moveToFirst()Z
 
@@ -224,7 +227,7 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 192
+    .line 194
     :cond_0
     invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
@@ -235,7 +238,7 @@
 
     invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
-    .line 193
+    .line 195
     throw v0
 .end method
 
@@ -249,7 +252,7 @@
 
     const-string v0, "S3.a"
 
-    .line 160
+    .line 162
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v0
@@ -291,7 +294,7 @@
 
     const-string v0, "S3.a"
 
-    .line 174
+    .line 176
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v0
@@ -328,12 +331,12 @@
 .method public static favToast()Ljava/lang/String;
     .locals 2
 
-    .line 152
+    .line 154
     sget-boolean v0, Lcom/mcp2p/tv/HomeScreen;->favBlocked:Z
 
     const/4 v1, 0x0
 
-    .line 153
+    .line 155
     sput-boolean v1, Lcom/mcp2p/tv/HomeScreen;->favBlocked:Z
 
     if-eqz v0, :cond_0
@@ -354,7 +357,7 @@
 
     const/4 v0, 0x0
 
-    .line 405
+    .line 753
     :try_start_0
     new-instance v1, Ljava/net/URL;
 
@@ -370,21 +373,21 @@
 
     const/16 v1, 0x1388
 
-    .line 406
+    .line 754
     :try_start_1
     invoke-virtual {p0, v1}, Ljava/net/HttpURLConnection;->setConnectTimeout(I)V
 
     const/16 v1, 0x1f40
 
-    .line 407
+    .line 755
     invoke-virtual {p0, v1}, Ljava/net/HttpURLConnection;->setReadTimeout(I)V
 
     const/4 v1, 0x1
 
-    .line 408
+    .line 756
     invoke-virtual {p0, v1}, Ljava/net/HttpURLConnection;->setInstanceFollowRedirects(Z)V
 
-    .line 409
+    .line 757
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getContentLength()I
 
     move-result v2
@@ -397,13 +400,13 @@
 
     if-eqz p0, :cond_0
 
-    .line 432
+    .line 780
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_0
     return-object v0
 
-    .line 411
+    .line 759
     :cond_1
     :try_start_2
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->getInputStream()Ljava/io/InputStream;
@@ -412,7 +415,7 @@
     :try_end_2
     .catchall {:try_start_2 .. :try_end_2} :catchall_3
 
-    .line 412
+    .line 760
     :try_start_3
     new-instance v4, Ljava/io/ByteArrayOutputStream;
 
@@ -422,7 +425,7 @@
 
     new-array v5, v5, [B
 
-    .line 415
+    .line 763
     :cond_2
     invoke-virtual {v2, v5}, Ljava/io/InputStream;->read([B)I
 
@@ -432,10 +435,10 @@
 
     if-lez v6, :cond_5
 
-    .line 416
+    .line 764
     invoke-virtual {v4, v5, v7, v6}, Ljava/io/ByteArrayOutputStream;->write([BII)V
 
-    .line 417
+    .line 765
     invoke-virtual {v4}, Ljava/io/ByteArrayOutputStream;->size()I
 
     move-result v6
@@ -446,7 +449,7 @@
 
     if-eqz v2, :cond_3
 
-    .line 420
+    .line 768
     :try_start_4
     invoke-virtual {v2}, Ljava/io/InputStream;->close()V
     :try_end_4
@@ -455,13 +458,13 @@
     :cond_3
     if-eqz p0, :cond_4
 
-    .line 432
+    .line 780
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_4
     return-object v0
 
-    .line 419
+    .line 767
     :cond_5
     :try_start_5
     invoke-virtual {v4}, Ljava/io/ByteArrayOutputStream;->toByteArray()[B
@@ -472,25 +475,25 @@
 
     if-eqz v2, :cond_6
 
-    .line 420
+    .line 768
     :try_start_6
     invoke-virtual {v2}, Ljava/io/InputStream;->close()V
 
-    .line 421
+    .line 769
     :cond_6
     new-instance v2, Landroid/graphics/BitmapFactory$Options;
 
     invoke-direct {v2}, Landroid/graphics/BitmapFactory$Options;-><init>()V
 
-    .line 422
+    .line 770
     iput-boolean v1, v2, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
 
-    .line 423
+    .line 771
     array-length v4, v3
 
     invoke-static {v3, v7, v4, v2}, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
 
-    .line 425
+    .line 773
     :goto_0
     iget v4, v2, Landroid/graphics/BitmapFactory$Options;->outWidth:I
 
@@ -508,16 +511,16 @@
 
     goto :goto_1
 
-    .line 426
+    .line 774
     :cond_7
     new-instance p1, Landroid/graphics/BitmapFactory$Options;
 
     invoke-direct {p1}, Landroid/graphics/BitmapFactory$Options;-><init>()V
 
-    .line 427
+    .line 775
     iput v1, p1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
 
-    .line 428
+    .line 776
     array-length v1, v3
 
     invoke-static {v3, v7, v1, p1}, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
@@ -528,7 +531,7 @@
 
     if-eqz p0, :cond_8
 
-    .line 432
+    .line 780
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_8
@@ -545,7 +548,7 @@
 
     if-eqz v2, :cond_a
 
-    .line 411
+    .line 759
     :try_start_7
     invoke-virtual {v2}, Ljava/io/InputStream;->close()V
     :try_end_7
@@ -571,7 +574,7 @@
     :catchall_3
     if-eqz p0, :cond_b
 
-    .line 432
+    .line 780
     invoke-virtual {p0}, Ljava/net/HttpURLConnection;->disconnect()V
 
     :cond_b
@@ -581,7 +584,7 @@
 .method static greeting()Ljava/lang/String;
     .locals 3
 
-    .line 1180
+    .line 1667
     invoke-static {}, Ljava/util/Calendar;->getInstance()Ljava/util/Calendar;
 
     move-result-object v0
@@ -621,6 +624,82 @@
     return-object v0
 .end method
 
+.method static hiddenLists(Landroid/content/Context;)Ljava/util/Set;
+    .locals 4
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Landroid/content/Context;",
+            ")",
+            "Ljava/util/Set<",
+            "Ljava/lang/Long;",
+            ">;"
+        }
+    .end annotation
+
+    .line 704
+    new-instance v0, Ljava/util/HashSet;
+
+    invoke-direct {v0}, Ljava/util/HashSet;-><init>()V
+
+    .line 706
+    :try_start_0
+    new-instance v1, Lorg/json/JSONArray;
+
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
+
+    move-result-object p0
+
+    const-string v2, "hidden_lists"
+
+    const-string v3, "[]"
+
+    invoke-interface {p0, v2, v3}, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object p0
+
+    invoke-direct {v1, p0}, Lorg/json/JSONArray;-><init>(Ljava/lang/String;)V
+
+    const/4 p0, 0x0
+
+    .line 707
+    :goto_0
+    invoke-virtual {v1}, Lorg/json/JSONArray;->length()I
+
+    move-result v2
+
+    if-ge p0, v2, :cond_0
+
+    invoke-virtual {v1, p0}, Lorg/json/JSONArray;->getLong(I)J
+
+    move-result-wide v2
+
+    invoke-static {v2, v3}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
+
+    move-result-object v2
+
+    invoke-interface {v0, v2}, Ljava/util/Set;->add(Ljava/lang/Object;)Z
+    :try_end_0
+    .catchall {:try_start_0 .. :try_end_0} :catchall_0
+
+    add-int/lit8 p0, p0, 0x1
+
+    goto :goto_0
+
+    :catchall_0
+    move-exception p0
+
+    const-string v1, "Mcp2pHome"
+
+    const-string v2, "hidden_lists ilegible"
+
+    .line 709
+    invoke-static {v1, v2, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+
+    :cond_0
+    return-object v0
+.end method
+
 .method static history(Landroid/content/Context;)Ljava/util/List;
     .locals 4
     .annotation system Ldalvik/annotation/Signature;
@@ -634,12 +713,12 @@
         }
     .end annotation
 
-    .line 351
+    .line 681
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
-    .line 353
+    .line 683
     :try_start_0
     new-instance v1, Lorg/json/JSONArray;
 
@@ -659,7 +738,7 @@
 
     const/4 p0, 0x0
 
-    .line 354
+    .line 684
     :goto_0
     invoke-virtual {v1}, Lorg/json/JSONArray;->length()I
 
@@ -692,7 +771,7 @@
     :try_start_0
     const-string v1, "d4.w"
 
-    .line 212
+    .line 214
     invoke-static {v1}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v1
@@ -731,7 +810,7 @@
 
     move-result-object v1
 
-    .line 213
+    .line 215
     check-cast v1, Landroid/content/DialogInterface$OnClickListener;
 
     const/4 v2, 0x0
@@ -749,12 +828,12 @@
 
     const-string v2, "No se pudo abrir el importador"
 
-    .line 215
+    .line 217
     invoke-static {v1, v2, p1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     const-string p1, "No se ha podido abrir el importador de listas"
 
-    .line 216
+    .line 218
     invoke-static {p0, p1, v0}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
     move-result-object p0
@@ -774,13 +853,13 @@
 
     return-object p0
 
-    .line 1188
+    .line 1675
     :cond_0
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
 
-    .line 1189
+    .line 1676
     invoke-virtual {p0}, Ljava/lang/String;->trim()Ljava/lang/String;
 
     move-result-object p0
@@ -802,7 +881,7 @@
 
     aget-object v4, p0, v3
 
-    .line 1190
+    .line 1677
     invoke-virtual {v4}, Ljava/lang/String;->isEmpty()Z
 
     move-result v5
@@ -811,13 +890,13 @@
 
     goto :goto_1
 
-    .line 1191
+    .line 1678
     :cond_1
     invoke-virtual {v4, v2}, Ljava/lang/String;->codePointAt(I)I
 
     move-result v4
 
-    .line 1192
+    .line 1679
     invoke-static {v4}, Ljava/lang/Character;->isLetterOrDigit(I)Z
 
     move-result v5
@@ -830,7 +909,7 @@
 
     invoke-virtual {v0, v4}, Ljava/lang/StringBuilder;->appendCodePoint(I)Ljava/lang/StringBuilder;
 
-    .line 1193
+    .line 1680
     :cond_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I
 
@@ -848,7 +927,7 @@
 
     goto :goto_0
 
-    .line 1195
+    .line 1682
     :cond_4
     :goto_2
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->length()I
@@ -873,7 +952,7 @@
 .method public static install(Landroid/app/Activity;)V
     .locals 3
 
-    .line 92
+    .line 94
     :try_start_0
     invoke-static {p0}, Lcom/mcp2p/dlna/DlnaRenderer;->isTv(Landroid/content/Context;)Z
 
@@ -883,7 +962,7 @@
 
     return-void
 
-    .line 93
+    .line 95
     :cond_0
     invoke-virtual {p0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
@@ -899,7 +978,7 @@
 
     move-result-object v0
 
-    .line 94
+    .line 96
     instance-of v2, v0, Lcom/mcp2p/tv/HomeScreen$Home;
 
     if-eqz v2, :cond_1
@@ -910,16 +989,16 @@
 
     invoke-interface {v0}, Ljava/util/concurrent/ExecutorService;->shutdown()V
 
-    .line 95
+    .line 97
     :cond_1
     new-instance v0, Lcom/mcp2p/tv/HomeScreen$Home;
 
     invoke-direct {v0, p0}, Lcom/mcp2p/tv/HomeScreen$Home;-><init>(Landroid/app/Activity;)V
 
-    .line 96
+    .line 98
     invoke-virtual {v0}, Lcom/mcp2p/tv/HomeScreen$Home;->show()V
 
-    .line 97
+    .line 99
     invoke-virtual {p0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
     move-result-object p0
@@ -941,7 +1020,7 @@
 
     const-string v1, "No se pudo montar el Inicio nuevo; se mantiene el original"
 
-    .line 99
+    .line 101
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -955,7 +1034,7 @@
 
     new-array v0, v0, [Ljava/lang/String;
 
-    .line 179
+    .line 181
     invoke-static {p1, p2}, Ljava/lang/String;->valueOf(J)Ljava/lang/String;
 
     move-result-object p1
@@ -975,12 +1054,12 @@
 
     const-string p3, "SELECT favorite FROM playlist_entries WHERE playlist_id=? AND input=? LIMIT 1"
 
-    .line 178
+    .line 180
     invoke-virtual {p0, p3, v0}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
 
     move-result-object p0
 
-    .line 181
+    .line 183
     :try_start_0
     invoke-interface {p0}, Landroid/database/Cursor;->moveToFirst()Z
 
@@ -998,7 +1077,7 @@
 
     move p2, p1
 
-    .line 183
+    .line 185
     :cond_1
     invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
@@ -1009,14 +1088,14 @@
 
     invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
-    .line 184
+    .line 186
     throw p1
 .end method
 
 .method static synthetic lambda$loadLogo$0(Ljava/lang/String;Landroid/widget/ImageView;Landroid/graphics/Bitmap;Landroid/view/View;)V
     .locals 1
 
-    .line 394
+    .line 742
     invoke-virtual {p1}, Landroid/widget/ImageView;->getTag()Ljava/lang/Object;
 
     move-result-object v0
@@ -1027,12 +1106,12 @@
 
     if-eqz p0, :cond_0
 
-    .line 395
+    .line 743
     invoke-virtual {p1, p2}, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
 
     const/16 p0, 0x8
 
-    .line 396
+    .line 744
     invoke-virtual {p3, p0}, Landroid/view/View;->setVisibility(I)V
 
     :cond_0
@@ -1044,7 +1123,7 @@
 
     const/16 v0, 0x100
 
-    .line 390
+    .line 738
     invoke-static {p0, v0}, Lcom/mcp2p/tv/HomeScreen;->fetch(Ljava/lang/String;I)Landroid/graphics/Bitmap;
 
     move-result-object v0
@@ -1053,13 +1132,13 @@
 
     return-void
 
-    .line 392
+    .line 740
     :cond_0
     sget-object v1, Lcom/mcp2p/tv/HomeScreen;->LOGOS:Landroid/util/LruCache;
 
     invoke-virtual {v1, p0, v0}, Landroid/util/LruCache;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 393
+    .line 741
     sget-object v1, Lcom/mcp2p/tv/HomeScreen;->MAIN:Landroid/os/Handler;
 
     new-instance v2, Lcom/mcp2p/tv/HomeScreen$$ExternalSyntheticLambda1;
@@ -1072,299 +1151,339 @@
 .end method
 
 .method static load(Landroid/content/Context;)Lcom/mcp2p/tv/HomeScreen$Data;
-    .locals 12
+    .locals 13
     .annotation system Ldalvik/annotation/Throws;
         value = {
             Ljava/lang/ReflectiveOperationException;
         }
     .end annotation
 
-    .line 300
+    .line 626
     invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->db(Landroid/content/Context;)Landroid/database/sqlite/SQLiteDatabase;
+
+    move-result-object v0
+
+    .line 627
+    new-instance v1, Lcom/mcp2p/tv/HomeScreen$Data;
+
+    invoke-direct {v1}, Lcom/mcp2p/tv/HomeScreen$Data;-><init>()V
+
+    .line 628
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->hiddenLists(Landroid/content/Context;)Ljava/util/Set;
 
     move-result-object p0
 
-    .line 301
-    new-instance v0, Lcom/mcp2p/tv/HomeScreen$Data;
+    const-string v2, "SELECT p._id, p.name, p.source, (SELECT COUNT(*) FROM playlist_entries e WHERE e.playlist_id=p._id) FROM playlists p WHERE p.parent_playlist_id IS NULL ORDER BY p.sort_position ASC, p.created_at DESC, p._id DESC"
 
-    invoke-direct {v0}, Lcom/mcp2p/tv/HomeScreen$Data;-><init>()V
+    const/4 v3, 0x0
 
-    const-string v1, "SELECT p._id, p.name, p.source, (SELECT COUNT(*) FROM playlist_entries e WHERE e.playlist_id=p._id) FROM playlists p WHERE p.parent_playlist_id IS NULL ORDER BY p.sort_position ASC, p.created_at DESC, p._id DESC"
+    .line 629
+    invoke-virtual {v0, v2, v3}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
 
-    const/4 v2, 0x0
+    move-result-object v2
 
-    .line 302
-    invoke-virtual {p0, v1, v2}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
-
-    move-result-object v1
-
-    .line 306
+    .line 633
     :goto_0
     :try_start_0
-    invoke-interface {v1}, Landroid/database/Cursor;->moveToNext()Z
+    invoke-interface {v2}, Landroid/database/Cursor;->moveToNext()Z
 
-    move-result v3
+    move-result v4
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_1
 
-    const/4 v4, 0x0
+    const/4 v5, 0x0
 
-    const/4 v5, 0x3
+    const/4 v6, 0x4
 
-    const-string v6, ""
+    const/4 v7, 0x3
 
-    const/4 v7, 0x4
+    const-string v8, ""
 
-    const/4 v8, 0x2
+    const/4 v9, 0x2
 
-    const/4 v9, 0x1
+    const/4 v10, 0x1
 
-    if-eqz v3, :cond_3
+    if-eqz v4, :cond_5
 
-    .line 307
+    .line 634
     :try_start_1
-    iget v3, v0, Lcom/mcp2p/tv/HomeScreen$Data;->totalLists:I
+    new-instance v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
 
-    add-int/2addr v3, v9
+    invoke-direct {v4}, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;-><init>()V
 
-    iput v3, v0, Lcom/mcp2p/tv/HomeScreen$Data;->totalLists:I
+    .line 635
+    invoke-interface {v2, v5}, Landroid/database/Cursor;->getLong(I)J
 
-    .line 308
-    iget-object v3, v0, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
+    move-result-wide v11
 
-    invoke-interface {v3}, Ljava/util/List;->size()I
+    iput-wide v11, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->id:J
 
-    move-result v3
+    .line 636
+    invoke-interface {v2, v10}, Landroid/database/Cursor;->isNull(I)Z
 
-    if-lt v3, v7, :cond_0
+    move-result v5
 
-    goto :goto_0
+    if-eqz v5, :cond_0
 
-    .line 309
-    :cond_0
-    new-instance v3, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
-
-    invoke-direct {v3}, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;-><init>()V
-
-    .line 310
-    invoke-interface {v1, v4}, Landroid/database/Cursor;->getLong(I)J
-
-    move-result-wide v10
-
-    iput-wide v10, v3, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->id:J
-
-    .line 311
-    invoke-interface {v1, v9}, Landroid/database/Cursor;->isNull(I)Z
-
-    move-result v4
-
-    if-eqz v4, :cond_1
-
-    const-string v4, "Lista"
+    const-string v5, "Lista"
 
     goto :goto_1
 
-    :cond_1
-    invoke-interface {v1, v9}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_0
+    invoke-interface {v2, v10}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v4
+    move-result-object v5
 
     :goto_1
-    iput-object v4, v3, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->name:Ljava/lang/String;
+    iput-object v5, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->name:Ljava/lang/String;
 
-    .line 312
-    invoke-interface {v1, v8}, Landroid/database/Cursor;->isNull(I)Z
+    .line 637
+    invoke-interface {v2, v9}, Landroid/database/Cursor;->isNull(I)Z
 
-    move-result v4
+    move-result v5
 
-    if-eqz v4, :cond_2
+    if-eqz v5, :cond_1
 
     goto :goto_2
 
-    :cond_2
-    invoke-interface {v1, v8}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_1
+    invoke-interface {v2, v9}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v6
+    move-result-object v8
 
     :goto_2
-    iput-object v6, v3, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->source:Ljava/lang/String;
+    iput-object v8, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->source:Ljava/lang/String;
 
-    .line 313
-    invoke-interface {v1, v5}, Landroid/database/Cursor;->getInt(I)I
+    .line 638
+    invoke-interface {v2, v7}, Landroid/database/Cursor;->getInt(I)I
 
-    move-result v4
+    move-result v5
 
-    iput v4, v3, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->count:I
+    iput v5, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->count:I
 
-    .line 314
-    iget-object v4, v0, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
+    const-string v5, "https://archive.org/download/cajab/cajab.txt"
 
-    invoke-interface {v4, v3}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+    .line 639
+    iget-object v7, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->source:Ljava/lang/String;
+
+    invoke-virtual {v5, v7}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v5
+
+    if-eqz v5, :cond_2
+
+    goto :goto_0
+
+    .line 640
+    :cond_2
+    iget-object v5, v1, Lcom/mcp2p/tv/HomeScreen$Data;->all:Ljava/util/List;
+
+    invoke-interface {v5, v4}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+
+    .line 641
+    iget-wide v7, v4, Lcom/mcp2p/tv/HomeScreen$PlaylistItem;->id:J
+
+    invoke-static {v7, v8}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
+
+    move-result-object v5
+
+    invoke-interface {p0, v5}, Ljava/util/Set;->contains(Ljava/lang/Object;)Z
+
+    move-result v5
+
+    if-eqz v5, :cond_3
+
+    goto :goto_0
+
+    .line 642
+    :cond_3
+    iget v5, v1, Lcom/mcp2p/tv/HomeScreen$Data;->totalLists:I
+
+    add-int/2addr v5, v10
+
+    iput v5, v1, Lcom/mcp2p/tv/HomeScreen$Data;->totalLists:I
+
+    .line 643
+    iget-object v5, v1, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
+
+    invoke-interface {v5}, Ljava/util/List;->size()I
+
+    move-result v5
+
+    if-lt v5, v6, :cond_4
+
+    goto :goto_0
+
+    .line 644
+    :cond_4
+    iget-object v5, v1, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
+
+    invoke-interface {v5, v4}, Ljava/util/List;->add(Ljava/lang/Object;)Z
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_1
 
     goto :goto_0
 
-    .line 317
-    :cond_3
-    invoke-interface {v1}, Landroid/database/Cursor;->close()V
+    .line 647
+    :cond_5
+    invoke-interface {v2}, Landroid/database/Cursor;->close()V
 
-    const-string v1, "SELECT p._id, p.name, e.title, e.input, e.tvg_logo FROM playlist_entries e INNER JOIN playlists p ON p._id=e.playlist_id WHERE e.favorite=1 AND e.entry_type=\'media\' ORDER BY p.name COLLATE NOCASE ASC, e.position ASC LIMIT 12"
+    const-string p0, "SELECT p._id, p.name, e.title, e.input, e.tvg_logo FROM playlist_entries e INNER JOIN playlists p ON p._id=e.playlist_id WHERE e.favorite=1 AND e.entry_type=\'media\' ORDER BY p.name COLLATE NOCASE ASC, e.position ASC LIMIT 12"
 
-    .line 319
-    invoke-virtual {p0, v1, v2}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
+    .line 649
+    invoke-virtual {v0, p0, v3}, Landroid/database/sqlite/SQLiteDatabase;->rawQuery(Ljava/lang/String;[Ljava/lang/String;)Landroid/database/Cursor;
 
-    move-result-object v1
+    move-result-object p0
 
-    .line 323
+    .line 653
     :goto_3
     :try_start_2
-    invoke-interface {v1}, Landroid/database/Cursor;->moveToNext()Z
+    invoke-interface {p0}, Landroid/database/Cursor;->moveToNext()Z
 
-    move-result v3
+    move-result v2
 
-    if-eqz v3, :cond_8
+    if-eqz v2, :cond_a
 
-    .line 324
-    new-instance v3, Lcom/mcp2p/tv/HomeScreen$FavItem;
+    .line 654
+    new-instance v2, Lcom/mcp2p/tv/HomeScreen$FavItem;
 
-    invoke-direct {v3}, Lcom/mcp2p/tv/HomeScreen$FavItem;-><init>()V
+    invoke-direct {v2}, Lcom/mcp2p/tv/HomeScreen$FavItem;-><init>()V
 
-    .line 325
-    invoke-interface {v1, v4}, Landroid/database/Cursor;->getLong(I)J
+    .line 655
+    invoke-interface {p0, v5}, Landroid/database/Cursor;->getLong(I)J
 
-    move-result-wide v10
+    move-result-wide v11
 
-    iput-wide v10, v3, Lcom/mcp2p/tv/HomeScreen$FavItem;->playlistId:J
+    iput-wide v11, v2, Lcom/mcp2p/tv/HomeScreen$FavItem;->playlistId:J
 
-    .line 326
-    invoke-interface {v1, v9}, Landroid/database/Cursor;->isNull(I)Z
+    .line 656
+    invoke-interface {p0, v10}, Landroid/database/Cursor;->isNull(I)Z
 
-    move-result v10
+    move-result v4
 
-    if-eqz v10, :cond_4
+    if-eqz v4, :cond_6
 
-    move-object v10, v6
+    move-object v4, v8
 
     goto :goto_4
 
-    :cond_4
-    invoke-interface {v1, v9}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_6
+    invoke-interface {p0, v10}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v10
+    move-result-object v4
 
     :goto_4
-    iput-object v10, v3, Lcom/mcp2p/tv/HomeScreen$FavItem;->playlistName:Ljava/lang/String;
+    iput-object v4, v2, Lcom/mcp2p/tv/HomeScreen$FavItem;->playlistName:Ljava/lang/String;
 
-    .line 327
-    invoke-interface {v1, v8}, Landroid/database/Cursor;->isNull(I)Z
+    .line 657
+    invoke-interface {p0, v9}, Landroid/database/Cursor;->isNull(I)Z
 
-    move-result v10
+    move-result v4
 
-    if-eqz v10, :cond_5
+    if-eqz v4, :cond_7
 
-    const-string v10, "Canal"
+    const-string v4, "Canal"
 
     goto :goto_5
 
-    :cond_5
-    invoke-interface {v1, v8}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_7
+    invoke-interface {p0, v9}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v10
+    move-result-object v4
 
     :goto_5
-    iput-object v10, v3, Lcom/mcp2p/tv/HomeScreen$FavItem;->title:Ljava/lang/String;
+    iput-object v4, v2, Lcom/mcp2p/tv/HomeScreen$FavItem;->title:Ljava/lang/String;
 
-    .line 328
-    invoke-interface {v1, v5}, Landroid/database/Cursor;->isNull(I)Z
+    .line 658
+    invoke-interface {p0, v7}, Landroid/database/Cursor;->isNull(I)Z
 
-    move-result v10
+    move-result v4
 
-    if-eqz v10, :cond_6
+    if-eqz v4, :cond_8
 
-    move-object v10, v6
+    move-object v4, v8
 
     goto :goto_6
 
-    :cond_6
-    invoke-interface {v1, v5}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_8
+    invoke-interface {p0, v7}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v10
+    move-result-object v4
 
     :goto_6
-    iput-object v10, v3, Lcom/mcp2p/tv/HomeScreen$FavItem;->input:Ljava/lang/String;
+    iput-object v4, v2, Lcom/mcp2p/tv/HomeScreen$FavItem;->input:Ljava/lang/String;
 
-    .line 329
-    invoke-interface {v1, v7}, Landroid/database/Cursor;->isNull(I)Z
+    .line 659
+    invoke-interface {p0, v6}, Landroid/database/Cursor;->isNull(I)Z
 
-    move-result v10
+    move-result v4
 
-    if-eqz v10, :cond_7
+    if-eqz v4, :cond_9
 
-    move-object v10, v2
+    move-object v4, v3
 
     goto :goto_7
 
-    :cond_7
-    invoke-interface {v1, v7}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
+    :cond_9
+    invoke-interface {p0, v6}, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
 
-    move-result-object v10
+    move-result-object v4
 
     :goto_7
-    iput-object v10, v3, Lcom/mcp2p/tv/HomeScreen$FavItem;->logo:Ljava/lang/String;
+    iput-object v4, v2, Lcom/mcp2p/tv/HomeScreen$FavItem;->logo:Ljava/lang/String;
 
-    .line 330
-    iget-object v10, v0, Lcom/mcp2p/tv/HomeScreen$Data;->favs:Ljava/util/List;
+    .line 660
+    iget-object v4, v1, Lcom/mcp2p/tv/HomeScreen$Data;->favs:Ljava/util/List;
 
-    invoke-interface {v10, v3}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+    invoke-interface {v4, v2}, Ljava/util/List;->add(Ljava/lang/Object;)Z
     :try_end_2
     .catchall {:try_start_2 .. :try_end_2} :catchall_0
 
     goto :goto_3
 
-    .line 333
-    :cond_8
-    invoke-interface {v1}, Landroid/database/Cursor;->close()V
+    .line 663
+    :cond_a
+    invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
-    .line 335
-    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->countFavorites(Landroid/database/sqlite/SQLiteDatabase;)I
+    .line 665
+    invoke-static {v0}, Lcom/mcp2p/tv/HomeScreen;->countFavorites(Landroid/database/sqlite/SQLiteDatabase;)I
 
     move-result p0
 
-    iput p0, v0, Lcom/mcp2p/tv/HomeScreen$Data;->totalFavs:I
+    iput p0, v1, Lcom/mcp2p/tv/HomeScreen$Data;->totalFavs:I
 
-    return-object v0
+    return-object v1
 
     :catchall_0
-    move-exception p0
+    move-exception v0
 
-    .line 333
-    invoke-interface {v1}, Landroid/database/Cursor;->close()V
+    .line 663
+    invoke-interface {p0}, Landroid/database/Cursor;->close()V
 
-    .line 334
-    throw p0
+    .line 664
+    throw v0
 
     :catchall_1
     move-exception p0
 
-    .line 317
-    invoke-interface {v1}, Landroid/database/Cursor;->close()V
+    .line 647
+    invoke-interface {v2}, Landroid/database/Cursor;->close()V
 
-    .line 318
+    .line 648
     throw p0
 .end method
 
 .method static loadLogo(Landroid/widget/ImageView;Ljava/lang/String;Landroid/view/View;)V
     .locals 2
 
-    .line 381
+    .line 729
     invoke-virtual {p0, p1}, Landroid/widget/ImageView;->setTag(Ljava/lang/Object;)V
 
     if-eqz p1, :cond_2
 
     const-string v0, "http://"
 
-    .line 382
+    .line 730
     invoke-virtual {p1, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v0
@@ -1381,7 +1500,7 @@
 
     goto :goto_0
 
-    .line 383
+    .line 731
     :cond_0
     sget-object v0, Lcom/mcp2p/tv/HomeScreen;->LOGOS:Landroid/util/LruCache;
 
@@ -1393,17 +1512,17 @@
 
     if-eqz v0, :cond_1
 
-    .line 385
+    .line 733
     invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
 
     const/16 p0, 0x8
 
-    .line 386
+    .line 734
     invoke-virtual {p2, p0}, Landroid/view/View;->setVisibility(I)V
 
     return-void
 
-    .line 389
+    .line 737
     :cond_1
     sget-object v0, Lcom/mcp2p/tv/HomeScreen;->LOGO_POOL:Ljava/util/concurrent/ExecutorService;
 
@@ -1423,13 +1542,13 @@
 
     const-string v0, "com.mcp2p.app.ui."
 
-    .line 232
+    .line 557
     :try_start_0
     new-instance v1, Landroid/content/Intent;
 
     invoke-direct {v1}, Landroid/content/Intent;-><init>()V
 
-    .line 233
+    .line 558
     new-instance v2, Ljava/lang/StringBuilder;
 
     invoke-direct {v2, v0}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
@@ -1442,7 +1561,7 @@
 
     invoke-virtual {v1, p0, v0}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 
-    .line 234
+    .line 559
     invoke-virtual {p0, v1}, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
@@ -1452,7 +1571,7 @@
     :catchall_0
     move-exception p0
 
-    .line 236
+    .line 561
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "No se pudo abrir "
@@ -1479,7 +1598,7 @@
     :try_start_0
     const-string v0, "d4.z"
 
-    .line 223
+    .line 225
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v0
@@ -1522,7 +1641,7 @@
 
     move-result-object p0
 
-    .line 224
+    .line 226
     check-cast p0, Landroid/view/View$OnClickListener;
 
     const/4 v0, 0x0
@@ -1540,7 +1659,7 @@
 
     const-string v1, "No se pudo abrir Mis listas"
 
-    .line 226
+    .line 228
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_0
@@ -1550,7 +1669,7 @@
 .method public static openPlaylist(Landroid/app/Activity;)V
     .locals 4
 
-    .line 118
+    .line 120
     invoke-virtual {p0}, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
 
     move-result-object v0
@@ -1571,7 +1690,7 @@
 
     if-eqz v0, :cond_0
 
-    .line 120
+    .line 122
     :try_start_0
     invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->showAllLinks(Landroid/app/Activity;)V
     :try_end_0
@@ -1586,10 +1705,10 @@
 
     const-string v3, "No se pudo abrir \u00abTodos los enlaces\u00bb; se muestran las categor\u00edas"
 
-    .line 123
+    .line 125
     invoke-static {v2, v3, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 127
+    .line 129
     :cond_0
     :try_start_1
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -1616,7 +1735,7 @@
     :catch_0
     move-exception p0
 
-    .line 131
+    .line 133
     new-instance v0, Ljava/lang/RuntimeException;
 
     invoke-direct {v0, p0}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/Throwable;)V
@@ -1626,7 +1745,7 @@
     :catch_1
     move-exception p0
 
-    .line 129
+    .line 131
     invoke-virtual {p0}, Ljava/lang/reflect/InvocationTargetException;->getCause()Ljava/lang/Throwable;
 
     move-result-object p0
@@ -1641,27 +1760,53 @@
 .method static openPlaylistFromHome(Landroid/app/Activity;JZ)V
     .locals 2
 
-    .line 241
+    .line 566
     new-instance v0, Landroid/content/Intent;
 
     invoke-direct {v0}, Landroid/content/Intent;-><init>()V
 
     const-string v1, "com.mcp2p.app.ui.PlaylistDetailActivity"
 
-    .line 242
+    .line 567
     invoke-virtual {v0, p0, v1}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 
     const-string v1, "playlist_id"
 
-    .line 243
+    .line 568
     invoke-virtual {v0, v1, p1, p2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;J)Landroid/content/Intent;
 
     const-string p1, "com.mcp2p.tv.ALL_LINKS"
 
-    .line 244
+    .line 569
     invoke-virtual {v0, p1, p3}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
 
-    .line 245
+    .line 570
+    invoke-virtual {p0, v0}, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
+
+    return-void
+.end method
+
+.method static openTelegram(Landroid/app/Activity;)V
+    .locals 3
+
+    .line 549
+    new-instance v0, Landroid/content/Intent;
+
+    invoke-direct {v0}, Landroid/content/Intent;-><init>()V
+
+    const-string v1, "com.mcp2p.app.ui.MediaLibraryActivity"
+
+    .line 550
+    invoke-virtual {v0, p0, v1}, Landroid/content/Intent;->setClassName(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+
+    const-string v1, "telegram"
+
+    const/4 v2, 0x1
+
+    .line 551
+    invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
+
+    .line 552
     invoke-virtual {p0, v0}, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
 
     return-void
@@ -1674,7 +1819,7 @@
 
     const/4 v1, 0x1
 
-    .line 199
+    .line 201
     :try_start_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -1710,19 +1855,19 @@
 
     aput-object p2, v3, v1
 
-    .line 200
+    .line 202
     invoke-static {p3}, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
 
     move-result-object p1
 
     aput-object p1, v3, v7
 
-    .line 199
+    .line 201
     invoke-static {v2, p0, v3}, Lcom/mcp2p/tv/HomeScreen;->call(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p1
 
-    .line 201
+    .line 203
     sget-object p2, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
     invoke-virtual {p2, p1}, Ljava/lang/Boolean;->equals(Ljava/lang/Object;)Z
@@ -1740,12 +1885,12 @@
 
     const-string p3, "No se pudo reproducir"
 
-    .line 203
+    .line 205
     invoke-static {p2, p3, p1}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     const-string p1, "No se ha podido reproducir este contenido"
 
-    .line 204
+    .line 206
     invoke-static {p0, p1, v1}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
     move-result-object p0
@@ -1762,7 +1907,7 @@
 
     const/4 v1, 0x0
 
-    .line 369
+    .line 699
     invoke-virtual {p0, v0, v1}, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
 
     move-result-object p0
@@ -1773,25 +1918,25 @@
 .method static remember(Landroid/content/Context;Ljava/lang/String;)V
     .locals 3
 
-    .line 360
+    .line 690
     invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->history(Landroid/content/Context;)Ljava/util/List;
 
     move-result-object v0
 
-    .line 361
+    .line 691
     invoke-interface {v0, p1}, Ljava/util/List;->remove(Ljava/lang/Object;)Z
 
     const/4 v1, 0x0
 
-    .line 362
+    .line 692
     invoke-interface {v0, v1, p1}, Ljava/util/List;->add(ILjava/lang/Object;)V
 
-    .line 363
+    .line 693
     new-instance p1, Lorg/json/JSONArray;
 
     invoke-direct {p1}, Lorg/json/JSONArray;-><init>()V
 
-    .line 364
+    .line 694
     :goto_0
     invoke-interface {v0}, Ljava/util/List;->size()I
 
@@ -1813,7 +1958,7 @@
 
     goto :goto_0
 
-    .line 365
+    .line 695
     :cond_0
     invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
 
@@ -1841,7 +1986,7 @@
 .method public static resume(Landroid/app/Activity;)V
     .locals 2
 
-    .line 106
+    .line 108
     :try_start_0
     invoke-virtual {p0}, Landroid/app/Activity;->getWindow()Landroid/view/Window;
 
@@ -1857,7 +2002,7 @@
 
     move-result-object p0
 
-    .line 107
+    .line 109
     instance-of v0, p0, Lcom/mcp2p/tv/HomeScreen$Home;
 
     if-eqz v0, :cond_0
@@ -1887,11 +2032,79 @@
 
     const-string v1, "No se pudo refrescar el Inicio"
 
-    .line 109
+    .line 111
     invoke-static {v0, v1, p0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :cond_0
     :goto_0
+    return-void
+.end method
+
+.method static saveHidden(Landroid/content/Context;Ljava/util/Set;)V
+    .locals 3
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Landroid/content/Context;",
+            "Ljava/util/Set<",
+            "Ljava/lang/Long;",
+            ">;)V"
+        }
+    .end annotation
+
+    .line 715
+    new-instance v0, Lorg/json/JSONArray;
+
+    invoke-direct {v0}, Lorg/json/JSONArray;-><init>()V
+
+    .line 716
+    invoke-interface {p1}, Ljava/util/Set;->iterator()Ljava/util/Iterator;
+
+    move-result-object p1
+
+    :goto_0
+    invoke-interface {p1}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v1
+
+    if-eqz v1, :cond_0
+
+    invoke-interface {p1}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v1
+
+    check-cast v1, Ljava/lang/Long;
+
+    invoke-virtual {v1}, Ljava/lang/Long;->longValue()J
+
+    move-result-wide v1
+
+    invoke-virtual {v0, v1, v2}, Lorg/json/JSONArray;->put(J)Lorg/json/JSONArray;
+
+    goto :goto_0
+
+    .line 717
+    :cond_0
+    invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
+
+    move-result-object p0
+
+    invoke-interface {p0}, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
+
+    move-result-object p0
+
+    const-string p1, "hidden_lists"
+
+    invoke-virtual {v0}, Lorg/json/JSONArray;->toString()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-interface {p0, p1, v0}, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+
+    move-result-object p0
+
+    invoke-interface {p0}, Landroid/content/SharedPreferences$Editor;->apply()V
+
     return-void
 .end method
 
@@ -1903,14 +2116,14 @@
         }
     .end annotation
 
-    .line 250
+    .line 575
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
 
     const-string v1, "f0"
 
-    .line 251
+    .line 576
     invoke-virtual {v0, v1}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v1
@@ -1921,7 +2134,7 @@
 
     const-string v2, "e0"
 
-    .line 252
+    .line 577
     invoke-virtual {v0, v2}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v2
@@ -1934,7 +2147,7 @@
 
     const-string v3, "n0"
 
-    .line 253
+    .line 578
     invoke-virtual {v0, v3}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v3
@@ -1945,7 +2158,7 @@
 
     const-string v3, "o0"
 
-    .line 254
+    .line 579
     invoke-virtual {v0, v3}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v3
@@ -1956,7 +2169,7 @@
 
     const-string v3, "p0"
 
-    .line 255
+    .line 580
     invoke-virtual {v0, v3}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v3
@@ -1969,7 +2182,7 @@
 
     const-string v4, "y"
 
-    .line 256
+    .line 581
     invoke-virtual {v0, v4, v3}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
 
     move-result-object v3
@@ -1980,7 +2193,7 @@
 
     const-string v3, "O"
 
-    .line 257
+    .line 582
     invoke-virtual {v0, v3}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v3
@@ -1995,7 +2208,7 @@
 
     const-string v2, "Z"
 
-    .line 258
+    .line 583
     invoke-virtual {v0, v2}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v2
@@ -2012,7 +2225,7 @@
 
     const-string v2, "Y"
 
-    .line 259
+    .line 584
     invoke-virtual {v0, v2}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v2
@@ -2029,7 +2242,7 @@
 
     const-string v2, "X"
 
-    .line 260
+    .line 585
     invoke-virtual {v0, v2}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v2
@@ -2044,7 +2257,7 @@
 
     const-string v2, "S"
 
-    .line 261
+    .line 586
     invoke-virtual {v0, v2}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v2
@@ -2059,7 +2272,7 @@
 
     const-string v1, "R"
 
-    .line 262
+    .line 587
     invoke-virtual {v0, v1}, Ljava/lang/Class;->getField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v0
@@ -2086,7 +2299,7 @@
 
     return-object v0
 
-    .line 341
+    .line 671
     :cond_0
     sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
 
@@ -2096,7 +2309,7 @@
 
     const-string v1, "mcp2p-remote-url:"
 
-    .line 342
+    .line 672
     invoke-virtual {p0, v1}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v1
@@ -2124,7 +2337,7 @@
     :cond_1
     const-string v1, "content:"
 
-    .line 343
+    .line 673
     invoke-virtual {p0, v1}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v1
@@ -2144,7 +2357,7 @@
     :cond_2
     const-string v1, "qr"
 
-    .line 344
+    .line 674
     invoke-virtual {p0, v1}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
 
     move-result p0
@@ -2176,16 +2389,16 @@
 
     const/4 v0, 0x0
 
-    .line 137
+    .line 139
     sput-boolean v0, Lcom/mcp2p/tv/HomeScreen;->favBlocked:Z
 
-    .line 139
+    .line 141
     :try_start_0
     invoke-static {p0}, Lcom/mcp2p/tv/HomeScreen;->db(Landroid/content/Context;)Landroid/database/sqlite/SQLiteDatabase;
 
     move-result-object v1
 
-    .line 140
+    .line 142
     invoke-static {v1, p1, p2, p3}, Lcom/mcp2p/tv/HomeScreen;->isFavorite(Landroid/database/sqlite/SQLiteDatabase;JLjava/lang/String;)Z
 
     move-result v2
@@ -2202,7 +2415,7 @@
 
     const/4 v1, 0x1
 
-    .line 141
+    .line 143
     sput-boolean v1, Lcom/mcp2p/tv/HomeScreen;->favBlocked:Z
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
@@ -2216,10 +2429,10 @@
 
     const-string v2, "No se pudo comprobar el l\u00edmite de favoritos"
 
-    .line 145
+    .line 147
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 147
+    .line 149
     :cond_0
     invoke-static {p0, p1, p2, p3}, Lcom/mcp2p/tv/HomeScreen;->toggleFavoriteRaw(Landroid/content/Context;JLjava/lang/String;)Z
 
@@ -2234,7 +2447,7 @@
     :try_start_0
     const-string v0, "S3.a"
 
-    .line 165
+    .line 167
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v0
@@ -2271,7 +2484,7 @@
 
     aput-object p0, v1, v5
 
-    .line 166
+    .line 168
     invoke-static {p1, p2}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
 
     move-result-object p0
@@ -2282,12 +2495,12 @@
 
     const/4 p0, 0x0
 
-    .line 165
+    .line 167
     invoke-static {v0, p0, v1}, Lcom/mcp2p/tv/HomeScreen;->call(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p0
 
-    .line 167
+    .line 169
     sget-object p1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
     invoke-virtual {p1, p0}, Ljava/lang/Boolean;->equals(Ljava/lang/Object;)Z
@@ -2301,7 +2514,7 @@
     :catch_0
     move-exception p0
 
-    .line 169
+    .line 171
     new-instance p1, Ljava/lang/RuntimeException;
 
     invoke-direct {p1, p0}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/Throwable;)V

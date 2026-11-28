@@ -15,6 +15,16 @@
 
 
 # instance fields
+.field final all:Ljava/util/List;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Ljava/util/List<",
+            "Lcom/mcp2p/tv/HomeScreen$PlaylistItem;",
+            ">;"
+        }
+    .end annotation
+.end field
+
 .field final favs:Ljava/util/List;
     .annotation system Ldalvik/annotation/Signature;
         value = {
@@ -44,17 +54,24 @@
 .method constructor <init>()V
     .locals 1
 
-    .line 292
+    .line 617
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 293
+    .line 618
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
     iput-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Data;->lists:Ljava/util/List;
 
-    .line 295
+    .line 619
+    new-instance v0, Ljava/util/ArrayList;
+
+    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
+
+    iput-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Data;->all:Ljava/util/List;
+
+    .line 621
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V

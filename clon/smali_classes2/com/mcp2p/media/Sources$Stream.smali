@@ -15,9 +15,13 @@
 
 
 # instance fields
+.field public acestream:Ljava/lang/String;
+
 .field public addon:Ljava/lang/String;
 
 .field public dualEnglish:Z
+
+.field public english:Z
 
 .field public file:Ljava/lang/String;
 
@@ -61,13 +65,13 @@
 
     const/4 v0, -0x1
 
-    .line 35
+    .line 37
     iput v0, p0, Lcom/mcp2p/media/Sources$Stream;->reachable:I
 
-    .line 40
+    .line 42
     iput v0, p0, Lcom/mcp2p/media/Sources$Stream;->fileIdx:I
 
-    .line 41
+    .line 43
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V

@@ -35,10 +35,10 @@ public final class StreamTuner {
      * Progreso de la precarga por infohash: {piezas listas, piezas necesarias, último avance (ms), terminada (0/1)}.
      * Lo consulta la Mediateca para pasar a otra fuente si esta no avanza.
      */
-    public static final Map<String, long[]> PROGRESS = new ConcurrentHashMap<>();
+    public static final Map<String, long[]> PROGRESS = TorrentFiles.bounded(200);
 
     /** Hash -> instante de la última lectura del reproductor (T3/m.read). Solo existe si ya se está viendo. */
-    public static final Map<String, Long> READ_AT = new ConcurrentHashMap<>();
+    public static final Map<String, Long> READ_AT = TorrentFiles.bounded(200);
     /** Identidad del handle -> hash, para saber de qué torrent es cada lectura. */
     private static final Map<Object, String> HASH_OF =
             java.util.Collections.synchronizedMap(new java.util.WeakHashMap<Object, String>());
@@ -261,16 +261,24 @@ public final class StreamTuner {
     static void configure(Object pack) throws ReflectiveOperationException {
         boolean low = com.mcp2p.tv.AppInfo.isLowMemory();
         Class<?> p = pack.getClass();
-        p.getMethod("connectionsLimit", int.class).invoke(pack, low ? 160 : 500);
-        p.getMethod("maxPeerlistSize", int.class).invoke(pack, low ? 1000 : 4000);
-        p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) ((low ? 1 : 2) * MB));
+        p.getMethod("connectionsLimit", int.class).invoke(pack, low ? 72 : 180);
+        p.getMethod("maxPeerlistSize", int.class).invoke(pack, low ? 600 : 1400);
+        p.getMethod("uploadRateLimit", int.class).invoke(pack, (int) ((low ? 512L : 1024L) * 1024)); // subida baja: el ancho de banda va a la bajada
         p.getMethod("downloadRateLimit", int.class).invoke(pack, 0);
         // Arranque más rápido: más conexiones nuevas por segundo y por película, cola de peticiones mayor y
         // las piezas que se atascan se vuelven a pedir antes.
-        setInt(pack, "connection_speed", low ? 60 : 150);         // por defecto 30
-        setInt(pack, "torrent_connect_boost", low ? 50 : 100);    // por defecto 30
-        setInt(pack, "max_out_request_queue", low ? 500 : 1500);  // por defecto 500
-        setInt(pack, "piece_timeout", 10);                        // por defecto 20 s
+        setInt(pack, "connection_speed", low ? 30 : 70);          // conexiones nuevas por segundo
+        setInt(pack, "torrent_connect_boost", low ? 30 : 50);     // conexiones extra al arrancar
+        setInt(pack, "max_out_request_queue", low ? 256 : 600);   // peticiones pendientes por peer
+        // Presupuesto explícito para que la caché nativa de libtorrent no expulse a VLC en aparatos de 1–2 GB.
+        setInt(pack, "cache_size", low ? 4096 : 8192);             // bloques de 16 KiB: 64/128 MiB
+        setInt(pack, "max_queued_disk_bytes", low ? 4 * 1024 * 1024 : 8 * 1024 * 1024);
+        setInt(pack, "send_buffer_watermark", low ? 1024 * 1024 : 2 * 1024 * 1024);
+        setInt(pack, "alert_queue_size", low ? 1000 : 3000);
+        // Los límites demasiado agresivos (10/15/30 s) descartaban peers lentos pero útiles y causaban huecos.
+        setInt(pack, "piece_timeout", 15);
+        setInt(pack, "peer_timeout", 60);
+        setInt(pack, "request_timeout", 30);
     }
 
     // ------------------------------------------------------------ durante la reproducción
@@ -281,7 +289,7 @@ public final class StreamTuner {
 
     /**
      * Lectura adelantada continua (como Elementum/Torrest en Kodi). Lo llama T3/m.read() con la pieza que el
-     * reproductor está leyendo: cada vez que avanza de pieza se marcan como urgentes las siguientes ~96 MB (48 MB
+     * reproductor está leyendo: cada vez que avanza de pieza se marcan como urgentes las siguientes ~128 MB (64 MB
      * con poca memoria), con plazos crecientes. Así la descarga va siempre por delante de lo que se ve y no hay
      * que esperar a que el reproductor se quede sin datos para pedirlas (antes solo se pedían 3 piezas, y solo
      * cuando ya estaba parado). Nunca lanza.
@@ -298,7 +306,7 @@ public final class StreamTuner {
             int pieceLen = c.getField("h").getInt(reader);
             int numPieces = c.getField("m").getInt(reader);
             if (handle == null || pieceLen <= 0) return;
-            long window = (com.mcp2p.tv.AppInfo.isLowMemory() ? 48 : 96) * MB;
+            long window = (com.mcp2p.tv.AppInfo.isLowMemory() ? 64 : 128) * MB;
             int count = (int) Math.max(4, Math.min(160, window / pieceLen));
             Method have = handle.getClass().getMethod("havePiece", int.class);
             Method deadline = handle.getClass().getMethod("setPieceDeadline", int.class, int.class);
@@ -314,11 +322,37 @@ public final class StreamTuner {
 
     /**
      * Segundos que guarda VLC con películas por magnet (lo llama X3/a con el ajuste «buffer_seconds», 8 s por
-     * defecto): al menos 30 s (20 s con poca memoria). Con 8 s, cualquier bajón de la descarga paraba la imagen.
+     * defecto): al menos 30 s (20 s con poca memoria). Es un compromiso entre aguantar variaciones de red y
+     * mantener el consumo acotado en TV Box de 1–2 GB.
      */
     public static int vlcCachingSeconds(int configured) {
-        int min = com.mcp2p.tv.AppInfo.isLowMemory() ? 20 : 30;
-        return Math.max(configured, min);
+        return TorrentFiles.p2pBufferSeconds(configured, com.mcp2p.tv.AppInfo.isLowMemory());
+    }
+
+    /** Suelo adaptativo de Media3 solo para AceStream/P2P; HTTP y archivos normales respetan el ajuste original. */
+    public static int media3CachingSeconds(android.app.Activity activity, int configured) {
+        boolean p2p = isP2p(activity);
+        return p2p ? TorrentFiles.p2pBufferSeconds(configured, com.mcp2p.tv.AppInfo.isLowMemory()) : configured;
+    }
+
+    /** Umbral inicial de Media3: más prudente para P2P, sin penalizar la reproducción convencional. */
+    public static int media3StartMs(android.app.Activity activity) {
+        return TorrentFiles.playbackStartMs(isP2p(activity), com.mcp2p.tv.AppInfo.isLowMemory());
+    }
+
+    /** Umbral de reanudación de Media3 después de quedarse sin datos. */
+    public static int media3RebufferMs(android.app.Activity activity) {
+        return TorrentFiles.playbackAfterRebufferMs(isP2p(activity), com.mcp2p.tv.AppInfo.isLowMemory());
+    }
+
+    private static boolean isP2p(android.app.Activity activity) {
+        try {
+            String input = activity == null ? null : activity.getIntent()
+                    .getStringExtra("com.mcp2p.app.extra.P2P_INPUT");
+            return input != null && !input.trim().isEmpty();
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     private static void setInt(Object pack, String name, int value) {

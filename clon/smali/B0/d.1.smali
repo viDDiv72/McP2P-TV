@@ -58,11 +58,16 @@
 
     .line 12
     .line 13
-    const-string v2, "Versi\u00f3n instalada: 1.5.6\nNueva versi\u00f3n: "
+    const-string v2, "Versi\u00f3n instalada: "
 
     .line 14
     .line 15
     invoke-direct {v1, v2}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+    invoke-static {v0}, Lcom/mcp2p/tv/AppInfo;->installedVersion(Landroid/content/Context;)Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual {v1, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    const-string v2, "\nNueva versi\u00f3n: "
+    invoke-virtual {v1, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     .line 16
     .line 17

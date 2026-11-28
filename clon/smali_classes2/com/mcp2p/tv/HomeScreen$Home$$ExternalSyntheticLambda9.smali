@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Landroid/content/DialogInterface$OnClickListener;
+.implements Landroid/view/View$OnLongClickListener;
 
 
 # instance fields
@@ -27,14 +27,16 @@
 
 
 # virtual methods
-.method public final onClick(Landroid/content/DialogInterface;I)V
+.method public final onLongClick(Landroid/view/View;)Z
     .locals 2
 
     iget-object v0, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$0:Lcom/mcp2p/tv/HomeScreen$Home;
 
     iget-object v1, p0, Lcom/mcp2p/tv/HomeScreen$Home$$ExternalSyntheticLambda9;->f$1:Lcom/mcp2p/tv/HomeScreen$PlaylistItem;
 
-    invoke-virtual {v0, v1, p1, p2}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$listOptions$20$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$PlaylistItem;Landroid/content/DialogInterface;I)V
+    invoke-virtual {v0, v1, p1}, Lcom/mcp2p/tv/HomeScreen$Home;->lambda$listCard$20$com-mcp2p-tv-HomeScreen$Home(Lcom/mcp2p/tv/HomeScreen$PlaylistItem;Landroid/view/View;)Z
 
-    return-void
+    move-result p1
+
+    return p1
 .end method

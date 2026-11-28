@@ -13,9 +13,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * el archivo. Sin pista, o si la pista no es válida, el motor mantiene su elección (el vídeo más grande).
  */
 public final class TorrentFiles {
-    private static final Map<String, Integer> HINTS = new ConcurrentHashMap<>();
+    private static final Map<String, Integer> HINTS = bounded(200);
 
     static final long MB = 1024L * 1024L;
+
+    /** Mapa acotado: al pasar de max entradas se olvidan las más antiguas (no crece sin fin en sesiones largas). */
+    static <K, V> Map<K, V> bounded(final int max) {
+        return java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<K, V>(16, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(java.util.Map.Entry<K, V> e) {
+                return size() > max;
+            }
+        });
+    }
 
     /** Geometría del archivo elegido en cada torrent (la apunta TorrentFiles.choose). */
     static final class Geometry {
@@ -23,18 +33,40 @@ public final class TorrentFiles {
         int pieceLength, numPieces;
     }
 
-    static final Map<String, Geometry> FILES = new ConcurrentHashMap<>();
+    static final Map<String, Geometry> FILES = bounded(200);
 
     // ------------------------------------------------------------ cálculo (probado en la JVM)
 
-    /** Bytes a precargar antes de empezar: 1 % del archivo, entre 32 y 128 MB (nunca más que el archivo). */
+    /**
+     * Bytes a precargar antes de empezar: 1 % del archivo, entre 32 y 256 MB (nunca más que el archivo).
+     * Los 128 MB anteriores podían representar menos de 20 s en un 4K de bitrate alto: tras cualquier bajón breve
+     * la reproducción alcanzaba a la descarga y volvía a cargar. Son bytes guardados en disco, no en el heap Java.
+     */
     static long bufferBytes(long fileSize) {
-        long b = Math.max(32 * MB, Math.min(128 * MB, fileSize / 100));
+        long b = Math.max(32 * MB, Math.min(256 * MB, fileSize / 100));
         return Math.min(b, Math.max(0, fileSize));
     }
 
+    /** Suelo de búfer P2P: conserva el ajuste del usuario si ya es mayor. */
+    static int p2pBufferSeconds(int configured, boolean lowMemory) {
+        return Math.max(configured, lowMemory ? 20 : 30);
+    }
+
+    /** Datos mínimos antes del primer fotograma. Los streams normales mantienen los 1,5 s originales. */
+    static int playbackStartMs(boolean p2p, boolean lowMemory) {
+        return p2p ? (lowMemory ? 5000 : 8000) : 1500;
+    }
+
+    /**
+     * Tras vaciarse el búfer se espera más que los 3 s originales; así no entra en el ciclo reproducir/cargar.
+     * En modo ligero se limita a 10 s para no forzar una reserva excesiva en memoria.
+     */
+    static int playbackAfterRebufferMs(boolean p2p, boolean lowMemory) {
+        return p2p ? (lowMemory ? 10000 : 15000) : 3000;
+    }
+
     /** Duración de la película (s) por infohash; la apunta la Mediateca (TMDB) para calcular la precarga. */
-    static final Map<String, Integer> DURATION = new ConcurrentHashMap<>();
+    static final Map<String, Integer> DURATION = bounded(200);
 
     public static void hintDuration(String infoHash, int seconds) {
         if (infoHash != null && seconds > 0) DURATION.put(infoHash.toLowerCase(Locale.ROOT), seconds);
