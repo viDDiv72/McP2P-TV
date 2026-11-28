@@ -900,6 +900,7 @@ public final class MediaScreen {
                 i.setClassName(a, "com.mcp2p.app.ui.PlayerActivity");
                 i.putExtra("com.mcp2p.app.extra.P2P_INPUT", s.acestream);
                 i.putExtra("com.mcp2p.app.extra.TITLE", (cur != null ? cur.title : "") + " · " + s.quality);
+                i.putExtra("com.mcp2p.app.extra.SOURCE", "telegram"); // solo Telegram usa la decodificación FFmpeg
                 a.startActivity(i);
                 return;
             }

@@ -12,6 +12,7 @@ Archivo para que varios agentes (Claude, ChatGPT…) no se pisen en esta carpeta
 
 ## Trabajo en curso
 - (vacío, buffering 1080p/4K terminado en 1.9.6-beta30; pendiente de instalación autorizada y prueba del usuario)
+- (vacío, FFmpeg solo para Telegram terminado en 1.9.7-beta1; pendiente de prueba del usuario)
 
 ## Aviso al otro agente (Claude)
 - Claude ha recibido la 1.9.6-beta27 y no toca PlayerActivity.smali ni FfmpegAudioRenderer. Mi parche de beta23 (u0.1/b.1.smali, PCM) sigue en el árbol; no lo quito sin una regresión reproducible.
@@ -19,6 +20,8 @@ Archivo para que varios agentes (Claude, ChatGPT…) no se pisen en esta carpeta
 - Hilos de la Mediateca: se mantienen tus valores por memoria (lowMemory). Pendiente de que lo pruebes en el X4.
 
 ## Historial
+- 1.9.7-beta2 (Claude): revertido el filtro por extra SOURCE; el modo FFmpeg vuelve a activarse con P2P_INPUT (como en beta27/30) porque las listas sin FFmpeg no suenan desde el inicio en la Vontar. Mediateca (magnets/VLC) no cambia.
+- 1.9.7-beta1 (Claude): el modo FFmpeg de audio se activa solo con el extra com.mcp2p.app.extra.SOURCE=telegram (lo pone MediaScreen.play). Listas (tvonline, deportes) vuelven al reproductor original; Mediateca y Telegram no cambian de ruta de reproducción.
 - 1.9.6-beta30 (Codex): corrección del ciclo reproducir/cargar en películas P2P 1080p/4K. Media3 aplica solo a entradas `P2P_INPUT` un suelo de búfer de 20/30 s, espera 5/8 s al arrancar y 10/15 s después de un rebuffer; los streams normales conservan sus valores. Magnets/VLC recuperan 20/30 s, precarga en disco hasta 256 MB, lectura adelantada de 64/128 MB y parámetros libtorrent equilibrados para conservar peers útiles sin desbordar equipos de poca memoria. Integrado sobre beta29 de Claude, conservando título a 48 sp y audio FFmpeg de beta27. Pruebas: 31/31 + 83/83, 21 guardas smali, layouts y 12 comportamientos; ensamblado, alineado y firma v2/v3 correctos. APK: `build/McP2P-TV-v1.9.6-beta30.apk`, SHA-256 `f8ddd96bea3a22719f8686677c1d525f37980ad04bc544ff3fb27756dba436e2`. No instalado: requiere autorización afirmativa del usuario.
 - 1.9.6-beta29 (Claude): tamaño del título del reproductor a 48 sp (PlayerTitle.java).
 - 1.9.6-beta28 (Claude): título del reproductor a la izquierda y 4 veces más grande (64 sp, PlayerTitle.java); en Telegram solo 4K, 1080p y 720p (TG_QUALITY en MediaScreen.java). Pendiente de validar en el X4.

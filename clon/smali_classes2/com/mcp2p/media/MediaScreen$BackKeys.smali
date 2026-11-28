@@ -22,10 +22,10 @@
 .method constructor <init>(Landroid/view/Window$Callback;Lcom/mcp2p/media/MediaScreen$Screen;)V
     .locals 0
 
-    .line 1594
+    .line 1595
     invoke-direct {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;-><init>(Landroid/view/Window$Callback;)V
 
-    .line 1595
+    .line 1596
     iput-object p2, p0, Lcom/mcp2p/media/MediaScreen$BackKeys;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     return-void
@@ -36,7 +36,7 @@
 .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
     .locals 3
 
-    .line 1600
+    .line 1601
     :try_start_0
     invoke-virtual {p1}, Landroid/view/KeyEvent;->getKeyCode()I
 
@@ -46,7 +46,7 @@
 
     if-ne v0, v1, :cond_3
 
-    .line 1601
+    .line 1602
     iget-object v0, p0, Lcom/mcp2p/media/MediaScreen$BackKeys;->s:Lcom/mcp2p/media/MediaScreen$Screen;
 
     iget-object v0, v0, Lcom/mcp2p/media/MediaScreen$Screen;->detailView:Landroid/widget/LinearLayout;
@@ -79,7 +79,7 @@
     :goto_1
     if-eqz v0, :cond_3
 
-    .line 1603
+    .line 1604
     invoke-virtual {p1}, Landroid/view/KeyEvent;->getAction()I
 
     move-result v0
@@ -108,10 +108,10 @@
 
     const-string v2, "Tecla ATR\u00c1S (ignorado)"
 
-    .line 1608
+    .line 1609
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 1610
+    .line 1611
     :cond_3
     invoke-super {p0, p1}, Lcom/mcp2p/tv/WindowCallbackWrapper;->dispatchKeyEvent(Landroid/view/KeyEvent;)Z
 

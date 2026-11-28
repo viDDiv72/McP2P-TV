@@ -43,7 +43,7 @@
 .method static constructor <clinit>()V
     .locals 2
 
-    .line 1543
+    .line 1544
     new-instance v0, Landroid/os/Handler;
 
     invoke-static {}, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -60,7 +60,7 @@
 .method constructor <init>()V
     .locals 0
 
-    .line 1447
+    .line 1448
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -79,7 +79,7 @@
 
     goto/16 :goto_3
 
-    .line 1482
+    .line 1483
     :cond_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -91,7 +91,7 @@
 
     const-string v2, "org.videolan.libvlc.MediaPlayer"
 
-    .line 1483
+    .line 1484
     invoke-virtual {v2, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
 
     move-result v2
@@ -103,7 +103,7 @@
     :cond_1
     const-string v2, "android."
 
-    .line 1484
+    .line 1485
     invoke-virtual {v1, v2}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
 
     move-result v3
@@ -128,7 +128,7 @@
 
     goto :goto_3
 
-    .line 1485
+    .line 1486
     :cond_2
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -141,7 +141,7 @@
 
     if-eq v1, v3, :cond_7
 
-    .line 1486
+    .line 1487
     invoke-virtual {v1}, Ljava/lang/Class;->getName()Ljava/lang/String;
 
     move-result-object v3
@@ -154,7 +154,7 @@
 
     goto :goto_3
 
-    .line 1487
+    .line 1488
     :cond_3
     invoke-virtual {v1}, Ljava/lang/Class;->getDeclaredFields()[Ljava/lang/reflect/Field;
 
@@ -169,7 +169,7 @@
 
     aget-object v6, v3, v5
 
-    .line 1488
+    .line 1489
     invoke-virtual {v6}, Ljava/lang/reflect/Field;->getType()Ljava/lang/Class;
 
     move-result-object v7
@@ -185,11 +185,11 @@
     :cond_4
     const/4 v7, 0x1
 
-    .line 1490
+    .line 1491
     :try_start_0
     invoke-virtual {v6, v7}, Ljava/lang/reflect/Field;->setAccessible(Z)V
 
-    .line 1491
+    .line 1492
     invoke-virtual {v6, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v6
@@ -213,7 +213,7 @@
 
     goto :goto_1
 
-    .line 1485
+    .line 1486
     :cond_6
     invoke-virtual {v1}, Ljava/lang/Class;->getSuperclass()Ljava/lang/Class;
 
@@ -233,7 +233,7 @@
 
     monitor-enter v0
 
-    .line 1453
+    .line 1454
     :try_start_0
     sget-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
@@ -246,10 +246,10 @@
     :cond_0
     const/4 v1, 0x1
 
-    .line 1454
+    .line 1455
     sput-boolean v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->installed:Z
 
-    .line 1455
+    .line 1456
     new-instance v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;
 
     invoke-direct {v1}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;-><init>()V
@@ -258,12 +258,12 @@
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 1456
+    .line 1457
     monitor-exit v0
 
     return-void
 
-    .line 1453
+    .line 1454
     :cond_1
     :goto_0
     monitor-exit v0
@@ -281,7 +281,7 @@
 .method static synthetic lambda$seekWhenPlaying$0(Landroid/app/Activity;Ljava/lang/String;)V
     .locals 2
 
-    .line 1514
+    .line 1515
     new-instance v0, Ljava/lang/StringBuilder;
 
     const-string v1, "Reanudando en "
@@ -316,7 +316,7 @@
 
     const/4 v1, 0x1
 
-    .line 1526
+    .line 1527
     invoke-static {p0, v0, v1}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
     move-result-object p0
@@ -346,18 +346,18 @@
 
     const-wide/16 v7, 0x1f4
 
-    .line 1505
+    .line 1506
     :try_start_0
     invoke-static {v7, v8}, Ljava/lang/Thread;->sleep(J)V
 
-    .line 1506
+    .line 1507
     invoke-static/range {p0 .. p1}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->player(J)Landroid/app/Activity;
 
     move-result-object v5
 
     if-eqz v5, :cond_6
 
-    .line 1507
+    .line 1508
     invoke-virtual {v5}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v7
@@ -372,7 +372,7 @@
 
     goto/16 :goto_3
 
-    .line 1508
+    .line 1509
     :cond_0
     invoke-static {v5}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->vlcPlayer(Ljava/lang/Object;)Ljava/lang/Object;
 
@@ -382,7 +382,7 @@
 
     goto/16 :goto_3
 
-    .line 1510
+    .line 1511
     :cond_1
     sget-object v8, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
 
@@ -410,7 +410,7 @@
 
     if-eqz v8, :cond_6
 
-    .line 1511
+    .line 1512
     invoke-virtual {v7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v8
@@ -441,7 +441,7 @@
 
     if-lez v8, :cond_6
 
-    .line 1513
+    .line 1514
     sget-object v4, Ljava/util/Locale;->US:Ljava/util/Locale;
 
     const-string v8, "%d:%02d"
@@ -480,7 +480,7 @@
 
     move-result-object v4
 
-    .line 1514
+    .line 1515
     sget-object v8, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->UI:Landroid/os/Handler;
 
     new-instance v9, Lcom/mcp2p/media/MediaScreen$PlayerTracker$$ExternalSyntheticLambda1;
@@ -489,7 +489,7 @@
 
     invoke-virtual {v8, v9}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
 
-    .line 1515
+    .line 1516
     invoke-virtual {v7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v4
@@ -514,7 +514,7 @@
 
     invoke-virtual {v4, v7, v8}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 1516
+    .line 1517
     new-instance v4, Ljava/lang/StringBuilder;
 
     invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
@@ -542,10 +542,10 @@
 
     if-ge v4, v8, :cond_5
 
-    .line 1519
+    .line 1520
     invoke-static {v12, v13}, Ljava/lang/Thread;->sleep(J)V
 
-    .line 1520
+    .line 1521
     invoke-virtual {v5}, Landroid/app/Activity;->isFinishing()Z
 
     move-result v8
@@ -560,7 +560,7 @@
 
     goto :goto_2
 
-    .line 1521
+    .line 1522
     :cond_2
     invoke-virtual {v7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
@@ -605,7 +605,7 @@
     :goto_2
     return-void
 
-    .line 1524
+    .line 1525
     :cond_5
     new-instance v4, Ljava/lang/StringBuilder;
 
@@ -627,7 +627,7 @@
 
     invoke-static {v6, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 1525
+    .line 1526
     invoke-virtual {v7}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -652,7 +652,7 @@
 
     invoke-virtual {v0, v7, v1}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 1526
+    .line 1527
     sget-object v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->UI:Landroid/os/Handler;
 
     new-instance v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker$$ExternalSyntheticLambda2;
@@ -677,7 +677,7 @@
     :cond_7
     const-string v0, "No se retom\u00f3 el minuto: el reproductor no empez\u00f3 a tiempo"
 
-    .line 1530
+    .line 1531
     invoke-static {v6, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;)I
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
@@ -687,7 +687,7 @@
     :goto_4
     const-string v1, "No se pudo retomar el minuto"
 
-    .line 1532
+    .line 1533
     invoke-static {v6, v1, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
     :goto_5
@@ -697,12 +697,12 @@
 .method static player(J)Landroid/app/Activity;
     .locals 5
 
-    .line 1460
+    .line 1461
     sget-object v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
     if-eqz v0, :cond_0
 
-    .line 1461
+    .line 1462
     sget-wide v1, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->lastAt:J
 
     const-wide/16 v3, 0x3e8
@@ -731,7 +731,7 @@
 .method static saveResume(Landroid/app/Activity;)V
     .locals 10
 
-    .line 1557
+    .line 1558
     sget-wide v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->nowMovie:J
 
     const-wide/16 v2, 0x0
@@ -742,7 +742,7 @@
 
     return-void
 
-    .line 1559
+    .line 1560
     :cond_0
     invoke-static {p0}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->vlcTime(Landroid/app/Activity;)J
 
@@ -756,7 +756,7 @@
 
     const/4 v9, 0x0
 
-    .line 1560
+    .line 1561
     invoke-virtual {p0, v8, v9}, Landroid/app/Activity;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
 
     move-result-object p0
@@ -785,7 +785,7 @@
 
     if-gez v2, :cond_2
 
-    .line 1561
+    .line 1562
     :cond_1
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -801,7 +801,7 @@
 
     goto :goto_0
 
-    .line 1562
+    .line 1563
     :cond_2
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -815,7 +815,7 @@
 
     invoke-interface {p0, v0}, Landroid/content/SharedPreferences$Editor;->remove(Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
 
-    .line 1563
+    .line 1564
     :goto_0
     invoke-interface {p0}, Landroid/content/SharedPreferences$Editor;->apply()V
 
@@ -825,12 +825,12 @@
 .method static seekWhenPlaying(J)V
     .locals 4
 
-    .line 1501
+    .line 1502
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
     move-result-wide v0
 
-    .line 1502
+    .line 1503
     new-instance v2, Ljava/lang/Thread;
 
     new-instance v3, Lcom/mcp2p/media/MediaScreen$PlayerTracker$$ExternalSyntheticLambda0;
@@ -841,7 +841,7 @@
 
     invoke-direct {v2, v3, p0}, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
 
-    .line 1534
+    .line 1535
     invoke-virtual {v2}, Ljava/lang/Thread;->start()V
 
     return-void
@@ -850,7 +850,7 @@
 .method static vlcLength(Landroid/app/Activity;)J
     .locals 6
 
-    .line 1546
+    .line 1547
     invoke-static {p0}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->vlcPlayer(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p0
@@ -861,7 +861,7 @@
 
     return-wide v0
 
-    .line 1549
+    .line 1550
     :cond_0
     :try_start_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -901,7 +901,7 @@
 
     const/4 v0, 0x0
 
-    .line 1477
+    .line 1478
     invoke-static {p0, v0}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->findVlc(Ljava/lang/Object;I)Ljava/lang/Object;
 
     move-result-object p0
@@ -912,7 +912,7 @@
 .method static vlcTime(Landroid/app/Activity;)J
     .locals 6
 
-    .line 1466
+    .line 1467
     invoke-static {p0}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->vlcPlayer(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object p0
@@ -923,7 +923,7 @@
 
     return-wide v0
 
-    .line 1469
+    .line 1470
     :cond_0
     :try_start_0
     invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -963,7 +963,7 @@
 .method public onActivityCreated(Landroid/app/Activity;Landroid/os/Bundle;)V
     .locals 1
 
-    .line 1578
+    .line 1579
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p2
@@ -980,14 +980,14 @@
 
     if-eqz p2, :cond_0
 
-    .line 1579
+    .line 1580
     new-instance p2, Ljava/lang/ref/WeakReference;
 
     invoke-direct {p2, p1}, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
 
     sput-object p2, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->last:Ljava/lang/ref/WeakReference;
 
-    .line 1580
+    .line 1581
     invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
 
     move-result-wide p1
@@ -1007,7 +1007,7 @@
 .method public onActivityPaused(Landroid/app/Activity;)V
     .locals 2
 
-    .line 1571
+    .line 1572
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object v0
@@ -1026,10 +1026,10 @@
 
     const/4 v0, 0x0
 
-    .line 1572
+    .line 1573
     sput-boolean v0, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->playing:Z
 
-    .line 1573
+    .line 1574
     invoke-static {p1}, Lcom/mcp2p/media/MediaScreen$PlayerTracker;->saveResume(Landroid/app/Activity;)V
 
     :cond_0
@@ -1039,7 +1039,7 @@
 .method public onActivityResumed(Landroid/app/Activity;)V
     .locals 1
 
-    .line 1567
+    .line 1568
     invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
 
     move-result-object p1
